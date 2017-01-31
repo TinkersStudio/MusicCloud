@@ -10,12 +10,11 @@
         android:scaleType="centerCrop"
         android:src="@drawable/navigation_header" />
 
-    <!-- TODO Implement the circlar image view in here-->
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profile_image"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@drawable/navigation_profile"
         app:civ_border_width="2dp"
         app:civ_border_color="#FFFFFF"/>
@@ -41,6 +40,6 @@
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:text="XXX@gmail.com"
-            android:textColor="#fff" />
+            android:textColor="#ffffff" />
     </LinearLayout>
 </FrameLayout>

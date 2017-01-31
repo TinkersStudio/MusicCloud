@@ -1,25 +1,31 @@
 package com.tinkersstudio.musiccloud;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainScreen extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
     NavigationView navigation;
+    Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
         initInstances();
+        context = getApplicationContext();
     }
 
     private void initInstances() {
@@ -31,30 +37,44 @@ public class MainScreen extends AppCompatActivity {
         drawerLayout.setDrawerListener(drawerToggle);
 
         navigation = (NavigationView) findViewById(R.id.navigation_view);
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         navigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
                 switch (id) {
-                    case R.id.navigation_item_1:
+                    case R.id.navigation_view_now_playing:
+                        Toast.makeText(context, "Open the Music Player Activity", Toast.LENGTH_SHORT).show();
+                        break;
+                    /**Offline service group*/
+                    case R.id.navigation_view_music_library:
+                        Toast.makeText(context, "Open thee Music Library", Toast.LENGTH_SHORT).show();
                         //Do some thing here
                         // add navigation drawer item onclick method here
                         break;
-                    case R.id.navigation_item_2:
+                    case R.id.navigation_view_music_playlist:
+                        Toast.makeText(context, "Open the Music Playlist", Toast.LENGTH_SHORT).show();
                         //Do some thing here
                         // add navigation drawer item onclick method here
                         break;
-                    case R.id.navigation_item_3:
+                    case R.id.navigation_view_favorite_list:
+                        Toast.makeText(context,"Open Favorite List", Toast.LENGTH_SHORT).show();
+                        break;
+                    /** Online service group*/
+                    /** Setting group*/
+                    case R.id.navigation_view_user_info:
+                        Toast.makeText(context, "User Info", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.navigation_view_equalizer:
+                        Toast.makeText(context, "Open the equalize", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.navigation_view_user_stat:
+                        Toast.makeText(context, "Open the achievement page", Toast.LENGTH_SHORT).show();
                         //Do some thing here
                         // add navigation drawer item onclick method here
                         break;
-                    case R.id.navigation_item_4:
-                        //Do some thing here
-                        // add navigation drawer item onclick method here
-                        break;
-                    case R.id.navigation_item_5:
-                        //Do some thing here
-                        // add navigation drawer item onclick method here
+                    case R.id.navigation_view_customize:
+                        Toast.makeText(context, "Open the customize page for the player",Toast.LENGTH_SHORT).show();
                         break;
                 }
                 return false;

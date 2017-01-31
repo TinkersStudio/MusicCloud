@@ -1,32 +1,70 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="all">
-        <item
-            android:id="@+id/navigation_item_1"
-            android:checked="true"
-            android:icon="@drawable/ic_action_help"
-            android:title="@string/navigation_view_item_1" />
-        <item
-            android:id="@+id/navigation_item_2"
-            android:icon="@drawable/ic_action_help"
-            android:title="@string/navigation_view_item_2" />
-    </group>
+
 
     <item
-        android:id="@+id/navigation_view_category_2"
-        android:title="@string/navigation_view_category_2">
+        android:id="@+id/navigation_view_now_playing"
+        android:icon="@drawable/ic_headphones"
+        android:title="@string/now_playing" />
+
+    <!-- Off Line service Group-->
+    <item
+        android:id="@+id/navigation_view_offline_service"
+        android:title="@string/local_music"
+        android:icon="@drawable/ic_library_music">
+        <menu>
+            <item
+                android:id="@+id/navigation_view_music_library"
+                android:icon="@drawable/ic_audiobook"
+                android:title="@string/my_music_library" />
+            <item
+                android:id="@+id/navigation_view_music_playlist"
+                android:icon="@drawable/ic_music_note"
+                android:title="@string/my_playlist" />
+            <item
+                android:id="@+id/navigation_view_favorite_list"
+                android:icon="@drawable/ic_action_favorite"
+                android:title="@string/navigation_view_favorite" />
+        </menu>
+    </item>
+
+    <!-- FIXME Edit the content-->
+    <!-- TODO Feature to implement-->
+    <!-- Cloud service-->
+    <item
+        android:id="@+id/navigation_view_cloud_service"
+        android:title="@string/music_cloud_service"
+        android:icon="@drawable/ic_action_cloud">
         <menu>
             <item
                 android:id="@+id/navigation_item_3"
                 android:icon="@drawable/ic_action_help"
-                android:title="@string/navigation_view_item_3" />
+                android:title="some service" />
+        </menu>
+    </item>
+
+    <!-- Customization -->
+    <item
+        android:id="@+id/navigation_view_setting"
+        android:title="@string/setting"
+        android:icon="@drawable/ic_settings">
+        <menu>
             <item
-                android:id="@+id/navigation_item_4"
-                android:icon="@drawable/ic_action_help"
-                android:title="@string/navigation_view_item_4" />
+                android:id="@+id/navigation_view_user_info"
+                android:icon="@drawable/ic_account_settings_variant"
+                android:title="@string/user_info" />
             <item
-                android:id="@+id/navigation_item_5"
-                android:icon="@drawable/ic_action_help"
-                android:title="@string/navigation_view_item_5" />
+                android:id="@+id/navigation_view_customize"
+                android:icon="@drawable/ic_radio"
+                android:title="@string/customize_player" />
+            <item
+                android:id="@+id/navigation_view_equalizer"
+                android:icon="@drawable/ic_action_settings"
+                android:title="@string/equalizer" />
+            <item
+                android:id="@+id/navigation_view_user_stat"
+                android:icon="@drawable/ic_trophy"
+                android:title="@string/achievement" />
+
         </menu>
     </item>
 </menu>
