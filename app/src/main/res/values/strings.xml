@@ -15,4 +15,6 @@
     <string name="local_music">Local File</string>
     <string name="achievement">Achievement</string>
     <string name="customize_player">Customize Player</string>
+    <string name="spotify">Spotify</string>
+    <string name="soundcloud">Sound Cloud</string>
 </resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Image ccircular -->
+    <info.abdolahi.CircularMusicProgressBar
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/music_player"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:src="@drawable/cover_art_stock"
+        app:border_color="#00796B"
+        app:border_width="2dp"
+        app:centercircle_diammterer="1"
+        app:progress_color="#80CBC4"
+        app:progress_startAngle="40" />
+
+    <!-- TODO Add the player layout-->
+</LinearLayout>

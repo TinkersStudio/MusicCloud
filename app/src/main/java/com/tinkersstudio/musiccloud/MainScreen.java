@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import es.dmoral.toasty.Toasty;
+
 public class MainScreen extends AppCompatActivity {
 
     DrawerLayout drawerLayout;
@@ -44,37 +46,43 @@ public class MainScreen extends AppCompatActivity {
                 int id = menuItem.getItemId();
                 switch (id) {
                     case R.id.navigation_view_now_playing:
-                        Toast.makeText(context, "Open the Music Player Activity", Toast.LENGTH_SHORT).show();
+                        Toasty.info(context, "Open the Music Player Activity", Toast.LENGTH_SHORT, true).show();
                         break;
                     /**Offline service group*/
                     case R.id.navigation_view_music_library:
-                        Toast.makeText(context, "Open thee Music Library", Toast.LENGTH_SHORT).show();
+                        Toasty.info(context, "Open thee Music Library", Toast.LENGTH_SHORT, true).show();
                         //Do some thing here
                         // add navigation drawer item onclick method here
                         break;
                     case R.id.navigation_view_music_playlist:
-                        Toast.makeText(context, "Open the Music Playlist", Toast.LENGTH_SHORT).show();
+                        Toasty.info(context, "Open the Music Playlist", Toast.LENGTH_SHORT, true).show();
                         //Do some thing here
                         // add navigation drawer item onclick method here
                         break;
                     case R.id.navigation_view_favorite_list:
-                        Toast.makeText(context,"Open Favorite List", Toast.LENGTH_SHORT).show();
+                        Toasty.info(context, "Open Favorite List", Toast.LENGTH_SHORT, true).show();
                         break;
                     /** Online service group*/
+                    case R.id.navigation_view_spotify:
+                        Toasty.info(context, "Open Spotify Service", Toast.LENGTH_SHORT, true).show();
+                        break;
+                    case R.id.navigation_view_soundcloud:
+                        Toasty.info(context, "Open Soundcloud", Toast.LENGTH_SHORT, true).show();
+                        break;
                     /** Setting group*/
                     case R.id.navigation_view_user_info:
-                        Toast.makeText(context, "User Info", Toast.LENGTH_SHORT).show();
+                        Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();
                         break;
                     case R.id.navigation_view_equalizer:
-                        Toast.makeText(context, "Open the equalize", Toast.LENGTH_SHORT).show();
+                        Toasty.info(context, "Open the equalize", Toast.LENGTH_SHORT, true).show();
                         break;
                     case R.id.navigation_view_user_stat:
-                        Toast.makeText(context, "Open the achievement page", Toast.LENGTH_SHORT).show();
+                        Toasty.info(context, "Open the achievement page", Toast.LENGTH_SHORT, true).show();
                         //Do some thing here
                         // add navigation drawer item onclick method here
                         break;
                     case R.id.navigation_view_customize:
-                        Toast.makeText(context, "Open the customize page for the player",Toast.LENGTH_SHORT).show();
+                        Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
                         break;
                 }
                 return false;

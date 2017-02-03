@@ -3,6 +3,13 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+    <!-- TODO: The screen is used to display the lyric of the song-->
+
+    <me.zhengken.lyricview.LyricView
+        android:id="@+id/custom_lyric_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,4 +42,5 @@
                 android:textColor="@color/lyricText"/>
         </ScrollView>
     </LinearLayout>
+    -->
 </LinearLayout>

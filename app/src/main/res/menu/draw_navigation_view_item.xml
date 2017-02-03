@@ -36,10 +36,16 @@
         android:icon="@drawable/ic_action_cloud">
         <menu>
             <item
-                android:id="@+id/navigation_item_3"
-                android:icon="@drawable/ic_action_help"
-                android:title="some service" />
+                android:id="@+id/navigation_view_spotify"
+                android:icon="@drawable/ic_spotify"
+                android:title="@string/spotify" />
+            <item
+                android:id="@+id/navigation_view_soundcloud"
+                android:icon="@drawable/ic_soundcloud"
+                android:title="@string/soundcloud" />
         </menu>
+
+
     </item>
 
     <!-- Customization -->
