@@ -1,21 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorAccent">
 
-    <!-- Image ccircular -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/mp_buttons_panel">
+        <!-- #0000 means transparent -->
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:id="@+id/mp_button_lyrics"
+            android:src="@drawable/ic_lyrics"
+            android:background="#0000"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:id="@+id/mp_button_info"
+            android:src="@drawable/ic_info"
+            android:background="#0000"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:id="@+id/mp_button_more"
+            android:src="@drawable/ic_dots_horizontal_black"
+            android:background="#0000"
+            />
+    </LinearLayout>
+
     <info.abdolahi.CircularMusicProgressBar
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/music_player"
+        android:id="@+id/mp_progress_bar"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
         android:src="@drawable/cover_art_stock"
-        app:border_color="#00796B"
-        app:border_width="2dp"
+        app:border_color="?attr/colorPrimaryDark"
+        app:border_width="6dp"
         app:centercircle_diammterer="1"
         app:progress_color="#80CBC4"
         app:progress_startAngle="40" />
 
-    <!-- TODO Add the player layout-->
+    <TextView
+            android:paddingTop="10dp"
+            android:id="@+id/mp_songBeingPlay"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:singleLine="true"
+            android:focusableInTouchMode="true"
+            android:fontFamily="sans-serif-smallcaps"
+            android:textSize="18dp"
+            android:text="Title Of The Song Playing"
+            android:textColor="#000"/>
+    <TextView
+            android:id="@+id/mp_songBeingPlayArtist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:textSize="15dp"
+            android:text="Artist Name"/>
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <ImageView
+
+            android:paddingTop="13dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight=".5"
+            android:id="@+id/mp_repeat"
+            android:clickable="true"
+            android:src="@drawable/ic_action_repeat"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/mp_play_prev"
+            android:clickable="true"
+            android:paddingTop="13dp"
+            android:src="@drawable/ic_action_previous"/>
+
+        <ImageView
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:id="@+id/mp_play"
+            android:src="@drawable/ic_action_play"
+            android:clickable="true"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/mp_play_next"
+            android:paddingTop="13dp"
+            android:clickable="true"
+            android:src="@drawable/ic_action_next"/>
+
+        <ImageView
+
+            android:paddingTop="13dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight=".5"
+            android:id="@+id/mp_shuffle"
+            android:clickable="true"
+            android:src="@drawable/ic_action_shuffle"/>
+
+    </LinearLayout>
 </LinearLayout>
