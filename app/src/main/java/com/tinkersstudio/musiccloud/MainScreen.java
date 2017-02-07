@@ -76,11 +76,11 @@ public class MainScreen extends AppCompatActivity {
                     case R.id.navigation_view_equalizer:
                         Toasty.info(context, "Open the equalize", Toast.LENGTH_SHORT, true).show();
                         break;
-                    case R.id.navigation_view_user_stat:
-                        Toasty.info(context, "Open the achievement page", Toast.LENGTH_SHORT, true).show();
+                    //case R.id.navigation_view_user_stat:
+                        //Toasty.info(context, "Open the achievement page", Toast.LENGTH_SHORT, true).show();
                         //Do some thing here
                         // add navigation drawer item onclick method here
-                        break;
+                        //break;
                     case R.id.navigation_view_customize:
                         Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
                         break;
@@ -111,7 +111,6 @@ public class MainScreen extends AppCompatActivity {
     }
 
     @Override
-    //TODO: Implement menu
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item))
             return true;

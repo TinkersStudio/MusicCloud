@@ -27,8 +27,6 @@
         </menu>
     </item>
 
-    <!-- FIXME Edit the content-->
-    <!-- TODO Feature to implement-->
     <!-- Cloud service-->
     <item
         android:id="@+id/navigation_view_cloud_service"
@@ -66,11 +64,12 @@
                 android:id="@+id/navigation_view_equalizer"
                 android:icon="@drawable/ic_action_settings"
                 android:title="@string/equalizer" />
+            <!--
             <item
                 android:id="@+id/navigation_view_user_stat"
                 android:icon="@drawable/ic_trophy"
                 android:title="@string/achievement" />
-
+                -->
         </menu>
     </item>
 </menu>
