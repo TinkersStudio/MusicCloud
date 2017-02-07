@@ -15,7 +15,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".FavoriteList" />
+        <activity android:name=".Equalizer" />
+        <activity android:name=".MusicPlayer" />
+        <activity android:name=".Profile" />
+        <activity android:name=".Setting" />
+        <activity android:name=".SongList" />
     </application>
 
 </manifest>
