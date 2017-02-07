@@ -111,7 +111,6 @@ public class MainScreen extends AppCompatActivity {
     }
 
     @Override
-    //TODO: Implement menu
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item))
             return true;
