@@ -1,6 +1,7 @@
 package com.tinkersstudio.musiccloud;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -46,21 +47,23 @@ public class MainScreen extends AppCompatActivity {
                 int id = menuItem.getItemId();
                 switch (id) {
                     case R.id.navigation_view_now_playing:
-                        Toasty.info(context, "Open the Music Player Activity", Toast.LENGTH_SHORT, true).show();
+                        //Toasty.info(context, "Open the Music Player Activity", Toast.LENGTH_SHORT, true).show();
+                        Intent musicPlayer = new Intent(MainScreen.this, MusicPlayer.class);
+                        startActivity(musicPlayer);
                         break;
                     /**Offline service group*/
                     case R.id.navigation_view_music_library:
-                        Toasty.info(context, "Open thee Music Library", Toast.LENGTH_SHORT, true).show();
-                        //Do some thing here
-                        // add navigation drawer item onclick method here
+                        //Toasty.info(context, "Open thee Music Library", Toast.LENGTH_SHORT, true).show();
+                        Intent songList = new Intent(MainScreen.this, SongList.class);
+                        startActivity(songList);
                         break;
                     case R.id.navigation_view_music_playlist:
                         Toasty.info(context, "Open the Music Playlist", Toast.LENGTH_SHORT, true).show();
-                        //Do some thing here
-                        // add navigation drawer item onclick method here
                         break;
                     case R.id.navigation_view_favorite_list:
-                        Toasty.info(context, "Open Favorite List", Toast.LENGTH_SHORT, true).show();
+                        //Toasty.info(context, "Open Favorite List", Toast.LENGTH_SHORT, true).show();
+                        Intent favoriteList= new Intent(MainScreen.this, FavoriteList.class);
+                        startActivity(favoriteList);
                         break;
                     /** Online service group*/
                     case R.id.navigation_view_spotify:
@@ -71,18 +74,19 @@ public class MainScreen extends AppCompatActivity {
                         break;
                     /** Setting group*/
                     case R.id.navigation_view_user_info:
-                        Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();
+                        //Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();
+                        Intent profile= new Intent(MainScreen.this, Profile.class);
+                        startActivity(profile);
                         break;
                     case R.id.navigation_view_equalizer:
-                        Toasty.info(context, "Open the equalize", Toast.LENGTH_SHORT, true).show();
+                        //Toasty.info(context, "Open the equalize", Toast.LENGTH_SHORT, true).show();
+                        Intent equalizer= new Intent(MainScreen.this, Equalizer.class);
+                        startActivity(equalizer);
                         break;
-                    //case R.id.navigation_view_user_stat:
-                        //Toasty.info(context, "Open the achievement page", Toast.LENGTH_SHORT, true).show();
-                        //Do some thing here
-                        // add navigation drawer item onclick method here
-                        //break;
                     case R.id.navigation_view_customize:
-                        Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
+                        //Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
+                        Intent setting = new Intent(MainScreen.this, Setting.class);
+                        startActivity(setting);
                         break;
                 }
                 return false;
