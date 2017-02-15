@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -72,13 +71,13 @@ public class MainScreen extends AppCompatActivity {
                 switch (id) {
                     case R.id.navigation_view_now_playing:
                         //Toasty.info(context, "Open the Music Player Activity", Toast.LENGTH_SHORT, true).show();
-                        Intent musicPlayer = new Intent(MainScreen.this, MusicPlayer.class);
+                        Intent musicPlayer = new Intent(MainScreen.this, FragmentMusicPlayer.class);
                         startActivity(musicPlayer);
                         break;
                     /**Offline service group*/
                     case R.id.navigation_view_music_library:
                         //Toasty.info(context, "Open thee Music Library", Toast.LENGTH_SHORT, true).show();
-                        Intent songList = new Intent(MainScreen.this, SongList.class);
+                        Intent songList = new Intent(MainScreen.this, FragmentSongList.class);
                         startActivity(songList);
                         break;
                     case R.id.navigation_view_music_playlist:
@@ -96,20 +95,20 @@ public class MainScreen extends AppCompatActivity {
                     case R.id.navigation_view_soundcloud:
                         Toasty.info(context, "Open Soundcloud", Toast.LENGTH_SHORT, true).show();
                         break;
-                    /** Setting group*/
+                    /** FragmentSetting group*/
                     case R.id.navigation_view_user_info:
                         //Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();
-                        Intent profile= new Intent(MainScreen.this, Profile.class);
+                        Intent profile= new Intent(MainScreen.this, FragmentProfile.class);
                         startActivity(profile);
                         break;
                     case R.id.navigation_view_equalizer:
                         //Toasty.info(context, "Open the equalize", Toast.LENGTH_SHORT, true).show();
-                        Intent equalizer= new Intent(MainScreen.this, Equalizer.class);
+                        Intent equalizer= new Intent(MainScreen.this, FragmentEqualizer.class);
                         startActivity(equalizer);
                         break;
                     case R.id.navigation_view_customize:
                         //Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
-                        Intent setting = new Intent(MainScreen.this, Setting.class);
+                        Intent setting = new Intent(MainScreen.this, FragmentSetting.class);
                         startActivity(setting);
                         break;
                 }

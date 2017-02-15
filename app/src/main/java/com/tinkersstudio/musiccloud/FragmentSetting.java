@@ -8,13 +8,13 @@ import android.support.v7.app.AppCompatActivity;
  * Created by anhnguyen on 2/6/17.
  */
 
-public class Equalizer extends AppCompatActivity {
+public class FragmentSetting extends AppCompatActivity {
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_equalizer);
+        setContentView(R.layout.activity_setting);
         context = getApplicationContext();
     }
 }

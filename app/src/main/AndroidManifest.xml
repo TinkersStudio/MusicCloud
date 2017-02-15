@@ -20,11 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".FavoriteList" />
-        <activity android:name=".Equalizer" />
-        <activity android:name=".MusicPlayer" />
-        <activity android:name=".Profile" />
-        <activity android:name=".Setting" />
-        <activity android:name=".SongList" />
+        <activity android:name=".FragmentEqualizer" />
+        <activity android:name=".FragmentMusicPlayer" />
+        <activity android:name=".FragmentProfile" />
+        <activity android:name=".FragmentSetting" />
+        <activity android:name=".FragmentSongList" />
 
         <receiver android:name="controller.MyNotification$NotificationDismissedReceiver" />
         <service android:name="controller.MusicService" />
