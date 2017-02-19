@@ -8,12 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by juntrinh on 2/11/17.
+ * Created by Owner on 2/19/2017.
  */
 
 public class FragmentUserStat extends Fragment {
-    public FragmentUserStat() {
-        //require constructor
+    public FragmentUserStat(){
+        //require an empty constructor
     }
 
     @Override
@@ -34,5 +34,4 @@ public class FragmentUserStat extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
-
 }

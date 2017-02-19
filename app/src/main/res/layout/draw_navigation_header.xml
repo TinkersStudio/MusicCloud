@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="192dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
+    <!-- The layout for the header of the drawer-->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

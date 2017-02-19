@@ -8,19 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by juntrinh on 2/11/17.
+ * Created by Owner on 2/19/2017.
  */
 
-public class FragmentUserInfo extends Fragment{
-    public FragmentUserInfo() {
-        //require constructor
+public class FragmentUserInfo extends Fragment {
+    public FragmentUserInfo(){
+        //require an empty constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_user_info, container, false);
-        return rootView;
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_user_info, container, false);
+
+        //initialize button in here
     }
 
     @Override
@@ -32,5 +34,4 @@ public class FragmentUserInfo extends Fragment{
     public void onDetach() {
         super.onDetach();
     }
-
 }

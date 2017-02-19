@@ -63,14 +63,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         /*Fragment control*/
-        FragmentTransaction fragmentTransaction;
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         //Set the fragment initially
         FragmentHome fragment = new FragmentHome();
-        fragmentTransaction =
-                getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         //checkingPermission();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -97,7 +96,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -139,6 +137,9 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = new FragmentHome();
 
         switch (id) {
+            case R.id.navigation_view_home:
+                fragment = new FragmentHome();
+                break;
             case R.id.navigation_view_now_playing:
                 //Toasty.info(context, "Open the Music Player Activity", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentMusicPlayer();
@@ -177,9 +178,7 @@ public class MainActivity extends AppCompatActivity
         }
         //fragmentTransaction.replace(R.id.main_screen_content_frame,fragment);
         fragmentTransaction.replace(R.id.fragment_container,fragment);
-
         fragmentTransaction.commit();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
