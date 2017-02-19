@@ -14,7 +14,7 @@ public class FragmentEqualizer extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_equalizer);
+        setContentView(R.layout.fragment_equalizer);
         context = getApplicationContext();
     }
 }

@@ -85,7 +85,7 @@ public class MainScreen extends AppCompatActivity {
                         break;
                     case R.id.navigation_view_favorite_list:
                         //Toasty.info(context, "Open Favorite List", Toast.LENGTH_SHORT, true).show();
-                        Intent favoriteList= new Intent(MainScreen.this, FavoriteList.class);
+                        Intent favoriteList= new Intent(MainScreen.this, FragmentFavoriteList.class);
                         startActivity(favoriteList);
                         break;
                     /** Online service group*/
@@ -137,6 +137,7 @@ public class MainScreen extends AppCompatActivity {
         return true;
     }
 
+    /**
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item))
@@ -155,6 +156,7 @@ public class MainScreen extends AppCompatActivity {
         //return super.onOptionsItemSelected(item);
         return true;
     }
+    */
 
     /**
      * Everytime we start this activity, bind it to the Service

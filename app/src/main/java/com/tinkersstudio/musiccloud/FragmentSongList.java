@@ -14,7 +14,7 @@ public class FragmentSongList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_song_list);
+        setContentView(R.layout.fragment_song_list);
         context = getApplicationContext();
     }
 }

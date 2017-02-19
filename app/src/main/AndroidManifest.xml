@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FavoriteList" />
+        <activity android:name=".FragmentFavoriteList" />
         <activity android:name=".FragmentEqualizer" />
         <activity android:name=".FragmentMusicPlayer" />
         <activity android:name=".FragmentProfile" />

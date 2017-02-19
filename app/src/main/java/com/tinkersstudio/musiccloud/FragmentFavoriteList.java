@@ -8,13 +8,13 @@ import android.support.v7.app.AppCompatActivity;
  * Created by anhnguyen on 2/6/17.
  */
 
-public class FavoriteList extends AppCompatActivity {
+public class FragmentFavoriteList extends AppCompatActivity {
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_song_list);
+        setContentView(R.layout.fragment_song_list);
         context = getApplicationContext();
     }
 }
