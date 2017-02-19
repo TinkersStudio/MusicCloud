@@ -2,19 +2,39 @@ package com.tinkersstudio.musiccloud;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Created by anhnguyen on 2/6/17.
  */
 
-public class FragmentSetting extends AppCompatActivity {
+public class FragmentSetting extends Fragment {
     Context context;
 
+    public FragmentSetting() {
+        //require constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_setting);
-        context = getApplicationContext();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_setting, container, false);
+
+        //initialize button in here
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 }
