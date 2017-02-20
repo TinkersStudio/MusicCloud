@@ -17,4 +17,7 @@
     <string name="customize_player">Customize Player</string>
     <string name="spotify">Spotify</string>
     <string name="soundcloud">Sound Cloud</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="home">Home</string>
+
 </resources>

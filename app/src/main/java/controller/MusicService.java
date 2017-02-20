@@ -77,12 +77,19 @@ public class MusicService extends Service {
             player.printSongList();
             player.setCurrentSongPosition(1);
 
-
+            //FIXME Using the catch block
             // Put up the Notification bar and run the service on foreground
-            notifBar = new MyNotification(this, MyFlag.PLAY,
-                                            player.getCurrentSong().getTitle(),
-                                            player.getCurrentSong().getArtist());
-            startForeground(101, notifBar);
+            try {
+                notifBar = new MyNotification(this, MyFlag.PLAY,
+                        player.getCurrentSong().getTitle(),
+                        player.getCurrentSong().getArtist());
+                startForeground(101, notifBar);
+            }
+            catch (Exception e)
+            {
+                Log.e(LOG_TAG, "Error in the onStartCommand. Suspend the service");
+            }
+
         } else if (intent.getAction().equals(
                 "com.truiton.foregroundservice.action.stopforeground")) {
             Log.i(LOG_TAG, "Received Stop Foreground Intent");

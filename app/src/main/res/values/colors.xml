@@ -6,4 +6,6 @@
     <color name="lyricSongTitle">#000000</color>
     <color name="lyricSinger">#000000</color>
     <color name="lyricText">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="orange">#FA0</color>
 </resources>

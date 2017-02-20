@@ -12,22 +12,19 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainScreen">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FragmentFavoriteList" />
-        <activity android:name=".FragmentEqualizer" />
-        <activity android:name=".FragmentMusicPlayer" />
-        <activity android:name=".FragmentProfile" />
-        <activity android:name=".FragmentSetting" />
-        <activity android:name=".FragmentSongList" />
-
         <receiver android:name="controller.MyNotification$NotificationDismissedReceiver" />
         <service android:name="controller.MusicService" />
+
     </application>
 
 </manifest>

@@ -9,7 +9,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -19,19 +21,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
-import controller.MusicService.MusicBinder;
-import controller.MusicService;
 
+import controller.MusicService;
 import controller.MyFlag;
 import es.dmoral.toasty.Toasty;
 
-/**DEPRECATED. THIS CLASS IS USED FOR REFERENCE ONLY
- * USE MAINACTIVITY intead
+/**
+ * Created by Owner on 2/19/2017.
  */
-public class MainScreen extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG = "MainScreen";
 
@@ -46,59 +51,51 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
 
     DrawerLayout drawer;
     ActionBarDrawerToggle drawerToggle;
-    NavigationView navigation;
+    NavigationView navigationView;
     Context context;
     Toolbar toolbar = null;
 
     /*Fragment control*/
     FragmentTransaction fragmentTransaction;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //setContentView(R.layout.activity_main_screen);
         setContentView(R.layout.activity_main);
-
         context = getApplicationContext();
-        //default fragment
-        FragmentHome fragmentHome = new FragmentHome();
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        /*Fragment control*/
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        //fragmentTransaction.replace(R.id.main_screen_content_frame,fragmentHome);
-        fragmentTransaction.replace(R.id.fragment_container,fragmentHome);
+
+        //Set the fragment initially
+        FragmentHome fragment = new FragmentHome();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
 
-        //init the layout
-        initInstances();
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         //checkingPermission();
 
 
-    }
 
-    private void initInstances() {
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        drawerToggle = new ActionBarDrawerToggle(MainScreen.this, drawer,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        //How to change elements in the header programatically
+        //View headerView = navigationView.getHeaderView(0);
+        //TextView emailText = (TextView) headerView.findViewById(R.id.email);
+        //emailText.setText("newemail@email.com");
 
-        //drawer.setDrawerListener(drawerToggle);
-        drawer.setDrawerListener(drawerToggle);
-        drawerToggle.syncState();
-
-        //change the layout in here
-        navigation = (NavigationView) findViewById(R.id.nav_view);
-        drawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        navigation.setNavigationItemSelectedListener(this);
-
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -107,11 +104,30 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
     }
 
     /**
-     * Called when an item in the navigation menu is selected.
-     *
-     * @param menuItem The selected item
-     * @return true to display the item as the selected item
-     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+     **/
+
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
@@ -121,6 +137,9 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
         Fragment fragment = new FragmentHome();
 
         switch (id) {
+            case R.id.navigation_view_home:
+                fragment = new FragmentHome();
+                break;
             case R.id.navigation_view_now_playing:
                 //Toasty.info(context, "Open the Music Player Activity", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentMusicPlayer();
@@ -159,42 +178,10 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
         }
         //fragmentTransaction.replace(R.id.main_screen_content_frame,fragment);
         fragmentTransaction.replace(R.id.fragment_container,fragment);
-
         fragmentTransaction.commit();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-
     }
-
-    /**TOP LEVEL MENU
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item))
-            return true;
-
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-           return true;
-        }
-
-        //return super.onOptionsItemSelected(item);
-        return super.onOptionsItemSelected(item);
-    }
-    */
 
     /**
      * Everytime we start this activity, bind it to the Service
@@ -204,21 +191,21 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
         super.onStart();
 
         /**
-        Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
-        Log.i(LOG_TAG, "musicService at: " + myService);
-        if(bindingIntent==null){
-            bindingIntent = new Intent(this, MusicService.class);
+         Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
+         Log.i(LOG_TAG, "musicService at: " + myService);
+         if(bindingIntent==null){
+         bindingIntent = new Intent(this, MusicService.class);
 
-            startService(bindingIntent);
-            Log.i(LOG_TAG, "Service Started by Main Screen");
+         startService(bindingIntent);
+         Log.i(LOG_TAG, "Service Started by Main Screen");
 
-            bindService(bindingIntent, myMusicConnection, Context.BIND_AUTO_CREATE);
-            Log.i(LOG_TAG, "Service Binded to Main Screen");
-        }
+         bindService(bindingIntent, myMusicConnection, Context.BIND_AUTO_CREATE);
+         Log.i(LOG_TAG, "Service Binded to Main Screen");
+         }
 
-        Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
-        Log.i(LOG_TAG, "musicService at: " + myService);
-        **/
+         Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
+         Log.i(LOG_TAG, "musicService at: " + myService);
+         **/
     }
 
     /* This variable is the binding connection with the MusicService */
@@ -226,7 +213,7 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i(LOG_TAG, "myMusicConnection Connecting...");
-            MusicBinder binder = (MusicBinder)service;
+            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
 
             //get the reference of the service
             myService = binder.getService();
@@ -263,5 +250,4 @@ public class MainScreen extends AppCompatActivity implements NavigationView.OnNa
             //resume tasks needing this permission
         }
     }
-
 }
