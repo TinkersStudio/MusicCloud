@@ -34,6 +34,7 @@
     </LinearLayout>
 
     <!--FIXME: Fix the play button for more align, color fix-->
+    <!--
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,4 +46,5 @@
         android:background="#000000"
         android:layout_gravity="right"
         android:elevation="3dp"/>
+        -->
 </LinearLayout>
