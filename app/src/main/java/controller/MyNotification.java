@@ -1,6 +1,6 @@
 package controller;
 
-import com.tinkersstudio.musiccloud.MainScreen;
+import com.tinkersstudio.musiccloud.MainActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
-import com.tinkersstudio.musiccloud.MainScreen;
 
 /**
  * Created by anhnguyen on 2/11/17.
@@ -30,20 +29,20 @@ public class MyNotification extends Notification {
 
     public MyNotification(MusicService owner, MyFlag playState, String title, String artist){
         this.owner = owner;
-        Intent notificationIntent = new Intent(owner, MainScreen.class);
+        Intent notificationIntent = new Intent(owner, MainActivity.class);
         notificationIntent.setAction("com.truiton.foregroundservice.action.main");
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(owner, 0, notificationIntent, 0);
 
-        Intent previousIntent = new Intent(owner, MainScreen.class);
+        Intent previousIntent = new Intent(owner, MainActivity.class);
         previousIntent.setAction("com.truiton.foregroundservice.action.prev");
         PendingIntent ppreviousIntent = PendingIntent.getService(owner, 0, previousIntent, 0);
 
-        Intent playIntent = new Intent(owner, MainScreen.class);
+        Intent playIntent = new Intent(owner, MainActivity.class);
         playIntent.setAction("com.truiton.foregroundservice.action.play");
         PendingIntent pplayIntent = PendingIntent.getService(owner, 0, playIntent, 0);
 
-        Intent nextIntent = new Intent(owner, MainScreen.class);
+        Intent nextIntent = new Intent(owner, MainActivity.class);
         nextIntent.setAction("com.truiton.foregroundservice.action.next");
         PendingIntent pnextIntent = PendingIntent.getService(owner, 0, nextIntent, 0);
 
