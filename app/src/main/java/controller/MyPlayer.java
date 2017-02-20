@@ -1,7 +1,9 @@
 package controller;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import java.util.ArrayList;
@@ -23,27 +25,52 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     private boolean isPaused;
     private boolean isShuffle;
     private boolean isRepeat;
-    private int     currentSongPosition = -1;
+    private int     currentSongPosition;
     private Song    currentSong;
     private long    currentPosition;
     private Random  rand;
     /* song list to play */
     private ArrayList<Song> songList;
 
-    public MyPlayer(MusicService owner) {
-        this.owner = owner;
-    }
-
-
-    public void initMusicPlayer(){}
-
     /**
-     * Get the whole list of song. The player will search and play all song incase
+     * Constructing a new Media Player which belong to a MusicService
+     * @param owner the ownner of this Player
+     */
+    public MyPlayer(MusicService owner) {
+        Log.i(LOG_TAG, "create MusicPlayer");
+
+        this.owner = owner;
+        player = new MediaPlayer();
+        this.initializePlayer();
+    }
+    public void initializePlayer() {
+
+        Log.i(LOG_TAG, "initMusicPlayer");
+        isPaused = true;
+        isRepeat = false;
+        isShuffle = false;
+        currentPosition = -1;   // Player have not load any songs yet.
+        currentPosition = (long)0.0;
+        rand = new Random();
+
+        player.setWakeMode(owner.getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        player.setOnPreparedListener(this);
+        player.setOnCompletionListener(this);
+        player.setOnErrorListener(this);
+    }
+    /**
+     * Get the whole list of song. The player will search and play all song in case
      * playlist of song have not been set by user.
      */
-    public int getSongFromStorage() {
+    public int getDataSource() {
         Log.i(LOG_TAG, "Find Music....");
-        songList = new ArrayList<Song>();
+
+        if (songList == null) {
+            songList = new ArrayList<Song>();
+        }
+        else
+            songList.clear();
 
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         String[] projection = {
@@ -96,7 +123,9 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
 
     @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {}
+    public void onPrepared(MediaPlayer mediaPlayer) {
+
+    }
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {}
