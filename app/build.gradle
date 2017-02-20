@@ -25,35 +25,26 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    // Library for circular image view
+
     compile 'de.hdodenhof:circleimageview:2.1.0'
-
-    // Library for circular music player
     compile 'com.github.aliab:circular-music-progressbar:v1.1.1'
-
-    //Library for toasty
     compile 'com.github.GrenderG:Toasty:1.1.2'
-
-    //Library for lyric
     compile 'com.github.zhengken:LyricViewDemo:v1.0'
-
-    //android design
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support:cardview-v7:24.2.1'
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.android.support:appcompat-v7:24.2.1'
-
-    //wrap text layout
     compile 'com.github.deano2390:FlowTextView:2.0.5'
-
-    //google cloud service
     compile 'com.google.android.gms:play-services-ads:9.8.0'
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'com.google.android.gms:play-services-gcm:9.8.0'
-
-    //testing
+    compile 'com.google.firebase:firebase-core:9.8.0'
+    compile 'com.google.firebase:firebase-crash:9.8.0'
+    compile 'com.google.firebase:firebase-ads:9.8.0'
     testCompile 'junit:junit:4.12'
-
-
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
 }
+
+
+
+
+apply plugin: 'com.google.gms.google-services'

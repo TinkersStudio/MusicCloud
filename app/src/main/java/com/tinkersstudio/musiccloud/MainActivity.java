@@ -27,6 +27,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import controller.MusicService;
 import controller.MyFlag;
 import es.dmoral.toasty.Toasty;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG = "MainActivity";
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     /* Intent use for binding with service */
     private Intent bindingIntent;
@@ -62,6 +65,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //firebase analytic
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         context = getApplicationContext();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -102,7 +108,7 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-    
+
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
