@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "668738642297",
+    "firebase_url": "https://music-cloud-1981e.firebaseio.com",
+    "project_id": "music-cloud-1981e",
+    "storage_bucket": "music-cloud-1981e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668738642297:android:d3e4681cda3cb54b",
+        "android_client_info": {
+          "package_name": "com.tinkersstudio.musiccloud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "668738642297-chd6km1tnurj2es8hrbjht835mh88ejm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tinkersstudio.musiccloud",
+            "certificate_hash": "5D3FAE7D999F687C92B19DC82FAB74E987AF3D58"
+          }
+        },
+        {
+          "client_id": "668738642297-m24ket02i2ftbtbg7tt36sr1dus1tt5p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDonUBvg_m4mVpcTguI4duIysXA9cMYTg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "668738642297-m24ket02i2ftbtbg7tt36sr1dus1tt5p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
