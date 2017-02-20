@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_editdone"
-
-        android:title="Edit Done"
+    <item android:id="@+id/menu_game"
+        android:title="Game"
         android:visible="true"
         />
 </menu>
