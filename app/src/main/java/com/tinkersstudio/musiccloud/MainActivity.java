@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //checkingPermission();
+        checkingPermission();
 
 
 
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
-        /**
+
          Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
          Log.i(LOG_TAG, "musicService at: " + myService);
          if(bindingIntent==null){
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity
 
          Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
          Log.i(LOG_TAG, "musicService at: " + myService);
-         **/
+
     }
 
     /* This variable is the binding connection with the MusicService */
