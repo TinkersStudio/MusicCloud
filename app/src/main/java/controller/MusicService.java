@@ -1,12 +1,20 @@
 package controller;
 
-import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.design.widget.TabLayout;
+import android.content.Context;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.app.Notification;
+
+import com.tinkersstudio.musiccloud.MainActivity;
 
 /**
  * Created by Owner on 2/10/2017.
@@ -23,7 +31,9 @@ public class MusicService extends Service {
 
     private MyPlayer player;
 
-    private MyNotification notifBar;
+    private Notification notifBar;
+    NotificationManager notificationManager;
+    private int notificaitonId = 10231;
 
     /**
      * Binder to bind this service with Activities
@@ -74,26 +84,89 @@ public class MusicService extends Service {
             // Getting Music files from Storage
             player = new MyPlayer(this);
             player.getSongFromStorage();
-
-            //FIXME Using the catch block
-            // Put up the Notification bar and run the service on foreground
-            try {
-                notifBar = new MyNotification(this, MyFlag.PLAY,
-                        player.getCurrentSong().getTitle(),
-                        player.getCurrentSong().getArtist());
-                startForeground(101, notifBar);
-            }
-            catch (Exception e)
-            {
-                Log.e(LOG_TAG, "Error in the onStartCommand. Suspend the service");
-            }
-
-        } else if (intent.getAction().equals(
-                "com.truiton.foregroundservice.action.stopforeground")) {
-            Log.i(LOG_TAG, "Received Stop Foreground Intent");
-            stopForeground(true);
-            stopSelf();
+            setNotificationBar(MyFlag.PLAY, "song title", "artist");
+            startForeground(101, notifBar);
+        }
+        else if (intent.getAction().equals("ACTION.NEXT_ACTION")) {
+            Log.i(LOG_TAG, "Received Intent : NEXT");
+            player.playNext();
+            setNotificationBar(MyFlag.PLAY, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+            notificationManager.notify(notificaitonId, notifBar);
+        }
+        else if (intent.getAction().equals("ACTION.PREV_ACTION")) {
+            Log.i(LOG_TAG, "Received Intent : PREV");
+            player.playPrev();
+            setNotificationBar(MyFlag.PLAY, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+            notificationManager.notify(notificaitonId, notifBar);
+        }
+        else if (intent.getAction().equals("ACTION.PLAY_ACTION")) {
+            Log.i(LOG_TAG, "Received Intent : PLAY");
+            player.play();
+            setNotificationBar(player.getIsPause()? MyFlag.PAUSE: MyFlag.PLAY,
+                    player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+            notificationManager.notify(notificaitonId, notifBar);
         }
         return START_NOT_STICKY;
+    }
+
+    public void setNotificationBar(MyFlag playState, String title, String artist) {
+        Log.i(LOG_TAG, "Set Notification Bar");
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setAction("ACTION.MAIN_ACTION");
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Intent previousIntent = new Intent(this, MusicService.class);
+        previousIntent.setAction("ACTION.PREV_ACTION");
+        PendingIntent ppreviousIntent = PendingIntent.getService(this, 0, previousIntent, 0);
+
+        Intent playIntent = new Intent(this, MusicService.class);
+        playIntent.setAction("ACTION.PLAY_ACTION");
+        PendingIntent pplayIntent = PendingIntent.getService(this, 0, playIntent, 0);
+
+        Intent nextIntent = new Intent(this, MusicService.class);
+        nextIntent.setAction("ACTION.NEXT_ACTION");
+        PendingIntent pnextIntent = PendingIntent.getService(this, 0, nextIntent, 0);
+
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_media_play);
+        notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notifBar = new NotificationCompat.Builder(this)
+                .setContentTitle(title)
+                .setTicker("Playing").setContentText(artist)
+                .setSmallIcon(android.R.drawable.ic_media_pause)
+                .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                .setContentIntent(pendingIntent)
+                .setOngoing(false)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setDeleteIntent(createOnDismissedIntent(this, notificaitonId))
+                .addAction(android.R.drawable.ic_media_previous, "Previous", ppreviousIntent)
+                .addAction(playState == MyFlag.PLAY? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause,
+                        "Play", pplayIntent)
+                .addAction(android.R.drawable.ic_media_next, "Next", pnextIntent)
+                .build();
+    }
+
+
+    public static class NotificationDismissedReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int notificationId = intent.getExtras().getInt("notificationId");
+
+            if (notificationId == 10231) {
+                context.stopService(new Intent(context, MusicService.class));
+            }
+        }
+    }
+
+    private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
+        Intent intent = new Intent(context, NotificationDismissedReceiver.class);
+        intent.putExtra("notificationId", notificationId);
+
+        PendingIntent pendingIntent =
+                PendingIntent.getBroadcast(context.getApplicationContext(),
+                        notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        return pendingIntent;
     }
 }

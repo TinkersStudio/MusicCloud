@@ -1,4 +1,5 @@
 package controller;
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -71,7 +72,10 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     }
 
     @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {}
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        Log.i(LOG_TAG, "onCompletion");
+        playNext();
+    }
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
@@ -82,19 +86,65 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     public void onSeekComplete(MediaPlayer var1) {}
 
     public void play() {
-        Log.i(LOG_TAG, "play");
 
         if (songList == null && getSongFromStorage() <= 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
         if (currentSongPosition < 0 ) {
-            currentSongPosition++;
+            currentSongPosition = 0;
         }
 
+        if (player.isPlaying()) {
+
+            Log.i(LOG_TAG, "pause");
+            currentPosition = player.getCurrentPosition();
+            pause();
+            isPaused = true;
+            return;
+        }
+
+        player.reset();
+        currentSong =  songList.get(currentSongPosition);
+        isPaused = false;
+
+        Log.i(LOG_TAG, "play " + currentSong.getTitle());
+        //get id
+        long currSong = currentSong.getID();
+        //set uri
+        Uri trackUri = ContentUris.withAppendedId(
+                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                currSong);
+
+        try{
+            player.setDataSource(owner.getApplicationContext(), trackUri);
+        }
+        catch(Exception e){
+            Log.e("MUSIC SERVICE", "Error setting data source", e);
+        }
+        player.prepareAsync();
     }
-    public void pause() {}
-    public void playPrev() {}
-    public void playNext() {}
+
+    public void pause() {
+        player.pause();
+    }
+    public void playPrev() {
+        if (player.isPlaying())
+            pause();
+        if (currentSongPosition == 0)
+            currentSongPosition = songList.size() - 1;
+        else
+            currentSongPosition--;
+        play();
+    }
+    public void playNext() {
+        if (player.isPlaying())
+            pause();
+        if (currentSongPosition == songList.size() -1)
+            currentSongPosition = 0;
+        else
+            currentSongPosition++;
+        play();
+    }
 
 
     /**
@@ -119,7 +169,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
                 MediaStore.Audio.Media.ALBUM_ID,
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DURATION,
-                //MediaStore.Audio.Albums.ALBUM_ART
+                //MediaStore.Audio.Media.
         };
         final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
 
@@ -179,4 +229,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             throw new NoSongToPlayException("No Song Found");
     }
 
+    public boolean getIsPause(){
+        return isPaused;
+    }
 }

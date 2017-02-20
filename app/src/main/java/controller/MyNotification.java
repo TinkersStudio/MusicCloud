@@ -22,11 +22,9 @@ public class MyNotification extends Notification {
 
     private MusicService owner;
 
-    private NotificationManager notificationManager;
-
     private Notification notification;
 
-    public MyNotification(MusicService owner, MyFlag playState, String title, String artist){
+    public MyNotification(NotificationManager notificationManager, MusicService owner, MyFlag playState, String title, String artist){
         this.owner = owner;
         Intent notificationIntent = new Intent(owner, MainActivity.class);
         notificationIntent.setAction("com.truiton.foregroundservice.action.main");
@@ -46,7 +44,7 @@ public class MyNotification extends Notification {
         PendingIntent pnextIntent = PendingIntent.getService(owner, 0, nextIntent, 0);
 
         Bitmap icon = BitmapFactory.decodeResource(owner.getResources(), android.R.drawable.ic_media_play);
-        notificationManager = (NotificationManager) owner.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) owner.getSystemService(owner.getBaseContext().NOTIFICATION_SERVICE);
 
         notification = new NotificationCompat.Builder(owner)
                 .setContentTitle(title)
