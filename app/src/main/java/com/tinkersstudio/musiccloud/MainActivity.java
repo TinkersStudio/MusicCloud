@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -28,6 +29,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import controller.MusicService;
 import controller.MyFlag;
@@ -66,7 +71,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //firebase analytic
+        //check the user permission
+        new CheckPermission().execute();
+
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         context = getApplicationContext();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -81,7 +88,7 @@ public class MainActivity extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        checkingPermission();
+        //checkingPermission();
 
 
 
@@ -206,20 +213,71 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    public void checkingPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED &&
-                    (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            == PackageManager.PERMISSION_GRANTED)) {
-                Log.v(LOG_TAG,"Permission is granted");
-            } else {
-                Log.v(LOG_TAG,"Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
+    /**
+     * This class handle uploading joke
+     * The order of parameter Params, Progress and Result
+     */
+    public class CheckPermission extends AsyncTask<Void, Void, String> {
+        /**
+         * Override this method to perform a computation on a background thread. The
+         * specified parameters are the parameters passed to {@link #execute}
+         * by the caller of this task.
+         * <p/>
+         * This method can call {@link #publishProgress} to publish updates
+         * on the UI thread.
+         *
+         * @param params The parameters of the task. Normally would be an array
+         * @return A result, defined by the subclass of this task.
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+        @Override
+        protected String doInBackground(Void... params) {
+            //upload the event in here
+
+            try {
+                checkingPermission();
             }
+            catch (Exception e) {
+                FirebaseCrash.logcat(Log.ERROR, MainActivity.this.LOG_TAG, "Exception in user case");
+                FirebaseCrash.report(e);
+            }
+            return "Success";
         }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("TAG","Permission is granted");
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d(MainActivity.this.LOG_TAG, "Entering permission");
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Log.d(MainActivity.this.LOG_TAG, "Complete checking permission");
+            FirebaseCrash.log("Failed to check permission");
+        }
+
+        public void checkingPermission() {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED &&
+                        (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                == PackageManager.PERMISSION_GRANTED)) {
+                    Log.v(LOG_TAG,"Permission is granted");
+
+                } else {
+                    Log.v(LOG_TAG,"Permission is revoked");
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                }
+            }
+            else { //permission is automatically granted on sdk<23 upon installation
+                Log.v("TAG","Permission is granted");
+            }
         }
     }
 
@@ -231,4 +289,5 @@ public class MainActivity extends AppCompatActivity
             //resume tasks needing this permission
         }
     }
+
 }
