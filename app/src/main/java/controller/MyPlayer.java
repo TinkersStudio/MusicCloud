@@ -49,7 +49,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         isPaused = true;
         isRepeat = false;
         isShuffle = false;
-        currentPosition = -1;   // Player have not load any songs yet.
+        currentSongPosition = -1;   // Player have not load any songs yet.
         currentPosition = (long)0.0;
         rand = new Random();
 
@@ -59,11 +59,49 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         player.setOnCompletionListener(this);
         player.setOnErrorListener(this);
     }
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+
+        Log.i(LOG_TAG, "onPrepared");
+
+        // Turning on the media player.
+        // This does not mean it plays the song yet,
+        player.start();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {}
+
+    @Override
+    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+        mediaPlayer.reset();
+        return false;
+    }
+    @Override
+    public void onSeekComplete(MediaPlayer var1) {}
+
+    public void play() {
+        Log.i(LOG_TAG, "play");
+
+        if (songList == null && getSongFromStorage() <= 0) {
+            throw new NoSongToPlayException("There no such a song to play");
+        }
+        if (currentSongPosition < 0 ) {
+            currentSongPosition++;
+        }
+
+    }
+    public void pause() {}
+    public void playPrev() {}
+    public void playNext() {}
+
+
     /**
      * Get the whole list of song. The player will search and play all song in case
      * playlist of song have not been set by user.
      */
-    public int getDataSource() {
+    public int getSongFromStorage() {
         Log.i(LOG_TAG, "Find Music....");
 
         if (songList == null) {
@@ -120,28 +158,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         return songList.size();
     }
-
-
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
-
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {}
-
-    @Override
-    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        mediaPlayer.reset();
-        return false;
-    }
-    @Override
-    public void onSeekComplete(MediaPlayer var1) {}
-
-    public void playMusic() {}
-    public void pauseMusic() {}
-    public void playPrev() {}
-    public void playNext() {}
 
     public void printSongList() {
         Log.i(LOG_TAG,"Song List on MyPLAYER");

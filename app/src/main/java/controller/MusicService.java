@@ -73,7 +73,7 @@ public class MusicService extends Service {
 
             // Getting Music files from Storage
             player = new MyPlayer(this);
-            player.getDataSource();
+            player.getSongFromStorage();
 
             //FIXME Using the catch block
             // Put up the Notification bar and run the service on foreground
