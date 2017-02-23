@@ -1,6 +1,6 @@
 package controller;
 
-import com.tinkersstudio.musiccloud.MainActivity;
+import com.tinkersstudio.ui.MainActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;

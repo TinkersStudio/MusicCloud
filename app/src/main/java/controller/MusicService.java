@@ -14,7 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.app.Notification;
 
-import com.tinkersstudio.musiccloud.MainActivity;
+import com.tinkersstudio.ui.MainActivity;
 
 /**
  * Created by Owner on 2/10/2017.

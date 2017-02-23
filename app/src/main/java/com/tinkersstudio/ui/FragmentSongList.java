@@ -1,10 +1,8 @@
-package com.tinkersstudio.musiccloud;
+package com.tinkersstudio.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,10 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import adapter.SongListAdapter;
 import model.Song;
@@ -25,9 +20,7 @@ import model.Song;
  * Created by anhnguyen on 2/6/17.
  */
 
-public class FragmentFavoriteList extends Fragment {
-    Context context;
-
+public class FragmentSongList extends Fragment {
     private static final String TAG = "RecyclerViewFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
@@ -38,21 +31,20 @@ public class FragmentFavoriteList extends Fragment {
         LINEAR_LAYOUT_MANAGER
     }
 
-    protected FragmentFavoriteList.LayoutManagerType mCurrentLayoutManagerType;
+    protected LayoutManagerType mCurrentLayoutManagerType;
 
     protected RecyclerView mRecyclerView;
     protected SongListAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     protected List<Song> mDataset;
 
-    public FragmentFavoriteList(){
+    public FragmentSongList(){
         //require an empty constructor
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDataset = new ArrayList<Song>();
-
         // Initialize dataset, this data would usually come from a local content provider or
         // remote server.
         initDataset();
@@ -72,11 +64,11 @@ public class FragmentFavoriteList extends Fragment {
         // elements are laid out.
         mLayoutManager = new LinearLayoutManager(getActivity());
 
-        mCurrentLayoutManagerType = FragmentFavoriteList.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+        mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
 
         if (savedInstanceState != null) {
             // Restore saved layout manager type.
-            mCurrentLayoutManagerType = (FragmentFavoriteList.LayoutManagerType) savedInstanceState
+            mCurrentLayoutManagerType = (LayoutManagerType) savedInstanceState
                     .getSerializable(KEY_LAYOUT_MANAGER);
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
@@ -94,7 +86,7 @@ public class FragmentFavoriteList extends Fragment {
      *
      * @param layoutManagerType Type of layout manager to switch to.
      */
-    public void setRecyclerViewLayoutManager(FragmentFavoriteList.LayoutManagerType layoutManagerType) {
+    public void setRecyclerViewLayoutManager(LayoutManagerType layoutManagerType) {
         int scrollPosition = 0;
 
         // If a layout manager has already been set, get current scroll position.
@@ -106,15 +98,15 @@ public class FragmentFavoriteList extends Fragment {
         switch (layoutManagerType) {
             case GRID_LAYOUT_MANAGER:
                 mLayoutManager = new GridLayoutManager(getActivity(), SPAN_COUNT);
-                mCurrentLayoutManagerType = FragmentFavoriteList.LayoutManagerType.GRID_LAYOUT_MANAGER;
+                mCurrentLayoutManagerType = LayoutManagerType.GRID_LAYOUT_MANAGER;
                 break;
             case LINEAR_LAYOUT_MANAGER:
                 mLayoutManager = new LinearLayoutManager(getActivity());
-                mCurrentLayoutManagerType = FragmentFavoriteList.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+                mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
                 break;
             default:
                 mLayoutManager = new LinearLayoutManager(getActivity());
-                mCurrentLayoutManagerType = FragmentFavoriteList.LayoutManagerType.LINEAR_LAYOUT_MANAGER;
+                mCurrentLayoutManagerType = LayoutManagerType.LINEAR_LAYOUT_MANAGER;
         }
 
         mRecyclerView.setLayoutManager(mLayoutManager);

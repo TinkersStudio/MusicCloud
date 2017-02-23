@@ -11,8 +11,8 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.tinkersstudio.musiccloud.MainActivity;
-import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.ui.MainActivity;
+import com.tinkersstudio.ui.R;
 
 /**
  * Created by Jun on 2/20/16.
