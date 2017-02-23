@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.tinkersstudio.ui.R;
+import com.tinkersstudio.musiccloud.R;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.tinkersstudio.ui;
+package com.tinkersstudio.musiccloud;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,24 +14,19 @@ import android.view.ViewGroup;
  * Created by anhnguyen on 2/6/17.
  */
 
-public class FragmentSetting extends Fragment {
+public class FragmentEqualizer extends Fragment {
     Context context;
 
-    public FragmentSetting() {
-        //require constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+    public FragmentEqualizer(){
+        //require an empty constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false);
+        setHasOptionsMenu(true);
+        return inflater.inflate(R.layout.fragment_equalizer, container, false);
 
         //initialize button in here
     }
@@ -46,11 +41,10 @@ public class FragmentSetting extends Fragment {
         super.onDetach();
     }
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.test_menu, menu);
+        inflater.inflate(R.menu.menu_main, menu);
     }
 
 

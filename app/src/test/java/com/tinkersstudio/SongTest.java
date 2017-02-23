@@ -1,12 +1,10 @@
-package com.tinkersstudio.ui;
+package com.tinkersstudio;
 
 /**
  * Created by Jun on 2/22/2017.
  */
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import model.Song;

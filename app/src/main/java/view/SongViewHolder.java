@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tinkersstudio.ui.R;
+import com.tinkersstudio.musiccloud.R;
 
 import model.Song;
 

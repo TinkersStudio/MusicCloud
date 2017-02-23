@@ -1,4 +1,4 @@
-package com.tinkersstudio.ui;
+package com.tinkersstudio.musiccloud;
 
 import android.content.Context;
 import android.os.Bundle;
