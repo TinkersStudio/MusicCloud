@@ -35,6 +35,7 @@ public class MusicService extends Service {
     NotificationManager notificationManager;
     private int notificaitonId = 10231;
 
+
     /**
      * Binder to bind this service with Activities
      */
@@ -84,7 +85,8 @@ public class MusicService extends Service {
             player = new MyPlayer(this);
             player.getSongFromStorage();
             setNotificationBar(MyFlag.PLAY, "song title", "artist");
-            startForeground(101, notifBar);
+            startForeground(notificaitonId, notifBar);
+
         }
         else if (intent.getAction().equals("ACTION.NEXT_ACTION")) {
             Log.i(LOG_TAG, "Received Intent : NEXT");
@@ -116,6 +118,7 @@ public class MusicService extends Service {
 
     public void setNotificationBar(MyFlag playState, String title, String artist) {
         Log.i(LOG_TAG, "Set Notification Bar");
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction("ACTION.MAIN_ACTION");
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

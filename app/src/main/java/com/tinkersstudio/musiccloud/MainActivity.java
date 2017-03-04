@@ -188,6 +188,36 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(LOG_TAG, "onResume");
+        if (myService == null) {
+            Log.i(LOG_TAG, "No previous Service found");
+        } else {
+            Log.i(LOG_TAG, "Has found Previous Service ");
+        }
+    }
+
+    /**
+     * Appropriate way to unbind the MusicService when this activity get killed
+     */
+    @Override
+    public void onDestroy() {
+        Log.d(LOG_TAG, "onDestroy");
+        super.onDestroy();
+        if (myMusicConnection != null) {
+            unbindService(myMusicConnection);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "save state");
+        super.onSaveInstanceState(savedInstanceState);;
+    }
+
+
     /* This variable is the binding connection with the MusicService */
     private ServiceConnection myMusicConnection = new ServiceConnection(){
         @Override
