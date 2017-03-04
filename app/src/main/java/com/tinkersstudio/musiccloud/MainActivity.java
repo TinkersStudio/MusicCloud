@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG = "MainActivity";
-    private FirebaseAnalytics mFirebaseAnalytics;
+    //private FirebaseAnalytics mFirebaseAnalytics;
 
     /* Intent use for binding with service */
     private Intent bindingIntent;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
         //check the user permission
         new CheckPermission().execute();
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        //mFirebaseAnalytics = FirebaseAnalytics.getInstance(this.getApplicationContext());
         context = getApplicationContext();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -233,8 +233,9 @@ public class MainActivity extends AppCompatActivity
                 checkingPermission();
             }
             catch (Exception e) {
-                FirebaseCrash.logcat(Log.ERROR, MainActivity.this.LOG_TAG, "Exception in user case");
-                FirebaseCrash.report(e);
+                //FirebaseCrash.logcat(Log.ERROR, MainActivity.this.LOG_TAG, "Exception in user case");
+                //FirebaseCrash.report(e);
+                Log.e(LOG_TAG, "Error");
             }
             return "Success";
         }
@@ -250,7 +251,7 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d(MainActivity.this.LOG_TAG, "Complete checking permission");
-            FirebaseCrash.log("Failed to check permission");
+            //FirebaseCrash.log("Failed to check permission");
         }
 
         public void checkingPermission() {

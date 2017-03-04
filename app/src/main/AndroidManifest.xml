@@ -40,12 +40,13 @@
         </activity>
         <receiver android:name="controller.MyNotification$NotificationDismissedReceiver" />
         <service android:name="controller.MusicService" />
-        <service
+
+        <!--service
             android:name="util.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
-        </service>
+        </service-->
     </application>
 
 </manifest>
