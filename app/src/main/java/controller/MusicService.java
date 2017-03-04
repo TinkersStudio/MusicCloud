@@ -80,7 +80,6 @@ public class MusicService extends Service {
         Log.i(LOG_TAG, "onStartCommand");
         if (intent.getAction() == null) {
             Log.i(LOG_TAG, "Received Start Foreground Intent ");
-
             // Getting Music files from Storage
             player = new MyPlayer(this);
             player.getSongFromStorage();
@@ -89,20 +88,26 @@ public class MusicService extends Service {
         }
         else if (intent.getAction().equals("ACTION.NEXT_ACTION")) {
             Log.i(LOG_TAG, "Received Intent : NEXT");
-            player.playNext();
-            setNotificationBar(MyFlag.PLAY, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+            if(player.getIsPause())
+                player.seekNext(false);
+            else
+                player.seekNext(true);
+            setNotificationBar(player.getIsPause()? MyFlag.PLAY: MyFlag.PAUSE, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
             notificationManager.notify(notificaitonId, notifBar);
         }
         else if (intent.getAction().equals("ACTION.PREV_ACTION")) {
             Log.i(LOG_TAG, "Received Intent : PREV");
-            player.playPrev();
-            setNotificationBar(MyFlag.PLAY, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+            if(player.getIsPause())
+                player.seekPrev(false);
+            else
+                player.seekPrev(true);
+            setNotificationBar(player.getIsPause()? MyFlag.PLAY: MyFlag.PAUSE, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
             notificationManager.notify(notificaitonId, notifBar);
         }
         else if (intent.getAction().equals("ACTION.PLAY_ACTION")) {
             Log.i(LOG_TAG, "Received Intent : PLAY");
             player.play();
-            setNotificationBar(player.getIsPause()? MyFlag.PAUSE: MyFlag.PLAY,
+            setNotificationBar(player.getIsPause()? MyFlag.PLAY: MyFlag.PAUSE,
                     player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
             notificationManager.notify(notificaitonId, notifBar);
         }
@@ -152,6 +157,7 @@ public class MusicService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e(LOG_TAG, "on Receive");
             int notificationId = intent.getExtras().getInt("notificationId");
 
             if (notificationId == 10231) {
@@ -161,6 +167,7 @@ public class MusicService extends Service {
     }
 
     private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
+        Log.e(LOG_TAG, "createOnDismissedIntent");
         Intent intent = new Intent(context, NotificationDismissedReceiver.class);
         intent.putExtra("notificationId", notificationId);
 
