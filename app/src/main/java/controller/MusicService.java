@@ -15,6 +15,7 @@ import android.util.Log;
 import android.app.Notification;
 
 import com.tinkersstudio.musiccloud.MainActivity;
+import com.tinkersstudio.musiccloud.R;
 
 /**
  * Created by Owner on 2/10/2017.
@@ -71,7 +72,7 @@ public class MusicService extends Service {
 
     @Override
     public void onDestroy() {
-
+        player.releasePlayer();
         Log.i(LOG_TAG, "onDestroy");
         super.onDestroy();
     }
@@ -136,12 +137,12 @@ public class MusicService extends Service {
         nextIntent.setAction("ACTION.NEXT_ACTION");
         PendingIntent pnextIntent = PendingIntent.getService(this, 0, nextIntent, 0);
 
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_media_play);
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.launcher);
         notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notifBar = new NotificationCompat.Builder(this)
                 .setContentTitle(title)
                 .setTicker("Playing").setContentText(artist)
-                .setSmallIcon(android.R.drawable.ic_media_pause)
+                .setSmallIcon(R.drawable.ic_headphones)
                 .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
                 .setContentIntent(pendingIntent)
                 .setOngoing(false)
@@ -179,4 +180,6 @@ public class MusicService extends Service {
                         notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         return pendingIntent;
     }
+
+    public MyPlayer getPlayer(){return player;}
 }

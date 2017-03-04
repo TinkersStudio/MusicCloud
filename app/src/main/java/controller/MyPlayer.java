@@ -245,4 +245,9 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     public boolean getIsPause(){
         return isPaused;
     }
+
+    public void releasePlayer(){
+        this.player.stop();
+        this.player.release();
+    }
 }
