@@ -20,6 +20,12 @@ public class FragmentMusicPlayer extends Fragment {
     Context context;
     ImageButton lyricsButton, infoButton;
 
+    //view items
+    View rootView;
+
+    //music player group
+    ImageButton repeatButton, playPrevButton, playButton, playNextButton, shuffleButton;
+
     public FragmentMusicPlayer() {
         //require constructor
     }
@@ -28,10 +34,9 @@ public class FragmentMusicPlayer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_music_player, container, false);
-        lyricsButton = (ImageButton) rootView.findViewById(R.id.mp_button_lyrics);
-        infoButton = (ImageButton) rootView.findViewById(R.id.mp_button_info);
+        rootView = inflater.inflate(R.layout.fragment_music_player, container, false);
 
+        initLayout();
         initAction();
         return rootView;
 
@@ -43,7 +48,13 @@ public class FragmentMusicPlayer extends Fragment {
      */
     public void initLayout()
     {
-
+        lyricsButton = (ImageButton) rootView.findViewById(R.id.mp_button_lyrics);
+        infoButton = (ImageButton) rootView.findViewById(R.id.mp_button_info);
+        repeatButton = (ImageButton)rootView.findViewById(R.id.mp_repeat);
+        playPrevButton = (ImageButton)rootView.findViewById(R.id.mp_play_prev);
+        playButton = (ImageButton)rootView.findViewById(R.id.mp_play);
+        playNextButton =(ImageButton) rootView.findViewById(R.id.mp_play_next);
+        shuffleButton = (ImageButton) rootView.findViewById(R.id.mp_shuffle);
     }
 
     /**
@@ -75,6 +86,42 @@ public class FragmentMusicPlayer extends Fragment {
                 fragmentTransaction.hide(FragmentMusicPlayer.this);
                 fragmentTransaction.add(R.id.fragment_container, songLyric);
                 fragmentTransaction.commit();
+            }
+        });
+
+        this.repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+
+        this.playPrevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        this.playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        this.playNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        this.shuffleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }

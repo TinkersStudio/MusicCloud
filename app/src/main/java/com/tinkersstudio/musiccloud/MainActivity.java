@@ -137,6 +137,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.navigation_view_music_playlist:
                 Toasty.info(context, "Open the Music Playlist", Toast.LENGTH_SHORT, true).show();
                 Log.i(LOG_TAG, "Service at: " + myService);
+                fragment = new FragmentSongList();
+                //FIXME: Bug in here
                 myService.getPlayer().play();
                 break;
             case R.id.navigation_view_favorite_list:

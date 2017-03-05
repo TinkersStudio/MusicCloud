@@ -91,8 +91,8 @@
         android:orientation="horizontal"
         android:gravity="center_horizontal">
 
-        <ImageView
-
+        <ImageButton
+            android:background="#0000"
             android:paddingTop="13dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -101,7 +101,8 @@
             android:clickable="true"
             android:src="@drawable/ic_action_repeat"/>
 
-        <ImageView
+        <ImageButton
+            android:background="#0000"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/mp_play_prev"
@@ -109,7 +110,8 @@
             android:paddingTop="13dp"
             android:src="@drawable/ic_action_previous"/>
 
-        <ImageView
+        <ImageButton
+            android:background="#0000"
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:id="@+id/mp_play"
@@ -118,7 +120,8 @@
             android:paddingRight="5dp"
             android:paddingLeft="5dp"/>
 
-        <ImageView
+        <ImageButton
+            android:background="#0000"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/mp_play_next"
@@ -126,8 +129,8 @@
             android:clickable="true"
             android:src="@drawable/ic_action_next"/>
 
-        <ImageView
-
+        <ImageButton
+            android:background="#0000"
             android:paddingTop="13dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -135,6 +138,5 @@
             android:id="@+id/mp_shuffle"
             android:clickable="true"
             android:src="@drawable/ic_action_shuffle"/>
-
     </LinearLayout>
 </LinearLayout>

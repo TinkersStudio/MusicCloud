@@ -10,13 +10,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.suke.widget.SwitchButton;
+
 /**
  * Created by anhnguyen on 2/6/17.
  */
 
 public class FragmentSetting extends Fragment {
     Context context;
-
+    View rootView;
+    com.suke.widget.SwitchButton switchButton;
     public FragmentSetting() {
         //require constructor
     }
@@ -24,15 +27,19 @@ public class FragmentSetting extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set the menu
         setHasOptionsMenu(true);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false);
-
+        rootView = inflater.inflate(R.layout.fragment_setting, container, false);
+        initLayout();
+        initListener();
+        return rootView;
         //initialize button in here
     }
 
@@ -46,6 +53,35 @@ public class FragmentSetting extends Fragment {
         super.onDetach();
     }
 
+
+    public void initLayout()
+    {
+        switchButton = (com.suke.widget.SwitchButton)rootView.findViewById(R.id.switch_button);
+        switchButton.setChecked(false);
+        switchButton.setShadowEffect(false);//disable shadow effect
+        switchButton.setEnabled(true);//disable button
+        switchButton.setEnableEffect(true);//disable the switch animation
+
+    }
+
+    public void initListener()
+    {
+        switchButton.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
+                //TODO do your job
+                //switchButton.isChecked();
+            }
+        });
+
+        switchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //switch state
+                switchButton.toggle();
+            }
+        });
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

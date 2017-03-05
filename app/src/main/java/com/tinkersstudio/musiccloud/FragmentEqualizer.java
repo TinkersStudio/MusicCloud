@@ -9,6 +9,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.xw.repo.BubbleSeekBar;
 
 /**
  * Created by anhnguyen on 2/6/17.
@@ -16,6 +19,9 @@ import android.view.ViewGroup;
 
 public class FragmentEqualizer extends Fragment {
     Context context;
+    BubbleSeekBar mBubbleSeekBar1;
+    BubbleSeekBar mBubbleSeekBar2;
+    View viewRoot;
 
     public FragmentEqualizer(){
         //require an empty constructor
@@ -26,8 +32,10 @@ public class FragmentEqualizer extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_equalizer, container, false);
 
+        viewRoot = inflater.inflate(R.layout.fragment_equalizer, container, false);
+        initLayout();
+        return viewRoot;
         //initialize button in here
     }
 
@@ -39,6 +47,22 @@ public class FragmentEqualizer extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public void initLayout()
+    {
+        mBubbleSeekBar1 = (BubbleSeekBar) viewRoot.findViewById(R.id.bubble_seek_bar_0);
+        mBubbleSeekBar2 = (BubbleSeekBar) viewRoot.findViewById(R.id.bubble_seek_bar_1);
+
+        mBubbleSeekBar1.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListenerAdapter() {
+            @Override
+            public void getProgressOnActionUp(int progress) {
+                Toast.makeText(getActivity(),
+                        "progressOnActionUp:" + progress,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override

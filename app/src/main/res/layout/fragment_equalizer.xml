@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Setting the equalizer or something"/>
+
+        <com.xw.repo.BubbleSeekBar
+            android:id="@+id/bubble_seek_bar_0"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginTop="32dp"/>
+
+        <com.xw.repo.BubbleSeekBar
+            android:id="@+id/bubble_seek_bar_1"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginTop="32dp"
+            app:bsb_show_progress_in_float="true"
+            app:bsb_show_section_mark="true"
+            app:bsb_show_text="true"
+            app:bsb_show_thumb_text="true"/>
+
+    </LinearLayout>
 
 </LinearLayout>
