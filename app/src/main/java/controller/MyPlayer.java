@@ -74,7 +74,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         Log.i(LOG_TAG, "onCompletion");
-        playNext();
+        seekNext(true);
+        play();
     }
 
     @Override
@@ -127,24 +128,36 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     public void pause() {
         player.pause();
     }
-    public void playPrev() {
+    public void seekPrev(boolean wasPlaying) {
         if (player.isPlaying())
             pause();
         if (currentSongPosition == 0)
             currentSongPosition = songList.size() - 1;
         else
             currentSongPosition--;
-        play();
+        if(wasPlaying) {
+            play();
+            isPaused = false;
+        } else {
+            isPaused = true;
+        }
     }
-    public void playNext() {
+    public void seekNext(boolean wasPlaying) {
         if (player.isPlaying())
             pause();
         if (currentSongPosition == songList.size() -1)
             currentSongPosition = 0;
         else
             currentSongPosition++;
-        play();
+        if(wasPlaying) {
+            play();
+            isPaused = false;
+        } else {
+            isPaused = true;
+        }
     }
+
+
 
 
     /**

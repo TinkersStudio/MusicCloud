@@ -31,14 +31,14 @@
         <activity
             android:name="com.tinkersstudio.musiccloud.MainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="controller.MyNotification$NotificationDismissedReceiver" />
+        <receiver android:name="controller.MusicService$NotificationDismissedReceiver" />
         <service android:name="controller.MusicService" />
 
         <service
