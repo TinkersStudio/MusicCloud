@@ -1,6 +1,7 @@
 package com.tinkersstudio.musiccloud;
 
 import android.Manifest;
+import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -38,16 +39,16 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG = "MainActivity";
-    private FirebaseAnalytics mFirebaseAnalytics;
+    static FirebaseAnalytics mFirebaseAnalytics;
 
     /* Intent use for binding with service */
-    private Intent bindingIntent;
+    static Intent bindingIntent;
 
     /* The Service associate with this activity */
-    private MusicService myService;
+    static MusicService myService;
 
     /* A flag indicate the state of the Service */
-    private MyFlag serviceBound;
+    static MyFlag serviceBound;
 
     DrawerLayout drawer;
     ActionBarDrawerToggle drawerToggle;
@@ -63,6 +64,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(savedInstanceState!=null)
+            Log.i(LOG_TAG, "there was some saved stated " + myService);
+        else
+            Log.i(LOG_TAG, "there was NOT some saved stated");
         //check the user permission
         new CheckPermission().execute();
 
@@ -131,6 +136,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.navigation_view_music_playlist:
                 Toasty.info(context, "Open the Music Playlist", Toast.LENGTH_SHORT, true).show();
+                Log.i(LOG_TAG, "Service at: " + myService);
+                myService.getPlayer().play();
                 break;
             case R.id.navigation_view_favorite_list:
                 fragment = new FragmentFavoriteList();
@@ -170,22 +177,20 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
+            Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
+            Log.i(LOG_TAG, "musicService at: " + myService);
+            if (bindingIntent == null) {
+                bindingIntent = new Intent(this, MusicService.class);
 
-         Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
-         Log.i(LOG_TAG, "musicService at: " + myService);
-         if(bindingIntent==null){
-         bindingIntent = new Intent(this, MusicService.class);
+                startService(bindingIntent);
+                Log.i(LOG_TAG, "Service Started by Main Screen");
 
-         startService(bindingIntent);
-         Log.i(LOG_TAG, "Service Started by Main Screen");
+                bindService(bindingIntent, myMusicConnection, Context.BIND_AUTO_CREATE);
+                Log.i(LOG_TAG, "Service Binded to Main Screen");
+            }
 
-         bindService(bindingIntent, myMusicConnection, Context.BIND_AUTO_CREATE);
-         Log.i(LOG_TAG, "Service Binded to Main Screen");
-         }
-
-         Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
-         Log.i(LOG_TAG, "musicService at: " + myService);
-
+            Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
+            Log.i(LOG_TAG, "musicService at: " + myService);
     }
 
     @Override
@@ -199,6 +204,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onStop() {
+
+        Log.d(LOG_TAG, "onStop");
+        super.onStop();
+        // Unbind from the service
+        if (serviceBound == MyFlag.IS_ON) {
+            unbindService(myMusicConnection);
+            serviceBound = MyFlag.IS_OFF;
+        }
+    }
     /**
      * Appropriate way to unbind the MusicService when this activity get killed
      */
@@ -206,14 +222,12 @@ public class MainActivity extends AppCompatActivity
     public void onDestroy() {
         Log.d(LOG_TAG, "onDestroy");
         super.onDestroy();
-        if (myMusicConnection != null) {
-            unbindService(myMusicConnection);
-        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "save state");
+        Log.d(LOG_TAG, "service was saved: " + myService);
         super.onSaveInstanceState(savedInstanceState);;
     }
 
@@ -231,6 +245,7 @@ public class MainActivity extends AppCompatActivity
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            Log.i(LOG_TAG, "myMusicConnection Disconnecting...");
             serviceBound = MyFlag.IS_OFF;
         }
     };
