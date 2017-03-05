@@ -27,6 +27,7 @@
             android:id="@+id/mp_button_info"
             android:src="@drawable/ic_info"
             android:background="#0000"/>
+        <!--
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -34,7 +35,7 @@
             android:id="@+id/mp_button_more"
             android:src="@drawable/ic_dots_horizontal_black"
             android:background="#0000"
-            />
+            />-->
     </LinearLayout>
 
     <info.abdolahi.CircularMusicProgressBar
