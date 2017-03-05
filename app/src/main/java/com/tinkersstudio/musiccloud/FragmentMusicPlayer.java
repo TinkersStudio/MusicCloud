@@ -36,6 +36,7 @@ public class FragmentMusicPlayer extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_music_player, container, false);
 
+        //get value from the
         initLayout();
         initAction();
         return rootView;
