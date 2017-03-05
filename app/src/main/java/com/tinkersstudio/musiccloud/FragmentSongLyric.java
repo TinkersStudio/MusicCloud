@@ -102,6 +102,7 @@ public class FragmentSongLyric extends Fragment {
      * The order of parameter Params, Progress and Result
      */
     public class retriveLyric extends AsyncTask<ArrayList<String>, Void, String> {
+        String lyricsLyric = "";
         /**
          * Override this method to perform a computation on a background thread. The
          * specified parameters are the parameters passed to {@link #execute}
@@ -142,6 +143,7 @@ public class FragmentSongLyric extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d(FragmentSongLyric.this.LOG_TAG, "Completed retrieve lyric");
+            lyricText.setText(lyricsLyric);
             //FirebaseCrash.log("Failed to check permission");
         }
 
@@ -151,9 +153,9 @@ public class FragmentSongLyric extends Fragment {
                 TrackData data = track.getTrack();
                 int trackID = data.getTrackId();
                 Lyrics lyrics = musixMatch.getLyrics(trackID);
-                String lyricsLyric = lyrics.getLyricsBody();
-                Log.i(LOG_TAG, lyricsLyric);
-                lyricText.setText(lyricsLyric);
+                this.lyricsLyric = lyrics.getLyricsBody();
+                //Log.i(LOG_TAG, lyricsLyric);
+                //lyricText.setText(lyricsLyric);
             }
             catch (MusixMatchException e) {
                 FirebaseCrash.logcat(Log.ERROR, LOG_TAG, "Can't get the song lyric");
@@ -166,6 +168,8 @@ public class FragmentSongLyric extends Fragment {
                 Log.e(e.toString(), "Error in setting value");
             }
         }
+
+
     }
 
 
