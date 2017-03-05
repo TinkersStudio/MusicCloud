@@ -84,35 +84,59 @@ public class MusicService extends Service {
             Log.i(LOG_TAG, "Received Start Foreground Intent ");
             // Getting Music files from Storage
             player = new MyPlayer(this);
-            player.getSongFromStorage();
+            if (player.getSongFromStorage() == 0)
+                setNotificationBar(MyFlag.PLAY, "No song to play", "------");
             setNotificationBar(MyFlag.PLAY, "song title", "artist");
             startForeground(notificaitonId, notifBar);
 
         }
         else if (intent.getAction().equals("ACTION.NEXT_ACTION")) {
             Log.i(LOG_TAG, "Received Intent : NEXT");
-            if(player.getIsPause())
-                player.seekNext(false);
-            else
-                player.seekNext(true);
-            setNotificationBar(player.getIsPause()? MyFlag.PLAY: MyFlag.PAUSE, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
-            notificationManager.notify(notificaitonId, notifBar);
+            try {
+                if(player.getIsPause()) {
+                    player.seekNext(false);
+                    setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+                }
+                else {
+                    player.seekNext(true);
+                    setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+                }
+            } catch (NoSongToPlayException e) {
+                setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
+            }
+            finally {
+                notificationManager.notify(notificaitonId, notifBar);
+            }
         }
         else if (intent.getAction().equals("ACTION.PREV_ACTION")) {
             Log.i(LOG_TAG, "Received Intent : PREV");
-            if(player.getIsPause())
-                player.seekPrev(false);
-            else
-                player.seekPrev(true);
-            setNotificationBar(player.getIsPause()? MyFlag.PLAY: MyFlag.PAUSE, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
-            notificationManager.notify(notificaitonId, notifBar);
+            try {
+                if(player.getIsPause()) {
+                    player.seekPrev(false);
+                    setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+                }
+                else {
+                    player.seekPrev(true);
+                    setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE, player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+                }
+            } catch (NoSongToPlayException e) {
+                setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
+            }
+            finally {
+                notificationManager.notify(notificaitonId, notifBar);
+            }
         }
         else if (intent.getAction().equals("ACTION.PLAY_ACTION")) {
             Log.i(LOG_TAG, "Received Intent : PLAY");
-            player.play();
-            setNotificationBar(player.getIsPause()? MyFlag.PLAY: MyFlag.PAUSE,
-                    player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
-            notificationManager.notify(notificaitonId, notifBar);
+            try {
+                player.play();
+                setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
+                        player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+            } catch (NoSongToPlayException e) {
+                setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
+            } finally {
+                notificationManager.notify(notificaitonId, notifBar);
+            }
         }
         return START_NOT_STICKY;
     }

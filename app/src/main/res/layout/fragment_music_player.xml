@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorAccent">
+    android:background="?attr/colorAccent"
+    android:id="@+id/mp_root_panel">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -137,6 +138,6 @@
             android:layout_weight=".5"
             android:id="@+id/mp_shuffle"
             android:clickable="true"
-            android:src="@drawable/ic_action_shuffle"/>
+            android:src="@drawable/ic_action_shuffle_disabled"/>
     </LinearLayout>
 </LinearLayout>

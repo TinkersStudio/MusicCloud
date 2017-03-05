@@ -24,8 +24,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     private MusicService owner;
     private MediaPlayer player;
     private boolean isPaused;
-    private boolean isShuffle;
-    private boolean isRepeat;
+    public boolean isShuffle; //TODO: change to private, public for checking in FragmentMusicPlayer
+    public boolean isRepeat;
     private int     currentSongPosition;
     private Song    currentSong;
     private long    currentPosition;
@@ -86,9 +86,19 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     @Override
     public void onSeekComplete(MediaPlayer var1) {}
 
+    public boolean setShuffle(){
+        isShuffle = !isShuffle;
+        return isShuffle;
+    }
+
+    public boolean setRepeat() {
+        isRepeat = !isRepeat;
+        return isRepeat;
+    }
+
     public void play() {
 
-        if (songList == null && getSongFromStorage() <= 0) {
+        if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
         if (currentSongPosition < 0 ) {
@@ -129,12 +139,30 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         player.pause();
     }
     public void seekPrev(boolean wasPlaying) {
+        if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
+            throw new NoSongToPlayException("There no such a song to play");
+        }
+
         if (player.isPlaying())
             pause();
-        if (currentSongPosition == 0)
-            currentSongPosition = songList.size() - 1;
+
+        //shuffle case
+        if(isShuffle) {
+            currentSongPosition = (int) (Math.random() * (songList.size() - 1));
+            Log.e(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
+        }
+        // Regular case
+        else if (!isRepeat) {
+            if (currentSongPosition == 0)
+                currentSongPosition = songList.size() - 1;
+            else
+                currentSongPosition--;
+
+            Log.e(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
+        }
         else
-            currentSongPosition--;
+            Log.e(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
+
         if(wasPlaying) {
             play();
             isPaused = false;
@@ -143,12 +171,26 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
     }
     public void seekNext(boolean wasPlaying) {
+        if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
+            throw new NoSongToPlayException("There no such a song to play");
+        }
         if (player.isPlaying())
             pause();
-        if (currentSongPosition == songList.size() -1)
-            currentSongPosition = 0;
+        //shuffle case
+        if(isShuffle){
+            currentSongPosition = (int)(Math.random() * (songList.size()-1));
+            Log.e(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
+        }
+            // Regular case
+        else if (!isRepeat) {
+            if (currentSongPosition == songList.size() - 1)
+                currentSongPosition = 0;
+            else
+                currentSongPosition++;
+            Log.e(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
+        }
         else
-            currentSongPosition++;
+            Log.e(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
         if(wasPlaying) {
             play();
             isPaused = false;
@@ -221,6 +263,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         return songList.size();
     }
+
 
     public void printSongList() {
         Log.i(LOG_TAG,"Song List on MyPLAYER");

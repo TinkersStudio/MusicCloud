@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.navigation_view_now_playing:
                 //Toasty.info(context, "Open the Music Player Activity", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentMusicPlayer();
+                ((FragmentMusicPlayer)fragment).setMusicService(myService);
                 break;
             /**Offline service group*/
             case R.id.navigation_view_music_library:
@@ -138,8 +139,6 @@ public class MainActivity extends AppCompatActivity
                 Toasty.info(context, "Open the Music Playlist", Toast.LENGTH_SHORT, true).show();
                 Log.i(LOG_TAG, "Service at: " + myService);
                 fragment = new FragmentSongList();
-                //FIXME: Bug in here
-                myService.getPlayer().play();
                 break;
             case R.id.navigation_view_favorite_list:
                 fragment = new FragmentFavoriteList();
