@@ -5,10 +5,14 @@
     android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
     <!-- TODO: The screen is used to display the lyric of the song-->
 
-    <me.zhengken.lyricview.LyricView
+    <!--me.zhengken.lyricview.LyricView
         android:id="@+id/custom_lyric_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" /-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lyric_text"/>
     <!--
     <LinearLayout
         android:layout_width="match_parent"

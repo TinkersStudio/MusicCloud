@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+
 /**
  * Created by anhnguyen on 2/6/17.
  */
@@ -30,10 +31,19 @@ public class FragmentMusicPlayer extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_music_player, container, false);
         lyricsButton = (ImageButton) rootView.findViewById(R.id.mp_button_lyrics);
         infoButton = (ImageButton) rootView.findViewById(R.id.mp_button_info);
+
         initAction();
         return rootView;
 
         //initialize button in here
+    }
+
+    /**
+     * Init the layout component of the page
+     */
+    public void initLayout()
+    {
+
     }
 
     /**
@@ -51,6 +61,7 @@ public class FragmentMusicPlayer extends Fragment {
                 fragmentTransaction.add(R.id.fragment_container, songLyric);
                 fragmentTransaction.commit();
 
+
             }
         });
 
@@ -67,6 +78,8 @@ public class FragmentMusicPlayer extends Fragment {
             }
         });
     }
+
+
 
     @Override
     public void onAttach(Context context) {
