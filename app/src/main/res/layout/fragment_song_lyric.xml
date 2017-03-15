@@ -12,39 +12,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lyric_text"/>
-    <!--
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="5dp">
-        <TextView
-            android:padding="3dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lyric_title"
-            android:text="@string/dummy_title"
-            android:layout_gravity="center"
-            android:textColor="@color/lyricSongTitle"/>
-        <TextView
-            android:padding="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lyric_singer"
-            android:text="@string/dummy_singer"
-            android:layout_gravity="center"
-            android:textColor="@color/lyricSinger" />
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lyric_text"
-                android:textColor="@color/lyricText"/>
-        </ScrollView>
-    </LinearLayout>
-    -->
+        android:id="@+id/lyric_text"
+        android:padding="10dp"
+        android:textColor="@android:color/black"
+        />
+
 </LinearLayout>

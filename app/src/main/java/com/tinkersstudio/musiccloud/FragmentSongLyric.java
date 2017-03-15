@@ -41,14 +41,14 @@ import static com.tinkersstudio.musiccloud.R.string.music_match_api_key;
  */
 public class FragmentSongLyric extends Fragment {
 
-    String API_KEY = getActivity().getResources().getString(R.string.music_match_api_key);
+    String API_KEY = "f4337155f55d30c22e85a96f2dc674c8";
     MusixMatch musixMatch = new MusixMatch(API_KEY);
     String LOG_TAG = "FragmentSongLyric";
     MusicService newService = ((MainActivity)getActivity()).myService;
     //LyricView mLyricView;
     TextView lyricText;
-    String trackName;
-    String artistName;
+    String trackName = "";
+    String artistName = "";
 
     public FragmentSongLyric() {
         //require constructor
@@ -62,8 +62,11 @@ public class FragmentSongLyric extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_song_lyric, container, false);
         //mLyricView = (LyricView)rootView.findViewById(R.id.custom_lyric_view);
         lyricText = (TextView) rootView.findViewById(R.id.lyric_text);
-        /**
-        if (trackName != null && artistName != null)
+
+        trackName = newService.getPlayer().getCurrentSong().getTitle();
+        artistName = newService.getPlayer().getCurrentSong().getArtist();
+
+        if (trackName.equals("") || artistName.equals(""))
         {
             new retriveLyric().execute();
         }
@@ -71,9 +74,6 @@ public class FragmentSongLyric extends Fragment {
         {
             lyricText.setText("Can't find the song");
         }
-        */
-        trackName = newService.getPlayer().getCurrentSong().getTitle();
-        artistName = newService.getPlayer().getCurrentSong().getArtist();
         ArrayList<String> values = new ArrayList<String>();
         values.add(trackName);
         values.add(artistName);
@@ -172,8 +172,6 @@ public class FragmentSongLyric extends Fragment {
                 Log.e(e.toString(), "Error in setting value");
             }
         }
-
-
     }
 
 
