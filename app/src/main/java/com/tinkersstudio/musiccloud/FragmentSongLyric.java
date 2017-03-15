@@ -30,7 +30,10 @@ import org.jmusixmatch.entity.track.TrackData;
 
 import java.util.ArrayList;
 
+import controller.MusicService;
 import me.zhengken.lyricview.LyricView;
+
+import static com.tinkersstudio.musiccloud.R.string.music_match_api_key;
 
 /**
  * Created by Owner on 3/4/2017.
@@ -38,9 +41,10 @@ import me.zhengken.lyricview.LyricView;
  */
 public class FragmentSongLyric extends Fragment {
 
-    String API_KEY = "f4337155f55d30c22e85a96f2dc674c8";
+    String API_KEY = getActivity().getResources().getString(R.string.music_match_api_key);
     MusixMatch musixMatch = new MusixMatch(API_KEY);
     String LOG_TAG = "FragmentSongLyric";
+    MusicService newService = ((MainActivity)getActivity()).myService;
     //LyricView mLyricView;
     TextView lyricText;
     String trackName;
@@ -68,8 +72,8 @@ public class FragmentSongLyric extends Fragment {
             lyricText.setText("Can't find the song");
         }
         */
-        final String trackName = "Don't stop the Party";
-        final String artistName = "The Black Eyed Peas";
+        trackName = newService.getPlayer().getCurrentSong().getTitle();
+        artistName = newService.getPlayer().getCurrentSong().getArtist();
         ArrayList<String> values = new ArrayList<String>();
         values.add(trackName);
         values.add(artistName);

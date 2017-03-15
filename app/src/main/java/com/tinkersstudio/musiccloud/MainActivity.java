@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
     static Intent bindingIntent;
 
     /* The Service associate with this activity */
-    static MusicService myService;
+    public static MusicService myService;
 
     /* A flag indicate the state of the Service */
     static MyFlag serviceBound;

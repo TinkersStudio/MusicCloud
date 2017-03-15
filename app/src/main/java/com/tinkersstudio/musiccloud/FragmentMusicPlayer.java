@@ -68,7 +68,7 @@ public class FragmentMusicPlayer extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_music_player, container, false);
-
+        context = getActivity().getBaseContext();
         //get value from the
         initLayout();
         initAction();

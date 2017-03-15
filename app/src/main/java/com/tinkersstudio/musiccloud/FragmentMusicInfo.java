@@ -7,11 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jmusixmatch.MusixMatch;
+
 /**
  * Created by Owner on 3/4/2017.
  */
 
 public class FragmentMusicInfo extends Fragment {
+    String API_KEY = getActivity().getResources().getString(R.string.music_match_api_key);
+    MusixMatch musixMatch = new MusixMatch(API_KEY);
+    String LOG_TAG = "FragmentSongLyric";
+
     public FragmentMusicInfo() {
         //require constructor
     }
