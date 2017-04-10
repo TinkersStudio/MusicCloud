@@ -30,7 +30,7 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
         <activity
-            android:name="com.tinkersstudio.musiccloud.MainActivity"
+            android:name="com.tinkersstudio.musiccloud.activities.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" >
@@ -39,11 +39,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="controller.MusicService$NotificationDismissedReceiver" />
-        <service android:name="controller.MusicService" />
+        <receiver android:name="com.tinkersstudio.musiccloud.controller.MusicService$NotificationDismissedReceiver" />
+        <service android:name="com.tinkersstudio.musiccloud.controller.MusicService" />
 
         <service
-            android:name="util.MyFirebaseMessagingService">
+            android:name="com.tinkersstudio.musiccloud.util.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

@@ -15,8 +15,8 @@ import com.tinkersstudio.musiccloud.R;
 
 import java.util.List;
 
-import model.Song;
-import view.SongViewHolder;
+import com.tinkersstudio.musiccloud.model.Song;
+import com.tinkersstudio.musiccloud.view.SongViewHolder;
 
 /**
  * This class binds the visual SongViews and the data behind them (Songs).
@@ -77,17 +77,17 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      *
      * @param parent   The ViewGroup into which the new View will be added after it is bound to
      *                 an adapter position.
-     * @param viewType The view type of the new View.
-     * @return A new ViewHolder that holds a View of the given view type.
+     * @param viewType The com.tinkersstudio.musiccloud.view type of the new View.
+     * @return A new ViewHolder that holds a View of the given com.tinkersstudio.musiccloud.view type.
      * @see #getItemViewType(int)
      * @see #onBindViewHolder(RecyclerView.ViewHolder, int)
      */
     @Override
     public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
+        // create a new com.tinkersstudio.musiccloud.view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(viewType, parent, false);
-        // set the view's size, margins, paddings and layout parameters
+        // set the com.tinkersstudio.musiccloud.view's size, margins, paddings and layout parameters
         SongViewHolder vh = new SongViewHolder(v);
         return vh;
 
