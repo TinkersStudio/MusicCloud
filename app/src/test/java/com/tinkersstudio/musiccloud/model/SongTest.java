@@ -16,28 +16,28 @@ import com.tinkersstudio.musiccloud.model.Song;
 public class SongTest {
     @Test
     public void testGetSongId() {
-        Song newSong = new Song(1, "Forever Love", "Sia", 1);
+        Song newSong = new Song(1, "Forever Love", "Sia", 1, "path");
         // use this method because float is not precise
         assertEquals("Failed to get songId", 1, newSong.getID(), 0.000);
     }
 
     @Test
     public void testGetSongTittle() {
-        Song newSong = new Song(1, "Forever Love", "Sia", 1);
+        Song newSong = new Song(1, "Forever Love", "Sia", 1, "path");
         // use this method because float is not precise
         assertSame("Failed to get song title", "Forever Love", newSong.getTitle());
     }
 
     @Test
     public void testGetSongAlbum() {
-        Song newSong = new Song(1, "Forever Love", "Sia", 1);
+        Song newSong = new Song(1, "Forever Love", "Sia", 1, "path");
         // use this method because float is not precise
         assertEquals("Failed to get songId", 1, newSong.getAlbumArt(), 0.000);
     }
 
     @Test
     public void testGetSongArtist() {
-        Song newSong = new Song(1, "Forever Love", "Sia", 1);
+        Song newSong = new Song(1, "Forever Love", "Sia", 1, "path");
         // use this method because float is not precise
         assertSame("Failed to get song title", "Sia", newSong.getArtist());
     }
