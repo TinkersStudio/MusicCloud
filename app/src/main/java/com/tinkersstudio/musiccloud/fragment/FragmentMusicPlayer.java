@@ -22,6 +22,7 @@ import info.abdolahi.CircularMusicProgressBar;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.widget.SeekBar;
+import android.view.MotionEvent;
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.controller.TimeConverter;
 
@@ -52,6 +53,7 @@ public class FragmentMusicPlayer extends Fragment {
 
     // The album picture to extract color;
     static Bitmap bitmap;
+    int compColor = Color.TRANSPARENT;
 
     //com.tinkersstudio.musiccloud.view items
     static View rootView;
@@ -185,6 +187,226 @@ public class FragmentMusicPlayer extends Fragment {
      * Init all the button listeners
      */
     public void initAction(){
+
+        // Open a new fragment when click on lyrics button
+        lyricsButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    lyricsButton.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    lyricsButton.setColorFilter(compColor);
+                    try {
+                        FragmentManager fragmentManager = getFragmentManager();
+                        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        FragmentSongLyric songLyric = new FragmentSongLyric();
+                        fragmentTransaction.addToBackStack("FragmentMusicPlayer");
+                        fragmentTransaction.hide(FragmentMusicPlayer.this);
+                        fragmentTransaction.add(R.id.fragment_container, songLyric);
+                        fragmentTransaction.commit();
+                    } catch (Exception e) {
+                        Toasty.info(context, "Current Song Empty", Toast.LENGTH_SHORT, true).show();
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+        });
+
+        // Open a new fragment when click on info button
+        infoButton.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    infoButton.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    infoButton.setColorFilter(compColor);
+                    try {
+                        FragmentManager fragmentManager = getFragmentManager();
+                        android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        FragmentMusicInfo songLyric = new FragmentMusicInfo();
+                        fragmentTransaction.addToBackStack("FragmentMusicPlayer");
+                        fragmentTransaction.hide(FragmentMusicPlayer.this);
+                        fragmentTransaction.add(R.id.fragment_container, songLyric);
+                        fragmentTransaction.commit();
+                    } catch (Exception e) {
+                        Toasty.info(context, "Current Song Empty", Toast.LENGTH_SHORT, true).show();
+                    }
+                    return true;
+
+                }
+                return false;
+            }
+        });
+
+        // Reponse to seekBar change when user drag the dot
+        this.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            /**
+             * Start record the change on seek bar
+             * @param seekBar
+             */
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                isMovingSeekBar = true;
+            }
+
+            /**
+             * Stop record the change on seek bar
+             * @param seekBar
+             */
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                isMovingSeekBar = false;
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (isMovingSeekBar) {
+                    Log.i("OnSeekBarChangeListener", "onProgressChanged");
+                    long totalDuration = musicService.getPlayer().getTotalDuration();
+                    int seekToPosition = TimeConverter.percentageToCurrentDuration(seekBar.getProgress(), totalDuration);
+
+                    // forward or backward to certain seconds
+                    musicService.getPlayer().seekPosition(seekToPosition);
+                }
+            }
+        });
+
+        /*---- THESE BUTTON OnTouchListener able modify the Button while touching it---*/
+        // Set repeat mode on player, also change the button view
+        this.repeatButton.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    repeatButton.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    repeatButton.setImageResource(musicService.getPlayer().setRepeat() ?
+                            R.drawable.ic_action_replay: R.drawable.ic_action_repeat);
+                    repeatButton.setColorFilter(compColor);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        this.playPrevButton.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    playPrevButton.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    Log.i(LOG_TAG, "Received Intent : PREV");
+                    // Move the prev song if there is a valid prev song
+                    try {
+                        // Pause player if the player was pausing before move to prev song
+                        if(musicService.getPlayer().getIsPause()) {
+                            musicService.getPlayer().seekPrev(false);
+                        }
+                        // Play if the player was playing before moving to prev song
+                        else {
+                            musicService.getPlayer().seekPrev(true);
+                        }
+                        // update whole screen with new song info
+                        updateSongPlaying();
+                        setColor();
+                    } catch (NoSongToPlayException e) {
+                        Toasty.info(context, "No Song To Play", Toast.LENGTH_SHORT, true).show();
+                    }
+                    playPrevButton.setColorFilter(compColor);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        this.playButton.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    playButton.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    try {
+                        musicService.getPlayer().play();
+                        // Need to update whole screen incase of the first time launching this fragment
+                        // other cases, song info should stay the same after user click on play/pause
+                        updateSongPlaying();
+                        setColor();
+                    } catch (NoSongToPlayException e) {
+                        Toasty.info(context, "No Song To Play", Toast.LENGTH_SHORT, true).show();
+                    }
+                    playButton.setColorFilter(compColor);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        this.playNextButton.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    playNextButton.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    // Move the prev song if there is a valid prev song
+                    try {
+                        // Pause player if the player was pausing before move to next song
+                        if(musicService.getPlayer().getIsPause()) {
+                            musicService.getPlayer().seekNext(false);
+                        }
+                        else {
+                            // Pause player if the player was pausing before move to next song
+                            musicService.getPlayer().seekNext(true);
+                        }
+                        // update whole screen with new song info
+                        updateSongPlaying();
+                        setColor();
+                    } catch (NoSongToPlayException e) {
+                        Toasty.info(context, "No Song To Play", Toast.LENGTH_SHORT, true).show();
+                    }
+                    playNextButton.setColorFilter(compColor);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        // Set shuffle mode on player, also change the button view
+        this.shuffleButton.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    shuffleButton.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    shuffleButton.setImageResource(musicService.getPlayer().setShuffle() ?
+                            R.drawable.ic_action_shuffle: R.drawable.ic_action_shuffle_disabled);
+                    shuffleButton.setColorFilter(compColor);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+        /*-------------- THESE BUTTON OnClickListener works with ripple effect----------*/
+        /*
         // Open a new fragment when click on lyrics button
         lyricsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,13 +437,13 @@ public class FragmentMusicPlayer extends Fragment {
 
         // Set repeat mode on player, also change the button view
         this.repeatButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 repeatButton.setImageResource(musicService.getPlayer().setRepeat() ?
                         R.drawable.ic_action_replay: R.drawable.ic_action_repeat);
             }
         });
-
 
         this.playPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -290,40 +512,7 @@ public class FragmentMusicPlayer extends Fragment {
                 shuffleButton.setImageResource(musicService.getPlayer().setShuffle() ?
                         R.drawable.ic_action_shuffle: R.drawable.ic_action_shuffle_disabled);
             }
-        });
-
-        // Reponse to seekBar change when user drag the dot
-        this.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            /**
-             * Start record the change on seek bar
-             * @param seekBar
-             */
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                isMovingSeekBar = true;
-            }
-
-            /**
-             * Stop record the change on seek bar
-             * @param seekBar
-             */
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                isMovingSeekBar = false;
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (isMovingSeekBar) {
-                    Log.i("OnSeekBarChangeListener", "onProgressChanged");
-                    long totalDuration = musicService.getPlayer().getTotalDuration();
-                    int seekToPosition = TimeConverter.percentageToCurrentDuration(seekBar.getProgress(), totalDuration);
-
-                    // forward or backward to certain seconds
-                    musicService.getPlayer().seekPosition(seekToPosition);
-                }
-            }
-        });
+        });*/
     }
 
     /**
@@ -366,7 +555,7 @@ public class FragmentMusicPlayer extends Fragment {
      */
     public void setColor(){
         int color = getDominantColor(bitmap);
-        int compColor = getComplementaryColor(color);
+        compColor = getComplementaryColor(color);
         int compColor2 = getComplementaryColor2(color);
         circularProgressBar.setBorderColor(compColor);
         rootView.setBackgroundColor(color);
@@ -377,12 +566,10 @@ public class FragmentMusicPlayer extends Fragment {
         playButton.setColorFilter(compColor);
         songTitle.setTextColor(compColor2);
         artist.setTextColor(compColor);
-        infoButton.setBackgroundColor(compColor);
-        lyricsButton.setBackgroundColor(compColor);
+        infoButton.setColorFilter(compColor);
+        lyricsButton.setColorFilter(compColor);
         timePast.setTextColor(compColor2);
         timeTotal.setTextColor(compColor2);
-        infoButton.setImageResource(R.drawable.tw__app_info_layout_border);
-        lyricsButton.setImageResource(R.drawable.ic_audiobook);
     }
 
     // extract the dominant color in the album cover

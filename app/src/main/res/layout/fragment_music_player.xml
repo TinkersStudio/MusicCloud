@@ -60,7 +60,8 @@
         <SeekBar
             android:layout_width="285dp"
             android:layout_height="wrap_content"
-            android:id="@+id/mp_seekbar"/>
+            android:id="@+id/mp_seekbar"
+            android:background="@drawable/ripple"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,7 +109,7 @@
         android:gravity="center_horizontal">
 
         <ImageButton
-            android:background="#0000"
+            android:background="@drawable/ripple"
             android:paddingTop="13dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -118,7 +119,7 @@
             android:src="@drawable/ic_action_repeat"/>
 
         <ImageButton
-            android:background="#0000"
+            android:background="@drawable/ripple"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/mp_play_prev"
@@ -127,7 +128,7 @@
             android:src="@drawable/ic_action_previous"/>
 
         <ImageButton
-            android:background="#0000"
+            android:background="@drawable/ripple"
             android:layout_width="65dp"
             android:layout_height="65dp"
             android:id="@+id/mp_play"
@@ -137,7 +138,7 @@
             android:paddingLeft="5dp"/>
 
         <ImageButton
-            android:background="#0000"
+            android:background="@drawable/ripple"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/mp_play_next"
@@ -146,7 +147,7 @@
             android:src="@drawable/ic_action_next"/>
 
         <ImageButton
-            android:background="#0000"
+            android:background="@drawable/ripple"
             android:paddingTop="13dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
