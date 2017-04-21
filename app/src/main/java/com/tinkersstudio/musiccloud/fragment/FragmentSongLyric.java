@@ -1,13 +1,28 @@
 package com.tinkersstudio.musiccloud.fragment;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.graphics.Bitmap;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.view.WindowManager;
+import android.view.Display;
+import 	android.graphics.Point;
 import android.widget.TextView;
 //import io.swagger.client.api.DefaultApi;
 
@@ -37,9 +52,15 @@ public class FragmentSongLyric extends Fragment {
     MusicService newService = ((MainActivity)getActivity()).myService;
     //LyricView mLyricView;
     TextView lyricText;
+    TextView lyricHeader;
+    LinearLayout wholeScreen;
+    LinearLayout lyricHeaderBar;
+    ImageButton exitButton;
     String trackName = "";
     String artistName = "";
-
+    Bitmap bitmap;
+    int dominantColor;
+    int compColor2;
     public FragmentSongLyric() {
         //require constructor
     }
@@ -52,6 +73,10 @@ public class FragmentSongLyric extends Fragment {
         View rootView = inflater.inflate(com.tinkersstudio.musiccloud.R.layout.fragment_song_lyric, container, false);
         //mLyricView = (LyricView)rootView.findViewById(R.id.custom_lyric_view);
         lyricText = (TextView) rootView.findViewById(R.id.lyric_text);
+        lyricHeader = (TextView) rootView.findViewById(R.id.lyric_header);
+        exitButton = (ImageButton) rootView.findViewById(R.id.lyric_quit);
+        wholeScreen = (LinearLayout) rootView.findViewById((R.id.lyric_screen));
+        lyricHeaderBar = (LinearLayout) rootView.findViewById(R.id.lyric_header_bar);
 
         trackName = newService.getPlayer().getCurrentSong().getTitle();
         artistName = newService.getPlayer().getCurrentSong().getArtist();
@@ -70,9 +95,67 @@ public class FragmentSongLyric extends Fragment {
         new retriveLyric().execute(values);
 
 
+
+        WindowManager wm = (WindowManager) ((MainActivity)getActivity()).getBaseContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x/100;
+        int height = size.y/100;
+        try {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(newService.getPlayer().getCurrentSong().getPath());
+            byte[] art = retriever.getEmbeddedPicture();
+            bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            }
+        } catch (Exception exception) {
+            Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
+            bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.cover_art_stock);
+        } finally {
+            dominantColor = getDominantColor(bitmap);
+            compColor2 = getComplementaryColor2(dominantColor);
+            BitmapDrawable newBitmap = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, width, height, true));
+            wholeScreen.setBackgroundDrawable(newBitmap);
+        }
+
+        //exitButton.setColorFilter(compColor2);
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Close this Fragment
+            }
+        });
+
+        lyricHeader.setText(trackName + "\n" + artistName);
+        lyricHeader.setTextSize((float)28);
+        lyricHeader.setTextColor(compColor2);
+        lyricHeaderBar.setBackgroundColor(dominantColor);
+
+        lyricText.setTextColor(compColor2);
+        lyricText.setTextSize((float)15);
+
+
+
         return rootView;
 
         //initialize button in here
+    }
+
+    // extract the dominant color in the album cover
+    public static int getDominantColor(Bitmap bitmap) {
+        Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
+        final int color = newBitmap.getPixel(0, 0);
+        newBitmap.recycle();
+        return color;
+    }
+
+    // Calculate the best contrast color (either black or white) of a color
+    public static int getComplementaryColor2(int colorToInvert) {
+        int ave =  (Color.red(colorToInvert)
+                + Color.green(colorToInvert)
+                + Color.blue(colorToInvert)) / 3;
+        return ave >= 128 ?  -16777216 : -1;
     }
 
 
