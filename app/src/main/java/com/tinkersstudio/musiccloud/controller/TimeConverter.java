@@ -57,12 +57,8 @@ public class TimeConverter {
     }
 
 
-    public static long percentageToCurrentDuration(int progress, long totalDuration) {
-        long currentDuration = 0;
-        totalDuration = (int) (totalDuration / 1000);
-        currentDuration = (int) ((((double)progress) / 100) * totalDuration);
-
+    public static int percentageToCurrentDuration(int progress, long totalDuration) {
         // return current duration in milliseconds
-        return currentDuration * 1000;
+        return (int) ((((double)progress) / 100) * totalDuration);
     }
 }

@@ -42,6 +42,7 @@ public class FragmentMusicPlayer extends Fragment {
     static TextView songTitle, artist, timePast, timeTotal;
     CircularMusicProgressBar circularProgressBar;
     static SeekBar seekBar;
+    boolean isMovingSeekBar;
 
     // A handler to manage the Runnable which is used to update UI
     Handler mHandler = new Handler();
@@ -143,7 +144,7 @@ public class FragmentMusicPlayer extends Fragment {
                     seekBar.setProgress(progress);
 
                     // Finish a song, update whole screen
-                    if (progress == 1) {
+                    if (currentDuration < 1000) {
                         updateSongPlaying();
                         setColor();
                     }
@@ -290,6 +291,39 @@ public class FragmentMusicPlayer extends Fragment {
                         R.drawable.ic_action_shuffle: R.drawable.ic_action_shuffle_disabled);
             }
         });
+
+        // Reponse to seekBar change when user drag the dot
+        this.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            /**
+             * Start record the change on seek bar
+             * @param seekBar
+             */
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                isMovingSeekBar = true;
+            }
+
+            /**
+             * Stop record the change on seek bar
+             * @param seekBar
+             */
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                isMovingSeekBar = false;
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (isMovingSeekBar) {
+                    Log.i("OnSeekBarChangeListener", "onProgressChanged");
+                    long totalDuration = musicService.getPlayer().getTotalDuration();
+                    int seekToPosition = TimeConverter.percentageToCurrentDuration(seekBar.getProgress(), totalDuration);
+
+                    // forward or backward to certain seconds
+                    musicService.getPlayer().seekPosition(seekToPosition);
+                }
+            }
+        });
     }
 
     /**
@@ -317,7 +351,7 @@ public class FragmentMusicPlayer extends Fragment {
                     circularProgressBar.setImageBitmap(bitmap);
                 }
             } catch (Exception exception) {
-                Log.e(LOG_TAG, "exception: " + exception.getClass().getName());
+                Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
                 circularProgressBar.setImageResource(R.drawable.cover_art_stock);
                 bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.cover_art_stock);
             }

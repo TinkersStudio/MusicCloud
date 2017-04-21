@@ -138,6 +138,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             Log.i(LOG_TAG, "pause");
             pause();
             isPaused = true;
+            owner.updateNotifBar(MyFlag.PLAY, currentSong.getTitle(), currentSong.getArtist());
             return;
         }
 
@@ -163,6 +164,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         // The song is feeded into the player and ready to be played
         player.prepareAsync();
+        owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
     }
 
     /**
@@ -205,14 +207,18 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         else
             Log.e(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
+        currentSong =  songList.get(currentSongPosition);
 
-        // After moving the index to prev song, resume the player
+        // After moving the index to prev song, resume the player, update the notif bar
         if(wasPlaying) {
             play();
             isPaused = false;
+            owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
         } else {
             isPaused = true;
+            owner.updateNotifBar(MyFlag.PLAY, currentSong.getTitle(), currentSong.getArtist());
         }
+
     }
 
     /**
@@ -246,13 +252,16 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         else
             Log.e(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
+        currentSong =  songList.get(currentSongPosition);
 
         // After moving the index to prev song, resume the player
         if(wasPlaying) {
             play();
             isPaused = false;
+            owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
         } else {
             isPaused = true;
+            owner.updateNotifBar(MyFlag.PLAY, currentSong.getTitle(), currentSong.getArtist());
         }
     }
 
@@ -361,5 +370,9 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     }
     public long getCurrentPosn() {
         return this.player.getCurrentPosition();
+    }
+    public boolean seekPosition(int seekTo){
+        this.player.seekTo(seekTo);
+        return true;
     }
 }

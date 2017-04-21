@@ -33,7 +33,7 @@ public class MusicService extends Service {
 
     private Notification notifBar;
     NotificationManager notificationManager;
-    private int notificaitonId = 10231;
+    private int notificaitonId = 10231;  // just a random number
 
 
     /**
@@ -140,6 +140,12 @@ public class MusicService extends Service {
         return START_NOT_STICKY;
     }
 
+    /**
+     * Rebuild the notification bar with new information (Not update the notif bar's view yet)
+     * @param playState
+     * @param title
+     * @param artist
+     */
     public void setNotificationBar(MyFlag playState, String title, String artist) {
         Log.i(LOG_TAG, "Set Notification Bar");
 
@@ -179,6 +185,16 @@ public class MusicService extends Service {
                 .build();
     }
 
+    /**
+     * Rebuild and Update the Notification bar's view
+     * @param playState
+     * @param title
+     * @param artist
+     */
+    public void updateNotifBar(MyFlag playState, String title, String artist) {
+        setNotificationBar(playState, title, artist);
+        notificationManager.notify(notificaitonId, notifBar);
+    }
 
     public static class NotificationDismissedReceiver extends BroadcastReceiver {
 
@@ -205,4 +221,5 @@ public class MusicService extends Service {
     }
 
     public MyPlayer getPlayer(){return player;}
+
 }
