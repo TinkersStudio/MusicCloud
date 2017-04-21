@@ -15,7 +15,7 @@ import com.tinkersstudio.musiccloud.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import adapter.SongListAdapter;
+import com.tinkersstudio.musiccloud.adapter.SongListAdapter;
 import com.tinkersstudio.musiccloud.model.Song;
 
 /**
@@ -76,7 +76,7 @@ public class FragmentSongList extends Fragment {
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
         mAdapter = new SongListAdapter(mDataset);
-        // Set CustomAdapter as the adapter for RecyclerView.
+        // Set CustomAdapter as the com.tinkersstudio.musiccloud.adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         // END_INCLUDE(initializeRecyclerView)
 
@@ -133,7 +133,7 @@ public class FragmentSongList extends Fragment {
     }
 
     /**
-     * Generates Strings for RecyclerView's adapter. This data would usually come
+     * Generates Strings for RecyclerView's com.tinkersstudio.musiccloud.adapter. This data would usually come
      * from a local content provider or remote server.
      */
     private void initDataset() {
