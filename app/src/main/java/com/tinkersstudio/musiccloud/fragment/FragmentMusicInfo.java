@@ -6,8 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.activities.MainActivity;
+import com.tinkersstudio.musiccloud.controller.MusicService;
 
 import org.jmusixmatch.MusixMatch;
 
@@ -16,9 +19,15 @@ import org.jmusixmatch.MusixMatch;
  */
 
 public class FragmentMusicInfo extends Fragment {
-    String API_KEY = getActivity().getResources().getString(R.string.music_match_api_key);
+
+    String API_KEY = "f4337155f55d30c22e85a96f2dc674c8";
     MusixMatch musixMatch = new MusixMatch(API_KEY);
     String LOG_TAG = "FragmentSongLyric";
+    MusicService newService = ((MainActivity)getActivity()).myService;
+    //LyricView mLyricView;
+    TextView lyricText;
+    String trackName = "";
+    String artistName = "";
 
     public FragmentMusicInfo() {
         //require constructor

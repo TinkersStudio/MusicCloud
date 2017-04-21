@@ -1,4 +1,4 @@
-package adapter;
+package com.tinkersstudio.musiccloud.adapter;
 
 /**
  * Created by Owner on 2/20/2017.
@@ -54,7 +54,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
     /**
      * Get the data item associated with the specified position in the data set.
      *
-     * @param position Position of the item whose data we want within the adapter's
+     * @param position Position of the item whose data we want within the com.tinkersstudio.musiccloud.adapter's
      *                 data set.
      * @return The data at the specified position.
      */
@@ -70,13 +70,13 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      * of the given type. You can either create a new View manually or inflate it from an XML
      * layout file.
      * <p/>
-     * The new ViewHolder will be used to display items of the adapter using
+     * The new ViewHolder will be used to display items of the com.tinkersstudio.musiccloud.adapter using
      * {@link #onBindViewHolder(RecyclerView.ViewHolder, int, List)}. Since it will be re-used to display
      * different items in the data set, it is a good idea to cache references to sub views of
      * the View to avoid unnecessary {@link View#findViewById(int)} calls.
      *
      * @param parent   The ViewGroup into which the new View will be added after it is bound to
-     *                 an adapter position.
+     *                 an com.tinkersstudio.musiccloud.adapter position.
      * @param viewType The com.tinkersstudio.musiccloud.view type of the new View.
      * @return A new ViewHolder that holds a View of the given com.tinkersstudio.musiccloud.view type.
      * @see #getItemViewType(int)
@@ -109,14 +109,14 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      * use the <code>position</code> parameter while acquiring the related data item inside
      * this method and should not keep a copy of it. If you need the position of an item later
      * on (e.g. in a click listener), use {@link RecyclerView.ViewHolder#getAdapterPosition()} which will
-     * have the updated adapter position.
+     * have the updated com.tinkersstudio.musiccloud.adapter position.
      * <p/>
      * Override {@link #onBindViewHolder(RecyclerView.ViewHolder, int, List)} instead if Adapter can
      * handle effcient partial bind.
      *
      * @param holder   The ViewHolder which should be updated to represent the contents of the
      *                 item at the given position in the data set.
-     * @param position The position of the item within the adapter's data set.
+     * @param position The position of the item within the com.tinkersstudio.musiccloud.adapter's data set.
      */
     @Override
     public void onBindViewHolder(SongViewHolder holder, int position) {
@@ -126,7 +126,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
     /**
      * Get the row id associated with the specified position in the list.
      *
-     * @param position The position of the item within the adapter's data set whose row id we want.
+     * @param position The position of the item within the com.tinkersstudio.musiccloud.adapter's data set whose row id we want.
      * @return The id of the item at the specified position.
      */
     @Override
@@ -135,9 +135,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
     }
 
     /**
-     * Returns the total number of items in the data set hold by the adapter.
+     * Returns the total number of items in the data set hold by the com.tinkersstudio.musiccloud.adapter.
      *
-     * @return The total number of items in this adapter.
+     * @return The total number of items in this com.tinkersstudio.musiccloud.adapter.
      */
     @Override
     public int getItemCount() {
