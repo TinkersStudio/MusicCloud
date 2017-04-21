@@ -28,15 +28,6 @@
             android:id="@+id/mp_button_info"
             android:src="@drawable/ic_info"
             android:background="#0000"/>
-        <!--
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:clickable="true"
-            android:id="@+id/mp_button_more"
-            android:src="@drawable/ic_dots_horizontal_black"
-            android:background="#0000"
-            />-->
     </LinearLayout>
 
     <info.abdolahi.CircularMusicProgressBar
@@ -52,10 +43,33 @@
         app:progress_color="#80CBC4"
         app:progress_startAngle="40" />
 
-    <SeekBar
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/mp_seekbar" />
+        android:id="@+id/mp_time_line"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mp_time_played"
+            android:text="@string/time_past"/>
+
+        <SeekBar
+            android:layout_width="285dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/mp_seekbar"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mp_time_total"
+            android:text="@string/time_total"/>
+
+    </LinearLayout>
+
 
     <TextView
             android:paddingTop="5dp"
@@ -70,6 +84,7 @@
             android:singleLine="true"
             android:focusableInTouchMode="true"
             android:fontFamily="sans-serif-smallcaps"
+            android:textStyle="bold"
             android:textSize="18dp"
             android:text="Title Of The Song Playing"
             android:textColor="#000"/>

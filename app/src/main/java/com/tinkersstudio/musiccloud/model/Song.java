@@ -9,17 +9,19 @@ public class Song {
     private String title;
     private String artist;
     private Long albumID;
+    private String path;
 
-
-    public Song(long songID, String songTitle, String songArtist, long albumID) {
+    public Song(long songID, String songTitle, String songArtist, long albumID, String path) {
         id=songID;
         title=songTitle;
         artist=songArtist;
         this.albumID = albumID;
+        this.path = path;
     }
 
     public Long getID(){return id;}
     public String getTitle(){return title;}
     public String getArtist(){return artist;}
     public Long getAlbumArt(){return albumID;}
+    public String getPath(){return this.path;}
 }

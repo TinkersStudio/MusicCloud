@@ -137,7 +137,7 @@ public class FragmentSongList extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
-        Song newSong = new Song(0, "Hello", "John Lenon", 1);
+        Song newSong = new Song(0, "Hello", "John Lenon", 1, "somePath");
         mDataset.add(newSong);
     }
 }

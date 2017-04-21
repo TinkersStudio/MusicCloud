@@ -13,7 +13,6 @@ import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.app.Notification;
-
 import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.R;
 

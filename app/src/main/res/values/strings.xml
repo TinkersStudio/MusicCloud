@@ -19,5 +19,7 @@
     <string name="soundcloud">Sound Cloud</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="home">Home</string>
+    <string name="time_past">00:00</string>
+    <string name="time_total">00:00</string>
 
 </resources>

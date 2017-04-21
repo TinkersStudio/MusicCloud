@@ -13,23 +13,32 @@ import com.tinkersstudio.musiccloud.model.Song;
 
 /**
  * Created by anhnguyen on 2/11/17.
+ *
+ * 4/21/2017 add method to get the times of current song playing
+ *           modify getSong to also get the data path
  */
 
 public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
                                  MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener
 {
-
     private static final String LOG_TAG = "MyPlayer";
 
+    // the music service which whole an instance of this PLAYER
     private MusicService owner;
+
+    // The media player
     private MediaPlayer player;
+
+    // State of the the PLAYER
     private boolean isPaused;
-    public boolean isShuffle; //TODO: change to private, public for checking in FragmentMusicPlayer
-    public boolean isRepeat;
+    private boolean isShuffle;
+    private boolean isRepeat;
     private int     currentSongPosition;
     private Song    currentSong;
-    private long    currentPosition;
-    private Random  rand;
+
+    // Hole the currentPosition of the song before being pause
+    private long    lastCurrentPosition;
+
     /* song list to play */
     private ArrayList<Song> songList;
 
@@ -51,8 +60,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         isRepeat = false;
         isShuffle = false;
         currentSongPosition = -1;   // Player have not load any songs yet.
-        currentPosition = (long)0.0;
-        rand = new Random();
 
         player.setWakeMode(owner.getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -71,6 +78,10 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         player.start();
     }
 
+    /**
+     * Complete a song, auto proceed to the next song and play it
+     * @param mediaPlayer
+     */
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         Log.i(LOG_TAG, "onCompletion");
@@ -84,44 +95,62 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         return false;
     }
     @Override
-    public void onSeekComplete(MediaPlayer var1) {}
+    public void onSeekComplete(MediaPlayer var1) {
+        //NOT IMPLEMENT
+    }
 
+    /**
+     * Set the shuffle mode
+     * @return the new state of shuffle mode
+     */
     public boolean setShuffle(){
         isShuffle = !isShuffle;
         return isShuffle;
     }
 
+    /**
+     * Set the repeat mode
+     * @return the new state of repeat mode
+     */
     public boolean setRepeat() {
         isRepeat = !isRepeat;
         return isRepeat;
     }
 
+    /**
+     * This method get called when client the button play/pause invoked
+     * This will either play the music or pause the music
+     */
     public void play() {
 
+        // Check to see if there is a valid song to play
         if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
+
+        // First time playing music, set the index to the first song on the list
         if (currentSongPosition < 0 ) {
             currentSongPosition = 0;
         }
 
+        // Pause player if it is playing, then return
         if (player.isPlaying()) {
-
             Log.i(LOG_TAG, "pause");
-            currentPosition = player.getCurrentPosition();
             pause();
             isPaused = true;
             return;
         }
 
+        // PLAY music
         player.reset();
-        currentSong =  songList.get(currentSongPosition);
-        isPaused = false;
 
+        isPaused = false;
+        // get song to play
+        currentSong =  songList.get(currentSongPosition);
         Log.i(LOG_TAG, "play " + currentSong.getTitle());
-        //get id
+        // get song id
         long currSong = currentSong.getID();
-        //set uri
+        // set uri path
         Uri trackUri = ContentUris.withAppendedId(
                 android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 currSong);
@@ -132,19 +161,33 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         catch(Exception e){
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
+        // The song is feeded into the player and ready to be played
         player.prepareAsync();
     }
 
+    /**
+     * Pause player
+     */
     public void pause() {
         player.pause();
     }
+
+    /**
+     * Move the index to the prev song on the list
+     * Play/Pause the prev song if player was playing/pausing
+     * @param wasPlaying indicates if the player was playing before seeking to Prev song
+     */
     public void seekPrev(boolean wasPlaying) {
+        // Check for valid prev song
         if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
 
+        // If the player is playing, pause it first before seeking to prev song
         if (player.isPlaying())
             pause();
+
+        // MOVE index to prev song according to shuffle/repeat/regular mode
 
         //shuffle case
         if(isShuffle) {
@@ -163,6 +206,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         else
             Log.e(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
 
+        // After moving the index to prev song, resume the player
         if(wasPlaying) {
             play();
             isPaused = false;
@@ -170,12 +214,23 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             isPaused = true;
         }
     }
+
+    /**
+     * Move the index to the next song on the list
+     * Play/Pause the next song if player was playing/pausing
+     * @param wasPlaying indicated if the player was playing before seeking to Next song
+     */
     public void seekNext(boolean wasPlaying) {
+        // Check for valid next song
         if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
+        // If the player is playing, pause it first before seeking to next song
         if (player.isPlaying())
             pause();
+
+
+        // MOVE index to next song according to shuffle/repeat/regular mode
         //shuffle case
         if(isShuffle){
             currentSongPosition = (int)(Math.random() * (songList.size()-1));
@@ -191,6 +246,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         else
             Log.e(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
+
+        // After moving the index to prev song, resume the player
         if(wasPlaying) {
             play();
             isPaused = false;
@@ -198,9 +255,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             isPaused = true;
         }
     }
-
-
-
 
     /**
      * Get the whole list of song. The player will search and play all song in case
@@ -247,7 +301,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
                     //String albumArt = cursor.getString(7);
                     cursor.moveToNext();
                     if(path != null && path.endsWith(".mp3")) {
-                        songList.add(new Song(id, title, artist, albumID));
+                        songList.add(new Song(id, title, artist, albumID, path));
                     }
                     Log.i(LOG_TAG, "Getting a song: " + title + "| by " + artist + "(" + songDuration
                             + "), albumID " + albumID + " : " + album);
@@ -272,10 +326,18 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
     }
 
+    /**
+     * To play a specific song on the list
+     * @param newPos
+     */
     public void setCurrentSongPosition(int newPos) {
         this.currentSongPosition = newPos;
     }
 
+    /**
+     * get the current song playing to extract info
+     * @return
+     */
     public Song getCurrentSong() {
         if (songList != null
                 && currentSongPosition != -1
@@ -292,5 +354,12 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     public void releasePlayer(){
         this.player.stop();
         this.player.release();
+    }
+
+    public long getTotalDuration() {
+        return this.player.getDuration();
+    }
+    public long getCurrentPosn() {
+        return this.player.getCurrentPosition();
     }
 }
