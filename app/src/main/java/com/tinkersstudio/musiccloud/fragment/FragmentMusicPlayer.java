@@ -582,13 +582,43 @@ public class FragmentMusicPlayer extends Fragment {
         timeTotal.setTextColor(compColor2);
     }
 
-    // extract the dominant color in the album cover
+
+    /**
+     * extract the dominant color in first 200x200 area of the album cover
+     * Get nealy correct dominant color of the bitmap
+     * SLOW - O(n2) Algorithm
+     */
+    public static int getDominantColor(Bitmap bitmap) {
+        int redBucket = 0, greenBucket = 0, blueBucket = 0, pixelCount = 0;
+        int w = (bitmap.getWidth() > 200 ? 200 : bitmap.getWidth());
+        int h = (bitmap.getHeight() > 200 ? 200 : bitmap.getHeight());
+        for (int y = 0; y < h ; y++) {
+            for (int x = 0; x < w ; x++) {
+                int c = bitmap.getPixel(x, y);
+
+                pixelCount++;
+                redBucket += Color.red(c);
+                greenBucket += Color.green(c);
+                blueBucket += Color.blue(c);
+            }
+        }
+        return Color.rgb(redBucket / pixelCount,
+                greenBucket / pixelCount,
+                blueBucket / pixelCount);
+    }
+
+    /*
+    /**
+     * Get the medium pixel color
+     * Fast and easy way to extract color from bitmap
+     * Out put not necessary the dominant color of the bitmap
+     * /
     public static int getDominantColor(Bitmap bitmap) {
         Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
         final int color = newBitmap.getPixel(0, 0);
         newBitmap.recycle();
         return color;
-    }
+    }*/
 
     // Calculate the opposite color of a color
     public static int getComplementaryColor(int colorToInvert) {
@@ -609,7 +639,7 @@ public class FragmentMusicPlayer extends Fragment {
         int ave =  (Color.red(colorToInvert)
                 + Color.green(colorToInvert)
                 + Color.blue(colorToInvert)) / 3;
-        return ave >= 128 ?  -16777216 : -1;
+        return ave >= Color.BLACK ?  Color.WHITE : -1;
     }
 
     @Override

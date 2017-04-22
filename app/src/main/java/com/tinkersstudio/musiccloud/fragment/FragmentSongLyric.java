@@ -4,29 +4,23 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.graphics.Bitmap;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.view.WindowManager;
 import android.view.Display;
 import 	android.graphics.Point;
 import android.widget.TextView;
-import android.widget.Toast;
 //import io.swagger.client.api.DefaultApi;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -66,8 +60,7 @@ public class FragmentSongLyric extends Fragment {
     String trackName = "";
     String artistName = "";
     Bitmap bitmap;
-    int dominantColor;
-    int compColor2;
+    int dominantColor, compColor, compColor2;
     public FragmentSongLyric() {
         //require constructor
     }
@@ -120,8 +113,9 @@ public class FragmentSongLyric extends Fragment {
             Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
             bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.cover_art_stock);
         } finally {
-            dominantColor = getDominantColor(bitmap);
-            compColor2 = getComplementaryColor2(dominantColor);
+            dominantColor = FragmentMusicPlayer.getDominantColor(bitmap);
+            compColor = FragmentMusicPlayer.getComplementaryColor(dominantColor);
+            compColor2 = FragmentMusicPlayer.getComplementaryColor2(dominantColor);
             BitmapDrawable newBitmap = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, width, height, true));
             wholeScreen.setBackgroundDrawable(newBitmap);
         }
@@ -129,9 +123,9 @@ public class FragmentSongLyric extends Fragment {
 
         lyricHeaderBar.setBackgroundColor(dominantColor);
 
-        exitButton.setColorFilter(compColor2);
+        exitButton.setColorFilter(compColor2); // TODO: Don't know why unable to set Color
+        // set listener to quit button
         exitButton.setOnTouchListener(new View.OnTouchListener() {
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -139,7 +133,6 @@ public class FragmentSongLyric extends Fragment {
                     exitButton.setColorFilter(Color.RED);
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    //TODO: Close this Fragment
                     getActivity().getSupportFragmentManager().popBackStack();
                     exitButton.setColorFilter(compColor2);
                     return true;
@@ -154,35 +147,14 @@ public class FragmentSongLyric extends Fragment {
 
         lyricArtist.setText(artistName);
         lyricArtist.setTextSize((float)16);
-        lyricArtist.setTextColor(compColor2);
+        lyricArtist.setTextColor(compColor);
 
         lyricText.setTextColor(compColor2);
-        lyricText.setShadowLayer((float)5.0, (float)4.0, (float)4.0, dominantColor);
+        lyricText.setShadowLayer((float)5.0, (float)2.0, (float)2.0, dominantColor);
         lyricText.setTextSize((float)15);
 
-
-
         return rootView;
-
-        //initialize button in here
     }
-
-    // extract the dominant color in the album cover
-    public static int getDominantColor(Bitmap bitmap) {
-        Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
-        final int color = newBitmap.getPixel(0, 0);
-        newBitmap.recycle();
-        return color;
-    }
-
-    // Calculate the best contrast color (either black or white) of a color
-    public static int getComplementaryColor2(int colorToInvert) {
-        int ave =  (Color.red(colorToInvert)
-                + Color.green(colorToInvert)
-                + Color.blue(colorToInvert)) / 3;
-        return ave >= 128 ?  -16777216 : -1;
-    }
-
 
     @Override
     public void onAttach(Context context) {

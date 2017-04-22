@@ -194,7 +194,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         //shuffle case
         if(isShuffle) {
             currentSongPosition = (int) (Math.random() * (songList.size() - 1));
-            Log.e(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
+            Log.i(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
         }
         // Regular case
         else if (!isRepeat) {
@@ -203,10 +203,10 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             else
                 currentSongPosition--;
 
-            Log.e(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
+            Log.i(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
         }
         else
-            Log.e(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
+            Log.i(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
         currentSong =  songList.get(currentSongPosition);
 
         // After moving the index to prev song, resume the player, update the notif bar
@@ -240,7 +240,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         //shuffle case
         if(isShuffle){
             currentSongPosition = (int)(Math.random() * (songList.size()-1));
-            Log.e(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
+            Log.i(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
         }
             // Regular case
         else if (!isRepeat) {
@@ -248,10 +248,10 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
                 currentSongPosition = 0;
             else
                 currentSongPosition++;
-            Log.e(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
+            Log.i(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
         }
         else
-            Log.e(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
+            Log.i(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
         currentSong =  songList.get(currentSongPosition);
 
         // After moving the index to prev song, resume the player
