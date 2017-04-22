@@ -13,17 +13,20 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.graphics.Bitmap;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.view.WindowManager;
 import android.view.Display;
 import 	android.graphics.Point;
 import android.widget.TextView;
+import android.widget.Toast;
 //import io.swagger.client.api.DefaultApi;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -39,6 +42,9 @@ import org.jmusixmatch.entity.track.TrackData;
 import java.util.ArrayList;
 
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.controller.NoSongToPlayException;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by Owner on 3/4/2017.
@@ -52,9 +58,10 @@ public class FragmentSongLyric extends Fragment {
     MusicService newService = ((MainActivity)getActivity()).myService;
     //LyricView mLyricView;
     TextView lyricText;
-    TextView lyricHeader;
+    TextView lyricTitle;
+    TextView lyricArtist;
     LinearLayout wholeScreen;
-    LinearLayout lyricHeaderBar;
+    RelativeLayout lyricHeaderBar;
     ImageButton exitButton;
     String trackName = "";
     String artistName = "";
@@ -70,13 +77,14 @@ public class FragmentSongLyric extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(com.tinkersstudio.musiccloud.R.layout.fragment_song_lyric, container, false);
+        final View rootView = inflater.inflate(com.tinkersstudio.musiccloud.R.layout.fragment_song_lyric, container, false);
         //mLyricView = (LyricView)rootView.findViewById(R.id.custom_lyric_view);
         lyricText = (TextView) rootView.findViewById(R.id.lyric_text);
-        lyricHeader = (TextView) rootView.findViewById(R.id.lyric_header);
+        lyricTitle = (TextView) rootView.findViewById(R.id.lyric_title);
+        lyricArtist = (TextView) rootView.findViewById(R.id.lyric_artist);
         exitButton = (ImageButton) rootView.findViewById(R.id.lyric_quit);
         wholeScreen = (LinearLayout) rootView.findViewById((R.id.lyric_screen));
-        lyricHeaderBar = (LinearLayout) rootView.findViewById(R.id.lyric_header_bar);
+        lyricHeaderBar = (RelativeLayout) rootView.findViewById(R.id.lyric_header_bar);
 
         trackName = newService.getPlayer().getCurrentSong().getTitle();
         artistName = newService.getPlayer().getCurrentSong().getArtist();
@@ -95,20 +103,19 @@ public class FragmentSongLyric extends Fragment {
         new retriveLyric().execute(values);
 
 
-
+        // Get screen size to scale the cover art
         WindowManager wm = (WindowManager) ((MainActivity)getActivity()).getBaseContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int width = size.x/100;
-        int height = size.y/100;
+        int width = size.x/75;
+        int height = size.y/75;
+        // Get the Cover art, scale it down to blur it, then set background with the blurred image
         try {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(newService.getPlayer().getCurrentSong().getPath());
             byte[] art = retriever.getEmbeddedPicture();
             bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            }
         } catch (Exception exception) {
             Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
             bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.cover_art_stock);
@@ -119,20 +126,38 @@ public class FragmentSongLyric extends Fragment {
             wholeScreen.setBackgroundDrawable(newBitmap);
         }
 
-        //exitButton.setColorFilter(compColor2);
-        exitButton.setOnClickListener(new View.OnClickListener() {
+
+        lyricHeaderBar.setBackgroundColor(dominantColor);
+
+        exitButton.setColorFilter(compColor2);
+        exitButton.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
-            public void onClick(View view) {
-                //TODO: Close this Fragment
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    exitButton.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    //TODO: Close this Fragment
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    exitButton.setColorFilter(compColor2);
+                    return true;
+                }
+                return false;
             }
         });
 
-        lyricHeader.setText(trackName + "\n" + artistName);
-        lyricHeader.setTextSize((float)28);
-        lyricHeader.setTextColor(compColor2);
-        lyricHeaderBar.setBackgroundColor(dominantColor);
+        lyricTitle.setText(trackName);
+        lyricTitle.setTextSize((float)20);
+        lyricTitle.setTextColor(compColor2);
+
+        lyricArtist.setText(artistName);
+        lyricArtist.setTextSize((float)16);
+        lyricArtist.setTextColor(compColor2);
 
         lyricText.setTextColor(compColor2);
+        lyricText.setShadowLayer((float)5.0, (float)4.0, (float)4.0, dominantColor);
         lyricText.setTextSize((float)15);
 
 

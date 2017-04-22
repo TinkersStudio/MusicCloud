@@ -39,7 +39,7 @@ public class FragmentMusicPlayer extends Fragment {
     Context context;
 
     // Widget elements
-    ImageButton lyricsButton, infoButton;
+    ImageButton favor, lyricsButton, infoButton;
     static TextView songTitle, artist, timePast, timeTotal;
     CircularMusicProgressBar circularProgressBar;
     static SeekBar seekBar;
@@ -167,6 +167,7 @@ public class FragmentMusicPlayer extends Fragment {
      */
     public void initLayout()
     {
+        favor = (ImageButton) rootView.findViewById(R.id.mp_button_favorite);
         lyricsButton = (ImageButton) rootView.findViewById(R.id.mp_button_lyrics);
         infoButton = (ImageButton) rootView.findViewById(R.id.mp_button_info);
         repeatButton = (ImageButton)rootView.findViewById(R.id.mp_repeat);
@@ -187,6 +188,14 @@ public class FragmentMusicPlayer extends Fragment {
      * Init all the button listeners
      */
     public void initAction(){
+
+        favor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO Implement Favorite field in Song to keep a list of favorist Song
+                favor.setColorFilter(Color.RED);
+            }
+        });
 
         // Open a new fragment when click on lyrics button
         lyricsButton.setOnTouchListener(new View.OnTouchListener() {
@@ -568,6 +577,7 @@ public class FragmentMusicPlayer extends Fragment {
         artist.setTextColor(compColor);
         infoButton.setColorFilter(compColor);
         lyricsButton.setColorFilter(compColor);
+        favor.setColorFilter(compColor);
         timePast.setTextColor(compColor2);
         timeTotal.setTextColor(compColor2);
     }
