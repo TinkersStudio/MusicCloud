@@ -39,7 +39,7 @@ public class FragmentMusicPlayer extends Fragment {
     Context context;
 
     // Widget elements
-    ImageButton lyricsButton, infoButton;
+    ImageButton favor, lyricsButton, infoButton;
     static TextView songTitle, artist, timePast, timeTotal;
     CircularMusicProgressBar circularProgressBar;
     static SeekBar seekBar;
@@ -167,6 +167,7 @@ public class FragmentMusicPlayer extends Fragment {
      */
     public void initLayout()
     {
+        favor = (ImageButton) rootView.findViewById(R.id.mp_button_favorite);
         lyricsButton = (ImageButton) rootView.findViewById(R.id.mp_button_lyrics);
         infoButton = (ImageButton) rootView.findViewById(R.id.mp_button_info);
         repeatButton = (ImageButton)rootView.findViewById(R.id.mp_repeat);
@@ -188,6 +189,14 @@ public class FragmentMusicPlayer extends Fragment {
      */
     public void initAction(){
 
+        favor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO Implement Favorite field in Song to keep a list of favorist Song
+                favor.setColorFilter(Color.RED);
+            }
+        });
+
         // Open a new fragment when click on lyrics button
         lyricsButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -198,6 +207,8 @@ public class FragmentMusicPlayer extends Fragment {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     lyricsButton.setColorFilter(compColor);
                     try {
+                        // Try get song to make sure there is a current song playing
+                        musicService.getPlayer().getCurrentSong();
                         FragmentManager fragmentManager = getFragmentManager();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         FragmentSongLyric songLyric = new FragmentSongLyric();
@@ -225,6 +236,8 @@ public class FragmentMusicPlayer extends Fragment {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     infoButton.setColorFilter(compColor);
                     try {
+                        // Try get song to make sure there is a current song playing
+                        musicService.getPlayer().getCurrentSong();
                         FragmentManager fragmentManager = getFragmentManager();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         FragmentMusicInfo songLyric = new FragmentMusicInfo();
@@ -535,14 +548,11 @@ public class FragmentMusicPlayer extends Fragment {
                 retriever.setDataSource(musicService.getPlayer().getCurrentSong().getPath());
                 byte[] art = retriever.getEmbeddedPicture();
                 bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    circularProgressBar.setClipToOutline(true);
-                    circularProgressBar.setImageBitmap(bitmap);
-                }
             } catch (Exception exception) {
                 Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
-                circularProgressBar.setImageResource(R.drawable.cover_art_stock);
                 bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.cover_art_stock);
+            } finally {
+                circularProgressBar.setImageBitmap(bitmap);
             }
         }
     }
@@ -568,17 +578,48 @@ public class FragmentMusicPlayer extends Fragment {
         artist.setTextColor(compColor);
         infoButton.setColorFilter(compColor);
         lyricsButton.setColorFilter(compColor);
+        favor.setColorFilter(compColor);
         timePast.setTextColor(compColor2);
         timeTotal.setTextColor(compColor2);
     }
 
-    // extract the dominant color in the album cover
+
+    /**
+     * extract the dominant color in first 200x200 area of the album cover
+     * Get nealy correct dominant color of the bitmap
+     * SLOW - O(n2) Algorithm
+     */
+    public static int getDominantColor(Bitmap bitmap) {
+        int redBucket = 0, greenBucket = 0, blueBucket = 0, pixelCount = 0;
+        int w = (bitmap.getWidth() > 200 ? 200 : bitmap.getWidth());
+        int h = (bitmap.getHeight() > 200 ? 200 : bitmap.getHeight());
+        for (int y = 0; y < h ; y++) {
+            for (int x = 0; x < w ; x++) {
+                int c = bitmap.getPixel(x, y);
+
+                pixelCount++;
+                redBucket += Color.red(c);
+                greenBucket += Color.green(c);
+                blueBucket += Color.blue(c);
+            }
+        }
+        return Color.rgb(redBucket / pixelCount,
+                greenBucket / pixelCount,
+                blueBucket / pixelCount);
+    }
+
+    /*
+    /**
+     * Get the medium pixel color
+     * Fast and easy way to extract color from bitmap
+     * Out put not necessary the dominant color of the bitmap
+     * /
     public static int getDominantColor(Bitmap bitmap) {
         Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
         final int color = newBitmap.getPixel(0, 0);
         newBitmap.recycle();
         return color;
-    }
+    }*/
 
     // Calculate the opposite color of a color
     public static int getComplementaryColor(int colorToInvert) {
@@ -599,7 +640,7 @@ public class FragmentMusicPlayer extends Fragment {
         int ave =  (Color.red(colorToInvert)
                 + Color.green(colorToInvert)
                 + Color.blue(colorToInvert)) / 3;
-        return ave >= 128 ?  -16777216 : -1;
+        return ave >= Color.BLACK ?  Color.WHITE : -1;
     }
 
     @Override

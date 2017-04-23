@@ -21,5 +21,7 @@
     <string name="home">Home</string>
     <string name="time_past">00:00</string>
     <string name="time_total">00:00</string>
+    <string name="si_comment_hint">Enter Your Comment About This Song</string>
+
 
 </resources>

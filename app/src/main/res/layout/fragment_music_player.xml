@@ -18,6 +18,13 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:clickable="true"
+            android:id="@+id/mp_button_favorite"
+            android:src="@drawable/ic_heart"
+            android:background="#0000"/>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:clickable="true"
             android:id="@+id/mp_button_lyrics"
             android:src="@drawable/ic_lyrics"
             android:background="#0000"/>

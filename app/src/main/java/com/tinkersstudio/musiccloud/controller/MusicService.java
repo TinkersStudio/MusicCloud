@@ -240,7 +240,7 @@ public class MusicService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(LOG_TAG, "on Receive");
+            Log.i(LOG_TAG, "on Receive");
             int notificationId = intent.getExtras().getInt("notificationId");
 
             if (notificationId == 10231) {
@@ -250,7 +250,7 @@ public class MusicService extends Service {
     }
 
     private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
-        Log.e(LOG_TAG, "createOnDismissedIntent");
+        Log.i(LOG_TAG, "createOnDismissedIntent");
         Intent intent = new Intent(context, NotificationDismissedReceiver.class);
         intent.putExtra("notificationId", notificationId);
 
