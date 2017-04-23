@@ -207,6 +207,8 @@ public class FragmentMusicPlayer extends Fragment {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     lyricsButton.setColorFilter(compColor);
                     try {
+                        // Try get song to make sure there is a current song playing
+                        musicService.getPlayer().getCurrentSong();
                         FragmentManager fragmentManager = getFragmentManager();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         FragmentSongLyric songLyric = new FragmentSongLyric();
@@ -234,6 +236,8 @@ public class FragmentMusicPlayer extends Fragment {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     infoButton.setColorFilter(compColor);
                     try {
+                        // Try get song to make sure there is a current song playing
+                        musicService.getPlayer().getCurrentSong();
                         FragmentManager fragmentManager = getFragmentManager();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         FragmentMusicInfo songLyric = new FragmentMusicInfo();
@@ -544,14 +548,11 @@ public class FragmentMusicPlayer extends Fragment {
                 retriever.setDataSource(musicService.getPlayer().getCurrentSong().getPath());
                 byte[] art = retriever.getEmbeddedPicture();
                 bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    circularProgressBar.setClipToOutline(true);
-                    circularProgressBar.setImageBitmap(bitmap);
-                }
             } catch (Exception exception) {
                 Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
-                circularProgressBar.setImageResource(R.drawable.cover_art_stock);
                 bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.cover_art_stock);
+            } finally {
+                circularProgressBar.setImageBitmap(bitmap);
             }
         }
     }

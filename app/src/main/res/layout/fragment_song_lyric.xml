@@ -9,15 +9,15 @@
         android:id="@+id/custom_lyric_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" /-->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/lyric_header_bar"
-        >
+        android:id="@+id/lyric_header_bar">
         <LinearLayout
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true">
             <TextView
@@ -26,14 +26,26 @@
                 android:id="@+id/lyric_title"
                 android:layout_gravity="center"
                 android:fontFamily="sans-serif-smallcaps"
-                android:text="Song Title Goes Here"/>
+                android:text="Song Title Goes Here"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/lyric_artist"
                 android:layout_gravity="center"
                 android:fontFamily="sans-serif-smallcaps"
-                android:text="Artist Name"/>
+                android:text="Artist Name"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"/>
         </LinearLayout>
 
         <ImageButton
@@ -43,7 +55,7 @@
             android:id="@+id/lyric_quit"
             android:clickable="true"
             android:background="@drawable/ic_action_exit"/>
-    </RelativeLayout>
+    </LinearLayout>
 
 
     <ScrollView
