@@ -62,6 +62,7 @@ public class MusicService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent){
+        super.onUnbind(intent);
         Log.i(LOG_TAG,"onUnbind");
         return false;
     }
@@ -190,11 +191,6 @@ public class MusicService extends Service {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        // Build Prev action button
-        Intent previousIntent = new Intent(this, MusicService.class);
-        previousIntent.setAction("ACTION.PREV_ACTION");
-        PendingIntent ppreviousIntent = PendingIntent.getService(this, 0, previousIntent, 0);
-
         // Build Play/Pause action button
         Intent playIntent = new Intent(this, MusicService.class);
         playIntent.setAction("ACTION.PLAY_ACTION");
@@ -204,6 +200,12 @@ public class MusicService extends Service {
         Intent nextIntent = new Intent(this, MusicService.class);
         nextIntent.setAction("ACTION.NEXT_ACTION");
         PendingIntent pnextIntent = PendingIntent.getService(this, 0, nextIntent, 0);
+
+        // Build Prev action button
+        Intent previousIntent = new Intent(this, MusicService.class);
+        previousIntent.setAction("ACTION.PREV_ACTION");
+        PendingIntent ppreviousIntent = PendingIntent.getService(this, 0, previousIntent, 0);
+
 
         // add all button to the Main element of the notif bar
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.launcher);
@@ -218,7 +220,7 @@ public class MusicService extends Service {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setDeleteIntent(createOnDismissedIntent(this, notificaitonId))
-                .addAction(android.R.drawable.ic_media_previous, "Previous", ppreviousIntent)
+                .addAction(android.R.drawable.ic_media_previous,"Prev", ppreviousIntent)
                 .addAction(playState == MyFlag.PLAY? android.R.drawable.ic_media_play : android.R.drawable.ic_media_pause,
                         "Play", pplayIntent)
                 .addAction(android.R.drawable.ic_media_next, "Next", pnextIntent)

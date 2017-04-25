@@ -100,7 +100,7 @@ public class FragmentMusicPlayer extends Fragment {
 
     @Override
     public void onStart() {
-        Log.e(LOG_TAG, "onStart");
+        Log.i(LOG_TAG, "onStart");
         super.onStart();
 
         // Start the handler, which run the Runnable mUpdateTimeTask
@@ -109,13 +109,13 @@ public class FragmentMusicPlayer extends Fragment {
 
     @Override
     public void onResume() {
-        Log.e(LOG_TAG, "onResume");
+        Log.i(LOG_TAG, "onResume");
         super.onResume();
 
         // Try to set the whole screen if there were some music is playing
         try {
-            this.setColor();
             this.updateSongPlaying();
+            this.setColor();
         }
         catch (Exception e) {
             Log.i(LOG_TAG, "onResume fail to get the current Song playing");
@@ -549,8 +549,12 @@ public class FragmentMusicPlayer extends Fragment {
                 byte[] art = retriever.getEmbeddedPicture();
                 bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
             } catch (Exception exception) {
-                Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
-                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.cover_art_stock);
+                Log.i(LOG_TAG, "NO COVER ART FOUND ");
+                try {
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cover_art_stock);
+                } catch (java.lang.IllegalStateException e) {
+                    Log.i(LOG_TAG, "This Fragment not shown");
+                }
             } finally {
                 circularProgressBar.setImageBitmap(bitmap);
             }

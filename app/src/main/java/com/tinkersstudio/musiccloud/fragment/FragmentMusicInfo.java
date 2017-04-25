@@ -3,21 +3,17 @@ package com.tinkersstudio.musiccloud.fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,7 +41,6 @@ public class FragmentMusicInfo extends Fragment {
     LinearLayout header;
     int dominantColor, compColor, compColor2;
     FragmentSongLyric fmSongLyric;
-    ImageButton quitButton;
 
     MusicService musicService = ((MainActivity)getActivity()).myService;
 
@@ -66,7 +61,6 @@ public class FragmentMusicInfo extends Fragment {
         artist = (TextView)view.findViewById(R.id.si_artist);
         favor = (ImageButton)view.findViewById(R.id.si_favor);
         artCover = (ImageView)view.findViewById(R.id.si_cover_art);
-        quitButton = (ImageButton)view.findViewById(R.id.si_quit);
 
         //Set an Apater for the View Pager
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
@@ -74,23 +68,6 @@ public class FragmentMusicInfo extends Fragment {
             @Override
             public void run() {
                 tabLayout.setupWithViewPager(viewPager);
-            }
-        });
-
-        //set quit button
-        // set listener to quit button
-        quitButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    quitButton.setColorFilter(R.color.colorPrimaryDark);
-                    return true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    getActivity().getSupportFragmentManager().popBackStack();
-                    quitButton.setColorFilter(R.color.tw__light_gray);
-                    return true;
-                }
-                return false;
             }
         });
 

@@ -15,7 +15,9 @@ import com.tinkersstudio.musiccloud.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.adapter.SongListAdapter;
+import com.tinkersstudio.musiccloud.controller.MusicService;
 import com.tinkersstudio.musiccloud.model.Song;
 
 /**
@@ -29,6 +31,7 @@ public class FragmentFavoriteList extends Fragment {
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
     private static final int DATASET_COUNT = 60;
+    MusicService myService = ((MainActivity)getActivity()).myService;
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -78,7 +81,7 @@ public class FragmentFavoriteList extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        mAdapter = new SongListAdapter(mDataset);
+        mAdapter = new SongListAdapter(mDataset, myService);
         // Set CustomAdapter as the com.tinkersstudio.musiccloud.adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         // END_INCLUDE(initializeRecyclerView)

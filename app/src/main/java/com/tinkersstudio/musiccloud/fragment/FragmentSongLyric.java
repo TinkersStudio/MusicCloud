@@ -53,7 +53,6 @@ public class FragmentSongLyric extends Fragment {
     MusicService newService = ((MainActivity)getActivity()).myService;
     TextView lyricText, lyricTitle, lyricArtist;
     LinearLayout wholeScreen, lyricHeaderBar;
-    ImageButton exitButton;
     String trackName = "", artistName = "";
     Bitmap bitmap;
     BitmapDrawable newBitmap;
@@ -69,7 +68,6 @@ public class FragmentSongLyric extends Fragment {
         lyricText = (TextView) rootView.findViewById(R.id.lyric_text);
         lyricTitle = (TextView) rootView.findViewById(R.id.lyric_title);
         lyricArtist = (TextView) rootView.findViewById(R.id.lyric_artist);
-        exitButton = (ImageButton) rootView.findViewById(R.id.lyric_quit);
         wholeScreen = (LinearLayout) rootView.findViewById((R.id.lyric_screen));
         lyricHeaderBar = (LinearLayout) rootView.findViewById(R.id.lyric_header_bar);
 
@@ -130,28 +128,9 @@ public class FragmentSongLyric extends Fragment {
                 newBitmap = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, width, height, true));
             }
 
-
-            // set listener to quit button
-            exitButton.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        exitButton.setColorFilter(Color.RED);
-                        return true;
-                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                        getActivity().getSupportFragmentManager().popBackStack();
-                        exitButton.setColorFilter(compColor2);
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
             wholeScreen.setBackgroundDrawable(newBitmap);
 
             lyricHeaderBar.setBackgroundColor(dominantColor);
-
-            exitButton.setColorFilter(compColor2); // TODO: Don't know why unable to set Color
 
             lyricTitle.setText(trackName);
             lyricTitle.setTextSize((float)22);

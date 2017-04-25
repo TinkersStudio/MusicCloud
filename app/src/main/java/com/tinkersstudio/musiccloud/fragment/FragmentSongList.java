@@ -15,7 +15,9 @@ import com.tinkersstudio.musiccloud.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.adapter.SongListAdapter;
+import com.tinkersstudio.musiccloud.controller.MusicService;
 import com.tinkersstudio.musiccloud.model.Song;
 
 /**
@@ -39,6 +41,7 @@ public class FragmentSongList extends Fragment {
     protected SongListAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     protected List<Song> mDataset;
+    MusicService myService = ((MainActivity)getActivity()).myService;
 
     public FragmentSongList(){
         //require an empty constructor
@@ -46,9 +49,6 @@ public class FragmentSongList extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDataset = new ArrayList<Song>();
-        // Initialize dataset, this data would usually come from a local content provider or
-        // remote server.
         initDataset();
     }
 
@@ -75,7 +75,7 @@ public class FragmentSongList extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        mAdapter = new SongListAdapter(mDataset);
+        mAdapter = new SongListAdapter(mDataset, myService);
         // Set CustomAdapter as the com.tinkersstudio.musiccloud.adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         // END_INCLUDE(initializeRecyclerView)
@@ -137,7 +137,7 @@ public class FragmentSongList extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
-        Song newSong = new Song(0, "Hello", "John Lenon", 1, "somePath");
-        mDataset.add(newSong);
+        MusicService musicService = ((MainActivity)getActivity()).myService;
+        mDataset = musicService.getPlayer().getSongList();
     }
 }

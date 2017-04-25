@@ -170,6 +170,12 @@ public class MainActivity extends AppCompatActivity
                 //Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentSetting();
                 break;
+            case R.id.navigation_view_quit:
+                myService.getPlayer().releasePlayer();
+                myService.stopForeground(true);
+                finishAffinity();
+                System.exit(0);
+                break;
         }
         //fragmentTransaction.replace(R.id.main_screen_content_frame,fragment);
         fragmentTransaction.replace(R.id.fragment_container,fragment);

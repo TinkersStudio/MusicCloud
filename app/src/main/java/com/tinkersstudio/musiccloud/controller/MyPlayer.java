@@ -35,9 +35,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     private boolean isRepeat;
     private int     currentSongPosition;
     private Song    currentSong;
-
     // Hole the currentPosition of the song before being pause
-    private long    lastCurrentPosition;
+    private long    lastCurrentPosition = 0;
 
     /* song list to play */
     private ArrayList<Song> songList;
@@ -76,6 +75,12 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         // Turning on the media player.
         // This does not mean it plays the song yet,
         player.start();
+
+        if (lastCurrentPosition > 0) {
+            Log.i(LOG_TAG, "Resume playing at " + lastCurrentPosition);
+            player.seekTo((int)lastCurrentPosition);
+            lastCurrentPosition = 0;
+        }
     }
 
     /**
@@ -118,6 +123,16 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     }
 
     /**
+     * Play the music from a specific index
+     * @param index
+     */
+    public void playAtIndex(int index){
+        Log.i(LOG_TAG, "Play at Index : ---- " +index);
+        setCurrentSongPosition(index);
+        this.pause();
+        this.play();
+    }
+    /**
      * This method get called when client the button play/pause invoked
      * This will either play the music or pause the music
      */
@@ -130,12 +145,13 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
         // First time playing music, set the index to the first song on the list
         if (currentSongPosition < 0 ) {
-            currentSongPosition = 0;
+            setCurrentSongPosition(0);
         }
 
         // Pause player if it is playing, then return
         if (player.isPlaying()) {
-            Log.i(LOG_TAG, "pause");
+            Log.i(LOG_TAG, "pause at " + player.getCurrentPosition());
+            lastCurrentPosition = player.getCurrentPosition();
             pause();
             isPaused = true;
             owner.updateNotifBar(MyFlag.PLAY, currentSong.getTitle(), currentSong.getArtist());
@@ -164,6 +180,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         // The song is feeded into the player and ready to be played
         player.prepareAsync();
+
         owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
     }
 
@@ -185,6 +202,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             throw new NoSongToPlayException("There no such a song to play");
         }
 
+        lastCurrentPosition = 0;
+
         // If the player is playing, pause it first before seeking to prev song
         if (player.isPlaying())
             pause();
@@ -193,15 +212,15 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
         //shuffle case
         if(isShuffle) {
-            currentSongPosition = (int) (Math.random() * (songList.size() - 1));
+            setCurrentSongPosition( (int) (Math.random() * (songList.size() - 1)));
             Log.i(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
         }
         // Regular case
         else if (!isRepeat) {
             if (currentSongPosition == 0)
-                currentSongPosition = songList.size() - 1;
+                setCurrentSongPosition( songList.size() - 1);
             else
-                currentSongPosition--;
+                setCurrentSongPosition(currentSongPosition -1);
 
             Log.i(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
         }
@@ -231,6 +250,10 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
+
+
+        lastCurrentPosition = 0;
+
         // If the player is playing, pause it first before seeking to next song
         if (player.isPlaying())
             pause();
@@ -239,15 +262,15 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         // MOVE index to next song according to shuffle/repeat/regular mode
         //shuffle case
         if(isShuffle){
-            currentSongPosition = (int)(Math.random() * (songList.size()-1));
+            setCurrentSongPosition( (int)(Math.random() * (songList.size()-1)));
             Log.i(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
         }
             // Regular case
         else if (!isRepeat) {
             if (currentSongPosition == songList.size() - 1)
-                currentSongPosition = 0;
+                setCurrentSongPosition( 0);
             else
-                currentSongPosition++;
+                setCurrentSongPosition(currentSongPosition + 1);
             Log.i(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
         }
         else
@@ -327,7 +350,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         return songList.size();
     }
 
-
     public void printSongList() {
         Log.i(LOG_TAG,"Song List on MyPLAYER");
         for (Song aSong: songList) {
@@ -336,7 +358,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     }
 
     /**
-     * To play a specific song on the list
+     * To set new song position
      * @param newPos
      */
     public void setCurrentSongPosition(int newPos) {
@@ -365,9 +387,11 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         this.player.release();
     }
 
+    public ArrayList<Song> getSongList(){return songList;}
     public long getTotalDuration() {
         return this.player.getDuration();
     }
+    public int getCurrentSongPosition() {return this.currentSongPosition;}
     public long getCurrentPosn() {
         return this.player.getCurrentPosition();
     }
