@@ -23,5 +23,8 @@
     <string name="time_total">00:00</string>
     <string name="si_comment_hint">Enter Your Comment About This Song</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

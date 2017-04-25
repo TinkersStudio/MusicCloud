@@ -652,4 +652,7 @@ public class FragmentMusicPlayer extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
+
+
+    //TODO AsynTask for update the song.
 }
