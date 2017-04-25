@@ -4,10 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -15,12 +13,8 @@ import android.widget.TextView;
 import android.widget.LinearLayout;
 
 import com.tinkersstudio.musiccloud.R;
-
-import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.adapter.SongListAdapter;
 import com.tinkersstudio.musiccloud.controller.MusicService;
-import com.tinkersstudio.musiccloud.fragment.FragmentMusicPlayer;
-import com.tinkersstudio.musiccloud.model.PlayList;
 import com.tinkersstudio.musiccloud.model.Song;
 
 /**
@@ -53,6 +47,7 @@ public class SongViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setService(MusicService musicService){myService = musicService;}
+
     public void setSong(Song song)
     {
         this.song = song;
@@ -62,6 +57,7 @@ public class SongViewHolder extends RecyclerView.ViewHolder{
             retriever.setDataSource(song.getPath());
             byte[] art = retriever.getEmbeddedPicture();
             bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
+            retriever.release();
         } catch (Exception exception) {
             Log.i(LOG_TAG, "NO COVER ART FOUND ");
             bitmap = BitmapFactory.decodeResource(item.getResources(),R.drawable.cover_art_stock);

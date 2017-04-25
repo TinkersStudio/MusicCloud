@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -19,11 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tinkersstudio.musiccloud.R;
-import com.tinkersstudio.musiccloud.activities.MainActivity;
-import com.tinkersstudio.musiccloud.controller.MusicService;
 
-import org.jmusixmatch.MusixMatch;
+import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.model.Song;
 
 /**
  * Created by Owner on 3/4/2017.
@@ -33,7 +30,7 @@ public class FragmentMusicInfo extends Fragment {
     Context context;
     public static TabLayout tabLayout;
     public static ViewPager viewPager;
-    public static int int_items = 2 ;
+    public static int int_items = 3 ;
     TextView title, artist;
     ImageButton favor;
     ImageView artCover;
@@ -41,12 +38,13 @@ public class FragmentMusicInfo extends Fragment {
     LinearLayout header;
     int dominantColor, compColor, compColor2;
     FragmentSongLyric fmSongLyric;
-
-    MusicService musicService = ((MainActivity)getActivity()).myService;
+    Song currentSong;
 
     public FragmentMusicInfo() {
         //require constructor
     }
+
+    public void setCurrentSong(Song currentSong){this.currentSong = currentSong;}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,9 +71,10 @@ public class FragmentMusicInfo extends Fragment {
 
         try {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(musicService.getPlayer().getCurrentSong().getPath());
+            retriever.setDataSource(currentSong.getPath());
             byte[] art = retriever.getEmbeddedPicture();
             bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
+            retriever.release();
         } catch (Exception exception) {
             bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.cover_art_stock);
         } finally {
@@ -85,10 +84,10 @@ public class FragmentMusicInfo extends Fragment {
             artCover.setImageBitmap(bitmap);
         }
         header.setBackgroundColor(dominantColor);
-        title.setText(musicService.getPlayer().getCurrentSong().getTitle());
+        title.setText(currentSong.getTitle());
         title.setTextColor(compColor2);
         title.setSelected(true);
-        artist.setText(musicService.getPlayer().getCurrentSong().getArtist());
+        artist.setText(currentSong.getArtist());
         artist.setTextColor(compColor);
         artist.setSelected(true);
 
@@ -125,9 +124,19 @@ public class FragmentMusicInfo extends Fragment {
         public Fragment getItem(int position)
         {
             switch (position){
-                case 0 : return new FragmentMusicInfoDetails();
+                case 0 : {
+                    FragmentMusicInfoDetails fmInfoDetails = new FragmentMusicInfoDetails();
+                    fmInfoDetails.setCurrentSong(currentSong);
+                    return fmInfoDetails;
+                }
                 case 1 : {
+                    fmSongLyric.setCurrentSong(currentSong);
                     return fmSongLyric;
+                }
+                case 2: {
+                    FragmentMusicInfoDetails fmInfoDetails = new FragmentMusicInfoDetails();
+                    fmInfoDetails.setCurrentSong(currentSong);
+                    return fmInfoDetails;
                 }
             }
             return null;
@@ -152,6 +161,9 @@ public class FragmentMusicInfo extends Fragment {
                     return "Details";
                 case 1 :
                     return "Lyric";
+                case 2 : {
+                    return (currentSong == null ? "Artist" : currentSong.getArtist());
+                }
             }
             return null;
         }

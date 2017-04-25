@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:id="@+id/si_detail_item">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:id="@+id/si_detail_bar">
+        <TextView
+            android:layout_weight="1.3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Album"
+            android:gravity="center"
+            android:textColor="#FFFF"
+            android:textSize="7pt"
+            android:id="@+id/si_detail_attribute"/>
+        <TextView
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/si_detail_value"
+            android:gravity="center_vertical"
+            android:hint="Not available"
+            android:textColorHint="#FFFF"
+            android:textColor="#FFFF"
+            android:textSize="7pt" />
+    </LinearLayout>
+    <View
+        android:layout_marginBottom="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#d6c982"/>
+</LinearLayout>

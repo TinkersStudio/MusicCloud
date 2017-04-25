@@ -41,6 +41,8 @@ public class FragmentSongList extends Fragment {
     protected SongListAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
     protected List<Song> mDataset;
+
+    // Need service to pass to Song View Holder in order to play song at index
     MusicService myService = ((MainActivity)getActivity()).myService;
 
     public FragmentSongList(){
@@ -137,7 +139,6 @@ public class FragmentSongList extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
-        MusicService musicService = ((MainActivity)getActivity()).myService;
-        mDataset = musicService.getPlayer().getSongList();
+        mDataset = myService.getPlayer().getSongList();
     }
 }

@@ -14,9 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.view.WindowManager;
 import android.view.Display;
 import 	android.graphics.Point;
@@ -35,8 +33,7 @@ import org.jmusixmatch.entity.track.TrackData;
 
 import java.util.ArrayList;
 
-import com.tinkersstudio.musiccloud.controller.MusicService;
-import com.tinkersstudio.musiccloud.controller.NoSongToPlayException;
+import com.tinkersstudio.musiccloud.model.Song;
 
 import es.dmoral.toasty.Toasty;
 
@@ -49,8 +46,7 @@ public class FragmentSongLyric extends Fragment {
     String API_KEY = "f4337155f55d30c22e85a96f2dc674c8";
     MusixMatch musixMatch = new MusixMatch(API_KEY);
     String LOG_TAG = "FragmentSongLyric";
-
-    MusicService newService = ((MainActivity)getActivity()).myService;
+    Song currentSong;
     TextView lyricText, lyricTitle, lyricArtist;
     LinearLayout wholeScreen, lyricHeaderBar;
     String trackName = "", artistName = "";
@@ -59,6 +55,7 @@ public class FragmentSongLyric extends Fragment {
     boolean hideQuit = false;
     int dominantColor, compColor, compColor2;
 
+    public void setCurrentSong(Song currentSong) {this.currentSong = currentSong;}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,8 +68,8 @@ public class FragmentSongLyric extends Fragment {
         wholeScreen = (LinearLayout) rootView.findViewById((R.id.lyric_screen));
         lyricHeaderBar = (LinearLayout) rootView.findViewById(R.id.lyric_header_bar);
 
-        trackName = newService.getPlayer().getCurrentSong().getTitle();
-        artistName = newService.getPlayer().getCurrentSong().getArtist();
+        trackName = currentSong.getTitle();
+        artistName = currentSong.getArtist();
 
         if (trackName.equals("") || artistName.equals(""))
         {
@@ -102,6 +99,7 @@ public class FragmentSongLyric extends Fragment {
         super.onResume();
         if (hideQuit) {
             lyricHeaderBar.removeAllViews();
+            lyricText.setTextColor(Color.WHITE);
         }
         else {
 
@@ -115,8 +113,9 @@ public class FragmentSongLyric extends Fragment {
             // Get the Cover art, scale it down to blur it, then set background with the blurred image
             try {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(newService.getPlayer().getCurrentSong().getPath());
+                retriever.setDataSource(currentSong.getPath());
                 byte[] art = retriever.getEmbeddedPicture();
+                retriever.release();
                 bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
             } catch (Exception exception) {
                 Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());

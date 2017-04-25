@@ -212,6 +212,7 @@ public class FragmentMusicPlayer extends Fragment {
                         FragmentManager fragmentManager = getFragmentManager();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         FragmentSongLyric songLyric = new FragmentSongLyric();
+                        songLyric.setCurrentSong(musicService.getPlayer().getCurrentSong());
                         fragmentTransaction.addToBackStack("FragmentMusicPlayer");
                         fragmentTransaction.hide(FragmentMusicPlayer.this);
                         fragmentTransaction.add(R.id.fragment_container, songLyric);
@@ -241,6 +242,7 @@ public class FragmentMusicPlayer extends Fragment {
                         FragmentManager fragmentManager = getFragmentManager();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         FragmentMusicInfo songLyric = new FragmentMusicInfo();
+                        songLyric.setCurrentSong(musicService.getPlayer().getCurrentSong());
                         fragmentTransaction.addToBackStack("FragmentMusicPlayer");
                         fragmentTransaction.hide(FragmentMusicPlayer.this);
                         fragmentTransaction.add(R.id.fragment_container, songLyric);
@@ -548,6 +550,7 @@ public class FragmentMusicPlayer extends Fragment {
                 retriever.setDataSource(musicService.getPlayer().getCurrentSong().getPath());
                 byte[] art = retriever.getEmbeddedPicture();
                 bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
+                retriever.release();
             } catch (Exception exception) {
                 Log.i(LOG_TAG, "NO COVER ART FOUND ");
                 try {
