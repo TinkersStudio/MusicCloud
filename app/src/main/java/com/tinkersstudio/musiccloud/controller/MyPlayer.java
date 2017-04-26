@@ -399,4 +399,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         this.player.seekTo(seekTo);
         return true;
     }
+    public int getAudioSessionId(){return player.getAudioSessionId();}
+    public void setVolume(float left, float right) {
+        player.setVolume(left,right);
+    }
 }

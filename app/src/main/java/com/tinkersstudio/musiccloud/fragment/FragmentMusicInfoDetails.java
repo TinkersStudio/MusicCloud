@@ -140,9 +140,11 @@ public class FragmentMusicInfoDetails extends Fragment {
         MediaMetadataRetriever metaRetriver;
         metaRetriver = new MediaMetadataRetriever();
         metaRetriver.setDataSource(currentSong.getPath());
+
+        mInfo.add(new Info ("Title", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)));
+        mInfo.add(new Info ("Artist", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)));
         mInfo.add(new Info ("Album", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)));
         mInfo.add(new Info ("Author", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR)));
-        mInfo.add(new Info ("Composer", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER)));
         mInfo.add(new Info ("Duration", TimeConverter.milliSecondsToTimeString(
                 Integer.parseInt(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)))));
         String rate = metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
@@ -160,6 +162,5 @@ public class FragmentMusicInfoDetails extends Fragment {
             value = String.format("%.0f", file_size) + " Kb";
         mInfo.add(new Info ("Size", value));
         metaRetriver.release();
-        //TODO Use myService
     }
 }

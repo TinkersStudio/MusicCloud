@@ -215,6 +215,12 @@ public class MainActivity extends AppCompatActivity
             Log.i(LOG_TAG, "No previous Service found");
         } else {
             Log.i(LOG_TAG, "Has found Previous Service ");
+
+            //FIXME When user click on Notification bar => Show the Music Player
+            Fragment fragment = new FragmentMusicPlayer();
+            ((FragmentMusicPlayer)fragment).setMusicService(myService);
+            fragmentTransaction.replace(R.id.fragment_container,fragment);
+            //fragmentTransaction.commit();
         }
     }
 
