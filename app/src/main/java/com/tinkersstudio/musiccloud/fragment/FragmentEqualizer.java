@@ -16,33 +16,62 @@ import android.widget.SeekBar;
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.controller.MyPlayer;
+import com.tinkersstudio.musiccloud.model.PresetFrequency;
 import com.xw.repo.BubbleSeekBar;
+
 
 
 /**
  * Created by anhnguyen on 2/6/17.
+ *
+ *
+ *  Equalizer Stats
+ *  Band	Freq(Hz)	    Center(Hz)	Type
+ *  ————————————————————————————————————————
+ *  1		30  - 120  	    60		    Bass
+ *  2 		120 - 460 	    230		    Low-Mid
+ *  3		460 - 1800	    910		    Mid
+ *  4		1.8 k - 7 k 	3.6 k		Low-Treble
+ *  5		7k - …		    14 k		Treble
+ *
+ *  Preset frequencies
+ *  Band    Folk    Hip-Hop	HeavyMetal  Jazz    Pop 	Rock    Normal	Classical   Dance   Flat
+ *  ——————————————————————————————————————————————————————————————————————-------------------
+ *  1		300		500		400		    400	    -100	500		300		500		    600     0
+ *  2 		0		300		100		    200	     200	300		0		300		    0		0
+ *  3		0		0		900		    -200	500		-100	0		-200	    200		0
+ *  4		200		100		300		    200		100		300		0		400		    400		0
+ *  5		-100	300		  0		    500    	-200	500		300		400		    100		0
+ *
  */
 
 public class FragmentEqualizer extends Fragment {
-    String LOG_TAG = "FragmentEqualizer";
-    Context context;
-    BubbleSeekBar mBubbleSeekBar1;
-    BubbleSeekBar mBubbleSeekBar2;
-    BubbleSeekBar mBubbleSeekBar3;
-    BubbleSeekBar mBubbleSeekBar4;
-    BubbleSeekBar mBubbleSeekBar5;
-    SeekBar volumeBalance;
-    NumberPicker presetMode;
-    View viewRoot;
-    Equalizer myEQ;
-    MusicService myService = ((MainActivity)getActivity()).myService;
-    String[] presetList;
 
-    boolean isMovingBalance;
+    private String LOG_TAG = "FragmentEqualizer";
 
-    public FragmentEqualizer(){
-        //require an empty constructor
-    }
+    private View viewRoot;
+
+    // To modify sound
+    private Equalizer myEQ;
+    private MyPlayer myPlayer;
+
+    // Preset variables
+    private NumberPicker presetMode;
+    private String[] presetListName;    // Just list of Name to display
+    private PresetFrequency[] presetFrequencies;    // Actual preset frequencies data
+
+    private BubbleSeekBar mBubbleSeekBar1, mBubbleSeekBar2, mBubbleSeekBar3, mBubbleSeekBar4, mBubbleSeekBar5;
+    private boolean isMovingBalance;
+
+    private SeekBar volumeBalance;
+
+
+    /**
+     * Setter of MusicPlayer
+     * @param myPlayer is the player on back ground
+     */
+    public void setMusicPlayer(MyPlayer myPlayer) {this.myPlayer = myPlayer;}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,30 +80,17 @@ public class FragmentEqualizer extends Fragment {
         setHasOptionsMenu(true);
 
         viewRoot = inflater.inflate(R.layout.fragment_equalizer, container, false);
+
+        // Get Equalizer
+        myEQ = new Equalizer(0, myPlayer.getAudioSessionId());
+        myEQ.setEnabled(true);
+
+        getPresetList(); // get presetList before initLayout because the picker need data
+        initLayout();
+        setListener();
         return viewRoot;
     }
 
-    /**
-     * Since the Equalizer need getAudioSessionId() to access the Audio
-     *  to get data before seting up layout
-     *
-     *  on Resume will do jobs of setting up layout to make sure this Equalizer already have
-     *  access to getAudioSessionId()
-     */
-    @Override
-    public void onResume(){
-        super.onResume();
-
-        myEQ = new Equalizer(0, myService.getPlayer().getAudioSessionId());
-        myEQ.setEnabled(true);
-
-
-        // Need to have getAudioSessionId() prior to
-        getPresetList(); // get presetList before initLayout
-        initLayout();
-        setListener();
-
-    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -85,6 +101,9 @@ public class FragmentEqualizer extends Fragment {
         super.onDetach();
     }
 
+    /**
+     *  Initialize the layout
+     */
     public void initLayout()
     {
         mBubbleSeekBar1 = (BubbleSeekBar) viewRoot.findViewById(R.id.eq_seekbar1);
@@ -100,10 +119,10 @@ public class FragmentEqualizer extends Fragment {
         //Set the minimum value of NumberPicker
         presetMode.setMinValue(0); //from array first value
         //Specify the maximum value/number of NumberPicker
-        presetMode.setMaxValue(presetList.length-1); //to array last value
+        presetMode.setMaxValue(presetListName.length-1); //to array last value
 
         //Specify the NumberPicker data source as array elements
-        presetMode.setDisplayedValues(presetList);
+        presetMode.setDisplayedValues(presetListName);
 
         //Gets whether the selector wheel wraps when reaching the min/max value.
         presetMode.setWrapSelectorWheel(true);
@@ -116,126 +135,213 @@ public class FragmentEqualizer extends Fragment {
         }
     }
 
+    /**
+     * Set up listener
+     */
     private void setListener(){
         //Set a value change listener for NumberPicker
         presetMode.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
+                //Log.i(LOG_TAG, "User select preset mode: " + presetListName[newVal]);
 
-                // Set the preset Mode if selected preset mode is not the last one on the list (Custom)
-                // Also reset all the seekbars according to new Mode
-                Log.i(LOG_TAG, "User select preset mode: " + presetList[newVal]);
-                if (newVal < presetList.length - 1) {
-                    myEQ.usePreset((short) newVal);
+                // SET the equalizer to use the preset frequencies
+                // and reset seekbar to new Mode
+                for (PresetFrequency pf : presetFrequencies) {
+                    if (presetListName[newVal].toLowerCase().compareTo(pf.getName()) == 0) {
+                        mBubbleSeekBar1.setProgress((float) pf.getBand1());
+                        mBubbleSeekBar2.setProgress((float) pf.getBand2());
+                        mBubbleSeekBar3.setProgress((float) pf.getBand3());
+                        mBubbleSeekBar4.setProgress((float) pf.getBand4());
+                        mBubbleSeekBar5.setProgress((float) pf.getBand5());
+                        myEQ.setBandLevel((short)0, (short)pf.getBand1());
+                        myEQ.setBandLevel((short)1, (short)pf.getBand2());
+                        myEQ.setBandLevel((short)2, (short)pf.getBand3());
+                        myEQ.setBandLevel((short)3, (short)pf.getBand4());
+                        myEQ.setBandLevel((short)4, (short)pf.getBand5());
+                    }
+                }
+            }
+        });
 
-                    //reset seekbar to new Mode
-                    //FIXME fine the new range of each band to set
-                    mBubbleSeekBar1.setProgress((float)0);
+        /** -----------------------CUSTOMIZE Equalizer-----------------------------
+         * when user maka change to a band,
+         * set new frequency of that band , reset other bands if user just start customizing
+         * set picker to show "CUSTOM" mode
+         */
+
+        // BAND 1 - BASS (30  - 120 Hz)
+        mBubbleSeekBar1.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListenerAdapter() {
+            @Override
+            public void getProgressOnActionUp(int progress) {
+
+                // Reset all other seekbar if user start customizing equalizer
+                // (current preset mode is not CUSTOM)
+                if (presetListName[presetMode.getValue()].toLowerCase().compareTo("custom") != 0) {
                     mBubbleSeekBar2.setProgress((float)0);
                     mBubbleSeekBar3.setProgress((float)0);
                     mBubbleSeekBar4.setProgress((float)0);
                     mBubbleSeekBar5.setProgress((float)0);
                 }
-            }
-        });
-
-        mBubbleSeekBar1.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListenerAdapter() {
-            @Override
-            public void getProgressOnActionUp(int progress) {
                 // Set the picker to show the last preset mode which is "Custom"
-                Log.i(LOG_TAG, "Set Picker to point to Custom: --> " + presetList[presetList.length - 1]);
-                presetMode.setValue(presetList.length - 1);
+                presetMode.setValue(presetListName.length - 1);
 
-                //TODO: change the Equalizer's range according to user's customization
+                // Set new frequency to this band
+                // Make sure the hardware does support up to this band
+                if (myEQ.getNumberOfBands() >= 0) {
+                    myEQ.setBandLevel((short) 0, (short) progress);
+                }
             }
         });
 
+        // BAND 2 - Low-MID (120 - 460 Hz)
         mBubbleSeekBar2.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListenerAdapter() {
             @Override
             public void getProgressOnActionUp(int progress) {
-                // Set the picker to show the last preset mode which is "Custom"
-                Log.i(LOG_TAG, "Set Picker to point to Custom: --> " + presetList[presetList.length - 1]);
-                presetMode.setValue(presetList.length - 1);
 
-                //TODO: change the Equalizer's range according to user's customization
+                // Reset all other seekbar if user start customizing equalizer
+                // (current preset mode is not CUSTOM)
+                if (presetListName[presetMode.getValue()].toLowerCase().compareTo("custom") != 0) {
+                    mBubbleSeekBar1.setProgress((float)0);
+                    mBubbleSeekBar3.setProgress((float)0);
+                    mBubbleSeekBar4.setProgress((float)0);
+                    mBubbleSeekBar5.setProgress((float)0);
+                }
+                // Set the picker to show the last preset mode which is "Custom"
+                presetMode.setValue(presetListName.length - 1);
+
+                // Set new frequency to this band
+                // Make sure the hardware does support up to this band
+                if (myEQ.getNumberOfBands() >= 0) {
+                    myEQ.setBandLevel((short) 1, (short) progress);
+                }
             }
         });
 
+        // BAND 3 - MID (460 Hz - 1.8 KHz)
         mBubbleSeekBar3.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListenerAdapter() {
             @Override
             public void getProgressOnActionUp(int progress) {
-                // Set the picker to show the last preset mode which is "Custom"
-                Log.i(LOG_TAG, "Set Picker to point to Custom: --> " + presetList[presetList.length - 1]);
-                presetMode.setValue(presetList.length - 1);
 
-                //TODO: change the Equalizer's range according to user's customization
+                // Reset all other seekbar if user start customizing equalizer
+                // (current preset mode is not CUSTOM)
+                if (presetListName[presetMode.getValue()].toLowerCase().compareTo("custom") != 0) {
+                    mBubbleSeekBar1.setProgress((float)0);
+                    mBubbleSeekBar2.setProgress((float)0);
+                    mBubbleSeekBar4.setProgress((float)0);
+                    mBubbleSeekBar5.setProgress((float)0);
+                }
+                // Set the picker to show the last preset mode which is "Custom"
+                presetMode.setValue(presetListName.length - 1);
+
+                // Set new frequency to this band
+                // Make sure the hardware does support up to this band
+                if (myEQ.getNumberOfBands() >= 0) {
+                    myEQ.setBandLevel((short) 2, (short) progress);
+                }
             }
         });
 
+        // BAND 4 - Low-TREBLE (1.8 - 7 KHz)
         mBubbleSeekBar4.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListenerAdapter() {
             @Override
             public void getProgressOnActionUp(int progress) {
-                // Set the picker to show the last preset mode which is "Custom"
-                Log.i(LOG_TAG, "Set Picker to point to Custom: --> " + presetList[presetList.length - 1]);
-                presetMode.setValue(presetList.length - 1);
 
-                //TODO: change the Equalizer's range according to user's customization
+                // Reset all other seekbar if user start customizing equalizer
+                // (current preset mode is not CUSTOM)
+                if (presetListName[presetMode.getValue()].toLowerCase().compareTo("custom") != 0) {
+                    mBubbleSeekBar1.setProgress((float)0);
+                    mBubbleSeekBar2.setProgress((float)0);
+                    mBubbleSeekBar3.setProgress((float)0);
+                    mBubbleSeekBar5.setProgress((float)0);
+                }
+                // Set the picker to show the last preset mode which is "Custom"
+                presetMode.setValue(presetListName.length - 1);
+
+                /// Set new frequency to this band
+                // Make sure the hardware does support up to this band
+                if (myEQ.getNumberOfBands() >= 0) {
+                    myEQ.setBandLevel((short) 3, (short) progress);
+                }
             }
         });
 
+        // BAND 5 - TREBLE ( > 7 KHz)
         mBubbleSeekBar5.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListenerAdapter() {
             @Override
             public void getProgressOnActionUp(int progress) {
-                // Set the picker to show the last preset mode which is "Custom"
-                Log.i(LOG_TAG, "Set Picker to point to Custom: --> " + presetList[presetList.length - 1]);
-                presetMode.setValue(presetList.length - 1);
 
-                //TODO: change the Equalizer's range according to user's customization
+                // Reset all other seekbar if user start customizing equalizer
+                // (current preset mode is not CUSTOM)
+                if (presetListName[presetMode.getValue()].toLowerCase().compareTo("custom") != 0) {
+                    mBubbleSeekBar1.setProgress((float)0);
+                    mBubbleSeekBar2.setProgress((float)0);
+                    mBubbleSeekBar3.setProgress((float)0);
+                    mBubbleSeekBar4.setProgress((float)0);
+                }
+                // Set the picker to show the last preset mode which is "Custom"
+                presetMode.setValue(presetListName.length - 1);
+
+                // Set new frequency to this band
+                // Make sure the hardware does support up to this band
+                if (myEQ.getNumberOfBands() >= 0) {
+                    myEQ.setBandLevel((short) 4, (short) progress);
+                }
             }
         });
 
+        // Change balance of Speaker (Left|Right)
         volumeBalance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            /**
-             * Start record the change on seek bar
-             * @param seekBar
-             */
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                isMovingBalance = true;
-            }
 
-            /**
-             * Stop record the change on seek bar
-             * @param seekBar
-             */
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                isMovingBalance = false;
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {isMovingBalance = true;}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {isMovingBalance = false;}
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (isMovingBalance) {
-                    Log.i("OnSeekBarChangeListener", "onProgressChanged");
+                    // Calculate value to set Volume
+                    // parameter of setVolume is from 0.0 - 1.0
+                    // Maximize the speaker that is set higher (1.0)
+                    float right = Float.valueOf(2) * (progress/Float.valueOf(100));
+                    float left = Float.valueOf(2) * (Float.valueOf(2) - right);
+                    if (left > Float.valueOf(1)) {left = Float.valueOf(1);}
+                    if (right > Float.valueOf(1)) {right= Float.valueOf(1);}
 
-                    //TODO change Speaker Balance by calling method setVolume on MyPlayer
-
+                    myPlayer.setVolume(left, right);
+                    //Log.i("OnSeekBarChangeListener", "Progress: " + progress + ". Set Volume L(" + left + ")\tR(" + right + ")");
                 }
             }
         });
     }
 
+    /**
+     * Build the preset list
+     */
     private void getPresetList(){
-        int size = myEQ.getNumberOfPresets();
-        presetList = new String[size + 1];
 
-        Log.i(LOG_TAG, "# of preset: " +size );
-
-        for(short preset = 0; preset < size; preset++) {
-            Log.i(LOG_TAG, myEQ.getPresetName(preset));
-            presetList[preset] = (myEQ.getPresetName(preset));
-        }
-        presetList[size] = "Custom";
+        // There are 10 presets, and CUSTOM mode
+        // The order of 10 Presets is
+        // Normal | Classical | Dance | Flat | Folk | HeavyMetal | Hip Hop | Jazz | Pop | Rock | Custom
+        int numOfPreset = 11;
+        presetFrequencies = new PresetFrequency[numOfPreset];
+        presetFrequencies[0] = new PresetFrequency("normal"     ,  300,    0,    0,    0,  300);
+        presetFrequencies[1] = new PresetFrequency("classical"  ,  500,  300, -200,  400,  400);
+        presetFrequencies[2] = new PresetFrequency("dance"      ,  600,    0,  200,  400,  100);
+        presetFrequencies[3] = new PresetFrequency("flat"       ,    0,    0,    0,    0,    0);
+        presetFrequencies[4] = new PresetFrequency("folk"       ,  300,    0,    0,  200, -100);
+        presetFrequencies[5] = new PresetFrequency("heavy metal",  400,  100,  900,  300,    0);
+        presetFrequencies[6] = new PresetFrequency("hip hop"    ,  500,  300,    0,  100,  300);
+        presetFrequencies[7] = new PresetFrequency("jazz"       ,  400,  200, -200,  200,  500);
+        presetFrequencies[8] = new PresetFrequency("pop"        , -100,  200,  500,  100, -200);
+        presetFrequencies[9] = new PresetFrequency("rock"       ,  500,  300, -100,  300,  500);
+        presetFrequencies[10] = new PresetFrequency("custom"    ,    0,    0,    0,    0,    0);
+        // Set Name list
+        presetListName = new String[numOfPreset];
+        for (int i = 0; i < numOfPreset; i ++)
+            presetListName[i] = presetFrequencies[i].getName().toUpperCase();
     }
 
     @Override

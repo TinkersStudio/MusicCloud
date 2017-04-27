@@ -163,8 +163,8 @@ public class MainActivity extends AppCompatActivity
                 fragment = new FragmentProfile();
                 break;
             case R.id.navigation_view_equalizer:
-                //Toasty.info(context, "Open the equalize", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentEqualizer();
+                ((FragmentEqualizer)fragment).setMusicPlayer(myService.getPlayer());
                 break;
             case R.id.navigation_view_customize:
                 //Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
