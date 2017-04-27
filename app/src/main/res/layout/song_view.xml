@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/songlist_background"
-
     android:id="@+id/song_fragment_pane">
     <!-- The fragment is used for both music list and favorite list-->
     <ImageView
@@ -42,7 +41,7 @@
         <View
             android:layout_marginBottom="0dp"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:background="#d6c982"/>
     </LinearLayout>
 

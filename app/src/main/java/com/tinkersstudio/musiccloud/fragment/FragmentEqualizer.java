@@ -4,7 +4,6 @@ import android.content.Context;
 import android.media.audiofx.Equalizer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,8 +13,6 @@ import android.widget.NumberPicker;
 import android.widget.SeekBar;
 
 import com.tinkersstudio.musiccloud.R;
-import com.tinkersstudio.musiccloud.activities.MainActivity;
-import com.tinkersstudio.musiccloud.controller.MusicService;
 import com.tinkersstudio.musiccloud.controller.MyPlayer;
 import com.tinkersstudio.musiccloud.model.PresetFrequency;
 import com.xw.repo.BubbleSeekBar;

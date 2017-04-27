@@ -28,7 +28,6 @@ public class FragmentSongList extends Fragment {
     private static final String TAG = "RecyclerViewFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
-    private static final int DATASET_COUNT = 60;
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
@@ -45,9 +44,6 @@ public class FragmentSongList extends Fragment {
     // Need service to pass to Song View Holder in order to play song at index
     MusicService myService = ((MainActivity)getActivity()).myService;
 
-    public FragmentSongList(){
-        //require an empty constructor
-    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

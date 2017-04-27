@@ -3,7 +3,7 @@ package com.tinkersstudio.musiccloud.fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.controller.MusicService;
 import com.tinkersstudio.musiccloud.controller.NoSongToPlayException;
 import es.dmoral.toasty.Toasty;
@@ -34,32 +36,32 @@ import com.tinkersstudio.musiccloud.controller.TimeConverter;
  */
 
 public class FragmentMusicPlayer extends Fragment {
-    String LOG_TAG = "FragmentMusicPlayer";
+    private String LOG_TAG = "FragmentMusicPlayer";
 
-    Context context;
+    private Context context;
 
     // Widget elements
-    ImageButton favor, lyricsButton, infoButton;
-    static TextView songTitle, artist, timePast, timeTotal;
-    CircularMusicProgressBar circularProgressBar;
-    static SeekBar seekBar;
-    boolean isMovingSeekBar;
+    private ImageButton favor, lyricsButton, infoButton;
+    private TextView songTitle, artist, timePast, timeTotal;
+    private CircularMusicProgressBar circularProgressBar;
+    private SeekBar seekBar;
+    private boolean isMovingSeekBar;
 
     // A handler to manage the Runnable which is used to update UI
-    Handler mHandler = new Handler();
+    private Handler mHandler = new Handler();
 
     //Service to control playback (provide by Main activity)
-    static MusicService musicService;
+    private MusicService musicService;
 
     // The album picture to extract color;
-    static Bitmap bitmap;
-    int compColor = Color.TRANSPARENT;
+    private Bitmap bitmap;
+    private int compColor = Color.TRANSPARENT;
 
     //com.tinkersstudio.musiccloud.view items
-    static View rootView;
+    private View rootView;
 
     //music player group
-    ImageButton repeatButton, playPrevButton, playButton, playNextButton, shuffleButton;
+    private ImageButton repeatButton, playPrevButton, playButton, playNextButton, shuffleButton;
 
     /**
      * Default constructor
@@ -70,6 +72,7 @@ public class FragmentMusicPlayer extends Fragment {
 
     /**
      * Setter of Music Service
+     *
      * @param musicService is the musicService on back ground
      */
     public void setMusicService(MusicService musicService) {
@@ -78,6 +81,7 @@ public class FragmentMusicPlayer extends Fragment {
 
     /**
      * Create the view of this Fragment
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -100,25 +104,22 @@ public class FragmentMusicPlayer extends Fragment {
 
     @Override
     public void onStart() {
-        Log.i(LOG_TAG, "onStart");
         super.onStart();
-
         // Start the handler, which run the Runnable mUpdateTimeTask
         mHandler.postDelayed(mUpdateTimeTask, 1000);
     }
 
     @Override
     public void onResume() {
-        Log.i(LOG_TAG, "onResume");
         super.onResume();
 
         // Try to set the whole screen if there were some music is playing
         try {
             this.updateSongPlaying();
             this.setColor();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.i(LOG_TAG, "onResume fail to get the current Song playing");
+            // No need to report
         }
     }
 
@@ -132,7 +133,7 @@ public class FragmentMusicPlayer extends Fragment {
         public void run() {
             try {
                 // Update seekbar only if the song playing
-                if(!musicService.getPlayer().getIsPause()) {
+                if (!musicService.getPlayer().getIsPause()) {
                     // Displaying time completed playing
                     long currentDuration = musicService.getPlayer().getCurrentPosn();
                     timePast.setText("" + TimeConverter.milliSecondsToTimeString(currentDuration));
@@ -153,10 +154,10 @@ public class FragmentMusicPlayer extends Fragment {
                 }
                 // Running this thread after 1000 milliseconds
                 mHandler.postDelayed(mUpdateTimeTask, 1000);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 //Exception thrown when Service haven't up yet
                 e.printStackTrace();
+                FirebaseCrash.report(e);
             }
         }
     };
@@ -165,29 +166,28 @@ public class FragmentMusicPlayer extends Fragment {
      * Get the layout components of the page
      * Get all widget instances from layout
      */
-    public void initLayout()
-    {
+    public void initLayout() {
         favor = (ImageButton) rootView.findViewById(R.id.mp_button_favorite);
         lyricsButton = (ImageButton) rootView.findViewById(R.id.mp_button_lyrics);
         infoButton = (ImageButton) rootView.findViewById(R.id.mp_button_info);
-        repeatButton = (ImageButton)rootView.findViewById(R.id.mp_repeat);
-        playPrevButton = (ImageButton)rootView.findViewById(R.id.mp_play_prev);
-        playButton = (ImageButton)rootView.findViewById(R.id.mp_play);
-        playNextButton =(ImageButton) rootView.findViewById(R.id.mp_play_next);
+        repeatButton = (ImageButton) rootView.findViewById(R.id.mp_repeat);
+        playPrevButton = (ImageButton) rootView.findViewById(R.id.mp_play_prev);
+        playButton = (ImageButton) rootView.findViewById(R.id.mp_play);
+        playNextButton = (ImageButton) rootView.findViewById(R.id.mp_play_next);
         shuffleButton = (ImageButton) rootView.findViewById(R.id.mp_shuffle);
-        songTitle = (TextView)rootView.findViewById(R.id.mp_songBeingPlay);
-        artist = (TextView)rootView.findViewById(R.id.mp_songBeingPlayArtist);
-        circularProgressBar = (CircularMusicProgressBar)rootView.findViewById((R.id.mp_progress_bar));
+        songTitle = (TextView) rootView.findViewById(R.id.mp_songBeingPlay);
+        artist = (TextView) rootView.findViewById(R.id.mp_songBeingPlayArtist);
+        circularProgressBar = (CircularMusicProgressBar) rootView.findViewById((R.id.mp_progress_bar));
 
-        seekBar = (SeekBar)rootView.findViewById(R.id.mp_seekbar);
-        timePast = (TextView)rootView.findViewById(R.id.mp_time_played);
-        timeTotal = (TextView)rootView.findViewById(R.id.mp_time_total);
+        seekBar = (SeekBar) rootView.findViewById(R.id.mp_seekbar);
+        timePast = (TextView) rootView.findViewById(R.id.mp_time_played);
+        timeTotal = (TextView) rootView.findViewById(R.id.mp_time_total);
     }
 
     /**
      * Init all the button listeners
      */
-    public void initAction(){
+    public void initAction() {
 
         favor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,6 +219,7 @@ public class FragmentMusicPlayer extends Fragment {
                         fragmentTransaction.commit();
                     } catch (Exception e) {
                         Toasty.info(context, "Current Song Empty", Toast.LENGTH_SHORT, true).show();
+                        // No need to report
                     }
                     return true;
                 }
@@ -228,7 +229,7 @@ public class FragmentMusicPlayer extends Fragment {
         });
 
         // Open a new fragment when click on info button
-        infoButton.setOnTouchListener(new View.OnTouchListener(){
+        infoButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -249,6 +250,7 @@ public class FragmentMusicPlayer extends Fragment {
                         fragmentTransaction.commit();
                     } catch (Exception e) {
                         Toasty.info(context, "Current Song Empty", Toast.LENGTH_SHORT, true).show();
+                        // No need to report
                     }
                     return true;
 
@@ -259,19 +261,11 @@ public class FragmentMusicPlayer extends Fragment {
 
         // Reponse to seekBar change when user drag the dot
         this.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            /**
-             * Start record the change on seek bar
-             * @param seekBar
-             */
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 isMovingSeekBar = true;
             }
 
-            /**
-             * Stop record the change on seek bar
-             * @param seekBar
-             */
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 isMovingSeekBar = false;
@@ -280,17 +274,15 @@ public class FragmentMusicPlayer extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (isMovingSeekBar) {
-                    Log.i("OnSeekBarChangeListener", "onProgressChanged");
                     long totalDuration = musicService.getPlayer().getTotalDuration();
                     int seekToPosition = TimeConverter.percentageToCurrentDuration(seekBar.getProgress(), totalDuration);
-
                     // forward or backward to certain seconds
                     musicService.getPlayer().seekPosition(seekToPosition);
                 }
             }
         });
 
-        /*---- THESE BUTTON OnTouchListener able modify the Button while touching it---*/
+        /*---- THESE BUTTON OnTouchListener can modify the Button while touching it---*/
         // Set repeat mode on player, also change the button view
         this.repeatButton.setOnTouchListener(new View.OnTouchListener() {
 
@@ -302,7 +294,7 @@ public class FragmentMusicPlayer extends Fragment {
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     repeatButton.setImageResource(musicService.getPlayer().setRepeat() ?
-                            R.drawable.ic_action_replay: R.drawable.ic_action_repeat);
+                            R.drawable.ic_action_replay : R.drawable.ic_action_repeat);
                     repeatButton.setColorFilter(compColor);
                     return true;
                 }
@@ -319,11 +311,10 @@ public class FragmentMusicPlayer extends Fragment {
                     playPrevButton.setColorFilter(Color.RED);
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    Log.i(LOG_TAG, "Received Intent : PREV");
                     // Move the prev song if there is a valid prev song
                     try {
                         // Pause player if the player was pausing before move to prev song
-                        if(musicService.getPlayer().getIsPause()) {
+                        if (musicService.getPlayer().getIsPause()) {
                             musicService.getPlayer().seekPrev(false);
                         }
                         // Play if the player was playing before moving to prev song
@@ -360,6 +351,7 @@ public class FragmentMusicPlayer extends Fragment {
                         setColor();
                     } catch (NoSongToPlayException e) {
                         Toasty.info(context, "No Song To Play", Toast.LENGTH_SHORT, true).show();
+                        // No need to report
                     }
                     playButton.setColorFilter(compColor);
                     return true;
@@ -380,10 +372,9 @@ public class FragmentMusicPlayer extends Fragment {
                     // Move the prev song if there is a valid prev song
                     try {
                         // Pause player if the player was pausing before move to next song
-                        if(musicService.getPlayer().getIsPause()) {
+                        if (musicService.getPlayer().getIsPause()) {
                             musicService.getPlayer().seekNext(false);
-                        }
-                        else {
+                        } else {
                             // Pause player if the player was pausing before move to next song
                             musicService.getPlayer().seekNext(true);
                         }
@@ -392,6 +383,7 @@ public class FragmentMusicPlayer extends Fragment {
                         setColor();
                     } catch (NoSongToPlayException e) {
                         Toasty.info(context, "No Song To Play", Toast.LENGTH_SHORT, true).show();
+                        // No need to report
                     }
                     playNextButton.setColorFilter(compColor);
                     return true;
@@ -411,7 +403,7 @@ public class FragmentMusicPlayer extends Fragment {
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     shuffleButton.setImageResource(musicService.getPlayer().setShuffle() ?
-                            R.drawable.ic_action_shuffle: R.drawable.ic_action_shuffle_disabled);
+                            R.drawable.ic_action_shuffle : R.drawable.ic_action_shuffle_disabled);
                     shuffleButton.setColorFilter(compColor);
                     return true;
                 }
@@ -538,7 +530,7 @@ public class FragmentMusicPlayer extends Fragment {
         songTitle.setText(musicService.getPlayer().getCurrentSong().getTitle());
         artist.setText(musicService.getPlayer().getCurrentSong().getArtist());
 
-        if(musicService.getPlayer().getIsPause())
+        if (musicService.getPlayer().getIsPause())
             playButton.setImageResource(R.drawable.ic_action_play);
         else
             playButton.setImageResource(R.drawable.ic_action_pause);
@@ -552,30 +544,50 @@ public class FragmentMusicPlayer extends Fragment {
                 bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
                 retriever.release();
             } catch (Exception exception) {
-                Log.i(LOG_TAG, "NO COVER ART FOUND ");
                 try {
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cover_art_stock);
                 } catch (java.lang.IllegalStateException e) {
                     Log.i(LOG_TAG, "This Fragment not shown");
                 }
+                // No need to report
             } finally {
                 circularProgressBar.setImageBitmap(bitmap);
             }
+        }
+
+        if (musicService.getPlayer().isRepeat()) {
+            repeatButton.setImageResource(R.drawable.ic_action_replay);
+        }
+        else {
+            repeatButton.setImageResource(R.drawable.ic_action_repeat);
+        }
+
+        if (musicService.getPlayer().isShuffle()) {
+            shuffleButton.setImageResource(R.drawable.ic_action_shuffle);
+        }
+        else {
+            shuffleButton.setImageResource(R.drawable.ic_action_shuffle_disabled);
         }
     }
 
     /**
      * Update widget elems with color extract from the current COVER ART
      * elems to be updated: all BUTTON color
-     *                      all TEXT color
-     *
+     * all TEXT color
      */
-    public void setColor(){
+    public void setColor() {
         int color = getDominantColor(bitmap);
         compColor = getComplementaryColor(color);
         int compColor2 = getComplementaryColor2(color);
         circularProgressBar.setBorderColor(compColor);
-        rootView.setBackgroundColor(color);
+
+        GradientDrawable gd = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{Color.WHITE, color});
+
+        rootView.setBackgroundDrawable(gd);
+
+        //rootView.setBackgroundColor(color);
         repeatButton.setColorFilter(compColor);
         shuffleButton.setColorFilter(compColor);
         playNextButton.setColorFilter(compColor);
@@ -600,8 +612,8 @@ public class FragmentMusicPlayer extends Fragment {
         int redBucket = 0, greenBucket = 0, blueBucket = 0, pixelCount = 0;
         int w = (bitmap.getWidth() > 200 ? 200 : bitmap.getWidth());
         int h = (bitmap.getHeight() > 200 ? 200 : bitmap.getHeight());
-        for (int y = 0; y < h ; y++) {
-            for (int x = 0; x < w ; x++) {
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
                 int c = bitmap.getPixel(x, y);
 
                 pixelCount++;
@@ -614,19 +626,6 @@ public class FragmentMusicPlayer extends Fragment {
                 greenBucket / pixelCount,
                 blueBucket / pixelCount);
     }
-
-    /*
-    /**
-     * Get the medium pixel color
-     * Fast and easy way to extract color from bitmap
-     * Out put not necessary the dominant color of the bitmap
-     * /
-    public static int getDominantColor(Bitmap bitmap) {
-        Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
-        final int color = newBitmap.getPixel(0, 0);
-        newBitmap.recycle();
-        return color;
-    }*/
 
     // Calculate the opposite color of a color
     public static int getComplementaryColor(int colorToInvert) {
@@ -644,10 +643,10 @@ public class FragmentMusicPlayer extends Fragment {
 
     // Calculate the best contrast color (either black or white) of a color
     public static int getComplementaryColor2(int colorToInvert) {
-        int ave =  (Color.red(colorToInvert)
+        int ave = (Color.red(colorToInvert)
                 + Color.green(colorToInvert)
                 + Color.blue(colorToInvert)) / 3;
-        return ave >= Color.BLACK ?  Color.WHITE : -1;
+        return ave >= Color.BLACK ? Color.WHITE : -1;
     }
 
     @Override
@@ -659,7 +658,4 @@ public class FragmentMusicPlayer extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
-
-
-    //TODO AsynTask for update the song.
 }

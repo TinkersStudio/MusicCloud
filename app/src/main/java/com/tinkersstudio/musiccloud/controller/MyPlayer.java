@@ -9,6 +9,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Random;
+
+import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.model.Song;
 
 /**
@@ -46,15 +48,12 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * @param owner the ownner of this Player
      */
     public MyPlayer(MusicService owner) {
-        Log.i(LOG_TAG, "create MusicPlayer");
-
         this.owner = owner;
         player = new MediaPlayer();
         this.initializePlayer();
     }
-    public void initializePlayer() {
 
-        Log.i(LOG_TAG, "initMusicPlayer");
+    public void initializePlayer() {
         isPaused = true;
         isRepeat = false;
         isShuffle = false;
@@ -69,15 +68,11 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-
-        Log.i(LOG_TAG, "onPrepared");
-
         // Turning on the media player.
         // This does not mean it plays the song yet,
         player.start();
 
         if (lastCurrentPosition > 0) {
-            Log.i(LOG_TAG, "Resume playing at " + lastCurrentPosition);
             player.seekTo((int)lastCurrentPosition);
             lastCurrentPosition = 0;
         }
@@ -89,7 +84,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      */
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        Log.i(LOG_TAG, "onCompletion");
         seekNext(true);
         play();
     }
@@ -99,6 +93,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         mediaPlayer.reset();
         return false;
     }
+
     @Override
     public void onSeekComplete(MediaPlayer var1) {
         //NOT IMPLEMENT
@@ -122,12 +117,19 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         return isRepeat;
     }
 
+    public boolean isRepeat() {
+        return isRepeat;
+    }
+
+    public boolean isShuffle() {
+        return isShuffle;
+    }
+
     /**
      * Play the music from a specific index
      * @param index
      */
     public void playAtIndex(int index){
-        Log.i(LOG_TAG, "Play at Index : ---- " +index);
         setCurrentSongPosition(index);
         this.pause();
         this.play();
@@ -137,7 +139,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * This will either play the music or pause the music
      */
     public void play() {
-
         // Check to see if there is a valid song to play
         if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
@@ -150,7 +151,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
         // Pause player if it is playing, then return
         if (player.isPlaying()) {
-            Log.i(LOG_TAG, "pause at " + player.getCurrentPosition());
             lastCurrentPosition = player.getCurrentPosition();
             pause();
             isPaused = true;
@@ -160,11 +160,9 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
         // PLAY music
         player.reset();
-
         isPaused = false;
         // get song to play
         currentSong =  songList.get(currentSongPosition);
-        Log.i(LOG_TAG, "play " + currentSong.getTitle());
         // get song id
         long currSong = currentSong.getID();
         // set uri path
@@ -177,6 +175,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         catch(Exception e){
             Log.e("MUSIC SERVICE", "Error setting data source", e);
+            FirebaseCrash.report(e);
+            return;
         }
         // The song is feeded into the player and ready to be played
         player.prepareAsync();
@@ -213,7 +213,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         //shuffle case
         if(isShuffle) {
             setCurrentSongPosition( (int) (Math.random() * (songList.size() - 1)));
-            Log.i(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
         }
         // Regular case
         else if (!isRepeat) {
@@ -221,11 +220,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
                 setCurrentSongPosition( songList.size() - 1);
             else
                 setCurrentSongPosition(currentSongPosition -1);
-
-            Log.i(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
         }
-        else
-            Log.i(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
+
         currentSong =  songList.get(currentSongPosition);
 
         // After moving the index to prev song, resume the player, update the notif bar
@@ -251,19 +247,16 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
             throw new NoSongToPlayException("There no such a song to play");
         }
 
-
         lastCurrentPosition = 0;
 
         // If the player is playing, pause it first before seeking to next song
         if (player.isPlaying())
             pause();
 
-
         // MOVE index to next song according to shuffle/repeat/regular mode
         //shuffle case
         if(isShuffle){
             setCurrentSongPosition( (int)(Math.random() * (songList.size()-1)));
-            Log.i(LOG_TAG, "currentPosition by shuffle: " + currentSongPosition);
         }
             // Regular case
         else if (!isRepeat) {
@@ -271,10 +264,8 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
                 setCurrentSongPosition( 0);
             else
                 setCurrentSongPosition(currentSongPosition + 1);
-            Log.i(LOG_TAG, "currentPosition by regular: " + currentSongPosition);
         }
-        else
-            Log.i(LOG_TAG, "currentPosition by repeat: " + currentSongPosition);
+
         currentSong =  songList.get(currentSongPosition);
 
         // After moving the index to prev song, resume the player
@@ -293,13 +284,13 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * playlist of song have not been set by user.
      */
     public int getSongFromStorage() {
-        Log.i(LOG_TAG, "Find Music....");
 
         if (songList == null) {
             songList = new ArrayList<Song>();
         }
-        else
+        else {
             songList.clear();
+        }
 
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         String[] projection = {
@@ -310,7 +301,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
                 MediaStore.Audio.Media.ALBUM_ID,
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DURATION,
-                //MediaStore.Audio.Media.
         };
         final String sortOrder = MediaStore.Audio.AudioColumns.TITLE + " COLLATE LOCALIZED ASC";
 
@@ -330,7 +320,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
                     Long albumID = cursor.getLong(4);
                     Long id = cursor.getLong(5);
                     String songDuration = cursor.getString(6);
-                    //String albumArt = cursor.getString(7);
                     cursor.moveToNext();
                     if(path != null && path.endsWith(".mp3")) {
                         songList.add(new Song(id, title, artist, albumID, path));
@@ -342,19 +331,13 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         } catch (Exception e) {
             Log.e("TAG", e.toString());
             e.printStackTrace();
+            FirebaseCrash.report(e);
         } finally{
             if( cursor != null){
                 cursor.close();
             }
         }
         return songList.size();
-    }
-
-    public void printSongList() {
-        Log.i(LOG_TAG,"Song List on MyPLAYER");
-        for (Song aSong: songList) {
-            Log.i(LOG_TAG, aSong.getTitle() + " - " + aSong.getArtist());
-        }
     }
 
     /**

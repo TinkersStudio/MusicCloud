@@ -13,6 +13,8 @@ import android.support.v4.app.NotificationCompat;
 
 /**
  * Created by anhnguyen on 2/11/17.
+ *
+ * NOT USE
  */
 
 public class MyNotification extends Notification {

@@ -46,22 +46,22 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG = "MainActivity";
-    static FirebaseAnalytics mFirebaseAnalytics;
+    private static FirebaseAnalytics mFirebaseAnalytics;
 
     /* Intent use for binding with service */
-    static Intent bindingIntent;
+    private static Intent bindingIntent;
 
     /* The Service associate with this activity */
     public static MusicService myService;
 
     /* A flag indicate the state of the Service */
-    static MyFlag serviceBound;
+    private static MyFlag serviceBound;
 
-    DrawerLayout drawer;
-    ActionBarDrawerToggle drawerToggle;
-    NavigationView navigationView;
-    Context context;
-    Toolbar toolbar = null;
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle drawerToggle;
+    private NavigationView navigationView;
+    private Context context;
+    private Toolbar toolbar = null;
 
     /*Fragment control*/
     FragmentTransaction fragmentTransaction;
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity
             Log.i(LOG_TAG, "there was some saved stated " + myService);
         else
             Log.i(LOG_TAG, "there was NOT some saved stated");
+
         //check the user permission
         new CheckPermission().execute();
 
@@ -92,9 +93,6 @@ public class MainActivity extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //checkingPermission();
-
-
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -102,11 +100,6 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        //How to change elements in the header programatically
-        //View headerView = navigationView.getHeaderView(0);
-        //TextView emailText = (TextView) headerView.findViewById(R.id.email);
-        //emailText.setText("newemail@email.com");
 
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -133,21 +126,18 @@ public class MainActivity extends AppCompatActivity
                 fragment = new FragmentHome();
                 break;
             case R.id.navigation_view_now_playing:
-                //Toasty.info(context, "Open the Music Player Activity", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentMusicPlayer();
                 ((FragmentMusicPlayer)fragment).setMusicService(myService);
                 break;
             /**Offline service group*/
             case R.id.navigation_view_music_library:
-                //Toasty.info(context, "Open thee Music Library", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentSongList();
                 break;
             case R.id.navigation_view_music_playlist:
                 Toasty.info(context, "Open the Music Playlist", Toast.LENGTH_SHORT, true).show();
-                Log.i(LOG_TAG, "Service at: " + myService);
-                fragment = new FragmentSongList();
                 break;
             case R.id.navigation_view_favorite_list:
+                Toasty.info(context, "Open the Favorite list", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentFavoriteList();
                 break;
             /** Online service group*/
@@ -159,7 +149,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             /** FragmentSetting group*/
             case R.id.navigation_view_user_info:
-                //Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();
+                Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentProfile();
                 break;
             case R.id.navigation_view_equalizer:
@@ -167,7 +157,7 @@ public class MainActivity extends AppCompatActivity
                 ((FragmentEqualizer)fragment).setMusicPlayer(myService.getPlayer());
                 break;
             case R.id.navigation_view_customize:
-                //Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
+                Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentSetting();
                 break;
             case R.id.navigation_view_quit:
@@ -191,26 +181,17 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
-            Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
-            Log.i(LOG_TAG, "musicService at: " + myService);
-            if (bindingIntent == null) {
-                bindingIntent = new Intent(this, MusicService.class);
-
-                startService(bindingIntent);
-                Log.i(LOG_TAG, "Service Started by Main Screen");
-
-                bindService(bindingIntent, myMusicConnection, Context.BIND_AUTO_CREATE);
-                Log.i(LOG_TAG, "Service Binded to Main Screen");
-            }
-
-            Log.i(LOG_TAG, "musicConnection at: " + myMusicConnection);
-            Log.i(LOG_TAG, "musicService at: " + myService);
+        if (bindingIntent == null) {
+            bindingIntent = new Intent(this, MusicService.class);
+            startService(bindingIntent);
+            bindService(bindingIntent, myMusicConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(LOG_TAG, "onResume");
+
         if (myService == null) {
             Log.i(LOG_TAG, "No previous Service found");
         } else {
@@ -226,8 +207,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-
-        Log.d(LOG_TAG, "onStop");
         super.onStop();
         // Unbind from the service
         if (serviceBound == MyFlag.IS_ON) {
@@ -240,14 +219,11 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onDestroy() {
-        Log.d(LOG_TAG, "onDestroy");
         super.onDestroy();
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        Log.d(LOG_TAG, "save state");
-        Log.d(LOG_TAG, "service was saved: " + myService);
         super.onSaveInstanceState(savedInstanceState);;
     }
 
@@ -256,7 +232,6 @@ public class MainActivity extends AppCompatActivity
     private ServiceConnection myMusicConnection = new ServiceConnection(){
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i(LOG_TAG, "myMusicConnection Connecting...");
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
 
             //get the reference of the service
@@ -265,7 +240,6 @@ public class MainActivity extends AppCompatActivity
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.i(LOG_TAG, "myMusicConnection Disconnecting...");
             serviceBound = MyFlag.IS_OFF;
         }
     };
@@ -300,7 +274,7 @@ public class MainActivity extends AppCompatActivity
             catch (Exception e) {
                 FirebaseCrash.logcat(Log.ERROR, MainActivity.this.LOG_TAG, "Exception in user case");
                 FirebaseCrash.report(e);
-                Log.e(LOG_TAG, "Error");
+                Log.e(LOG_TAG, "Error getting permission");
             }
             return "Success";
         }
@@ -309,14 +283,11 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d(MainActivity.this.LOG_TAG, "Entering permission");
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.d(MainActivity.this.LOG_TAG, "Complete checking permission");
-            //FirebaseCrash.log("Failed to check permission");
         }
 
         public void checkingPermission() {
@@ -325,16 +296,13 @@ public class MainActivity extends AppCompatActivity
                         == PackageManager.PERMISSION_GRANTED &&
                         (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 == PackageManager.PERMISSION_GRANTED)) {
-                    Log.v(LOG_TAG,"Permission is granted");
-
                 } else {
-                    Log.v(LOG_TAG,"Permission is revoked");
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 }
             }
             else { //permission is automatically granted on sdk<23 upon installation
-                Log.v("TAG","Permission is granted");
+                Log.i("TAG","Permission is granted");
             }
         }
     }
@@ -343,7 +311,7 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Log.v("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
+            Log.i("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
             //resume tasks needing this permission
         }
     }

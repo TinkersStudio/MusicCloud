@@ -36,7 +36,7 @@ public class MusicService extends Service {
 
     /* notification bar */
     private Notification notifBar;
-    NotificationManager notificationManager;
+    private NotificationManager notificationManager;
     private int notificaitonId = 10231;  // just a random number to give this notif an ID
 
 
@@ -56,28 +56,18 @@ public class MusicService extends Service {
      */
     @Override
     public IBinder onBind(Intent arg0) {
-        Log.i(LOG_TAG,"onBind");
         return musicBind;
     }
 
     @Override
     public boolean onUnbind(Intent intent){
         super.onUnbind(intent);
-        Log.i(LOG_TAG,"onUnbind");
         return false;
-    }
-
-    @Override
-    public void onCreate() {
-
-        Log.i(LOG_TAG, "onCreate");
-        super.onCreate();
     }
 
     @Override
     public void onDestroy() {
         player.releasePlayer();
-        Log.i(LOG_TAG, "onDestroy");
         super.onDestroy();
     }
 
@@ -93,24 +83,22 @@ public class MusicService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(LOG_TAG, "onStartCommand");
-
         // When service is just start, there is no action Intent received.
         // Initialize the Foreground service and Notif Bar
         if (intent.getAction() == null) {
-            Log.i(LOG_TAG, "Received Start Foreground Intent ");
             // Getting Music files from Storage
             player = new MyPlayer(this);
-            if (player.getSongFromStorage() == 0)
+            if (player.getSongFromStorage() == 0) {
                 setNotificationBar(MyFlag.PLAY, "No song to play", "------");
-            setNotificationBar(MyFlag.PLAY, "song title", "artist");
+            }
+            else {
+                setNotificationBar(MyFlag.PLAY, "song title", "artist");
+            }
             startForeground(notificaitonId, notifBar);
 
         }
         // Receive action NEXT, pass the action to MyPlayer, rebuild and update notif bar
         else if (intent.getAction().equals("ACTION.NEXT_ACTION")) {
-            Log.i(LOG_TAG, "Received Intent : NEXT");
-
             // Pass action to MyPlayer, and rebuild notif bar
             try {
                 if(player.getIsPause()) {
@@ -135,7 +123,6 @@ public class MusicService extends Service {
         }
         // Receive action PREV, pass the action to MyPlayer, rebuild and update notif bar
         else if (intent.getAction().equals("ACTION.PREV_ACTION")) {
-            Log.i(LOG_TAG, "Received Intent : PREV");
             // Pass action to MyPlayer, and rebuild notif bar
             try {
                 if(player.getIsPause()) {
@@ -160,7 +147,6 @@ public class MusicService extends Service {
         }
         // Receive action PLAY/PAUSE, pass the action to MyPlayer, rebuild and update notif bar
         else if (intent.getAction().equals("ACTION.PLAY_ACTION")) {
-            Log.i(LOG_TAG, "Received Intent : PLAY");
             // Pass action to MyPlayer, and rebuild notif bar
             try {
                 player.play();
@@ -184,7 +170,6 @@ public class MusicService extends Service {
      * @param artist
      */
     public void setNotificationBar(MyFlag playState, String title, String artist) {
-        Log.i(LOG_TAG, "Set Notification Bar");
         // Build Main element on the notif bar
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction("ACTION.MAIN_ACTION");
@@ -242,7 +227,6 @@ public class MusicService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i(LOG_TAG, "on Receive");
             int notificationId = intent.getExtras().getInt("notificationId");
 
             if (notificationId == 10231) {
@@ -252,7 +236,6 @@ public class MusicService extends Service {
     }
 
     private PendingIntent createOnDismissedIntent(Context context, int notificationId) {
-        Log.i(LOG_TAG, "createOnDismissedIntent");
         Intent intent = new Intent(context, NotificationDismissedReceiver.class);
         intent.putExtra("notificationId", notificationId);
 

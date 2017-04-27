@@ -10,16 +10,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.view.WindowManager;
 import android.view.Display;
-import 	android.graphics.Point;
+import android.graphics.Point;
 import android.widget.TextView;
-//import io.swagger.client.api.DefaultApi;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.R;
@@ -34,8 +32,6 @@ import org.jmusixmatch.entity.track.TrackData;
 import java.util.ArrayList;
 
 import com.tinkersstudio.musiccloud.model.Song;
-
-import es.dmoral.toasty.Toasty;
 
 /**
  * Created by Owner on 3/4/2017.
@@ -59,9 +55,9 @@ public class FragmentSongLyric extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(com.tinkersstudio.musiccloud.R.layout.fragment_song_lyric, container, false);
-        //mLyricView = (LyricView)rootView.findViewById(R.id.custom_lyric_view);
+        final View rootView = inflater.inflate(R.layout.fragment_song_lyric, container, false);
         lyricText = (TextView) rootView.findViewById(R.id.lyric_text);
         lyricTitle = (TextView) rootView.findViewById(R.id.lyric_title);
         lyricArtist = (TextView) rootView.findViewById(R.id.lyric_artist);
@@ -118,7 +114,7 @@ public class FragmentSongLyric extends Fragment {
                 retriever.release();
                 bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
             } catch (Exception exception) {
-                Log.e(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
+                Log.i(LOG_TAG, "NO COVER ART FOUND " + exception.getClass().getName());
                 bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.cover_art_stock);
             } finally {
                 dominantColor = FragmentMusicPlayer.getDominantColor(bitmap);
@@ -200,15 +196,14 @@ public class FragmentSongLyric extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d(FragmentSongLyric.this.LOG_TAG, "Start API called");
+            //Log.d(FragmentSongLyric.this.LOG_TAG, "Start API called");
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.d(FragmentSongLyric.this.LOG_TAG, "Completed retrieve lyric");
+            //Log.d(FragmentSongLyric.this.LOG_TAG, "Completed retrieve lyric");
             lyricText.setText(lyricsLyric);
-            //FirebaseCrash.log("Failed to check permission");
         }
 
         public void getLyric(String trackName, String artistName) {
@@ -218,13 +213,9 @@ public class FragmentSongLyric extends Fragment {
                 int trackID = data.getTrackId();
                 Lyrics lyrics = musixMatch.getLyrics(trackID);
                 this.lyricsLyric = lyrics.getLyricsBody();
-                //Log.i(LOG_TAG, lyricsLyric);
-                //lyricText.setText(lyricsLyric);
             }
             catch (MusixMatchException e) {
-                FirebaseCrash.logcat(Log.ERROR, LOG_TAG, "Can't get the song lyric");
-                FirebaseCrash.report(e);
-                e.printStackTrace();
+                Log.i(LOG_TAG, "No lyrics found online");
             }
             catch (Exception e)
             {

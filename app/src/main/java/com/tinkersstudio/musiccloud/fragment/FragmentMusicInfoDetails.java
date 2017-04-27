@@ -10,10 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.media.MediaMetadataRetriever;
+
 import java.io.File;
-
-import com.tinkersstudio.musiccloud.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +19,7 @@ import com.tinkersstudio.musiccloud.adapter.InfoListAdapter;
 import com.tinkersstudio.musiccloud.controller.TimeConverter;
 import com.tinkersstudio.musiccloud.model.Song;
 import com.tinkersstudio.musiccloud.model.Info;
+import com.tinkersstudio.musiccloud.R;
 
 /**
  * Created by anhnguyen on 2/6/17.
@@ -36,13 +35,14 @@ public class FragmentMusicInfoDetails extends Fragment {
         LINEAR_LAYOUT_MANAGER
     }
 
-    protected LayoutManagerType mCurrentLayoutManagerType;
+    private LayoutManagerType mCurrentLayoutManagerType;
 
-    protected RecyclerView mRecyclerView;
-    protected InfoListAdapter mAdapter;
-    protected RecyclerView.LayoutManager mLayoutManager;
-    protected List<Info> mInfo;
-    Song currentSong;
+    private RecyclerView mRecyclerView;
+    private InfoListAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private List<Info> mInfo;
+    private Song currentSong;
+
     public void setCurrentSong(Song currentSong) {this.currentSong = currentSong;}
 
     @Override

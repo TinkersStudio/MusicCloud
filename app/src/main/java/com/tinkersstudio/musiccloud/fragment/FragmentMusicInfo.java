@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.model.Song;
 
@@ -27,22 +26,17 @@ import com.tinkersstudio.musiccloud.model.Song;
  */
 
 public class FragmentMusicInfo extends Fragment {
-    Context context;
-    public static TabLayout tabLayout;
-    public static ViewPager viewPager;
-    public static int int_items = 3 ;
-    TextView title, artist;
-    ImageButton favor;
-    ImageView artCover;
-    Bitmap bitmap;
-    LinearLayout header;
-    int dominantColor, compColor, compColor2;
-    FragmentSongLyric fmSongLyric;
-    Song currentSong;
-
-    public FragmentMusicInfo() {
-        //require constructor
-    }
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private final int int_items = 3 ;
+    private TextView title, artist;
+    private ImageButton favor;
+    private ImageView artCover;
+    private Bitmap bitmap;
+    private LinearLayout header;
+    private int dominantColor, compColor, compColor2;
+    private FragmentSongLyric fmSongLyric;
+    private Song currentSong;
 
     public void setCurrentSong(Song currentSong){this.currentSong = currentSong;}
 
@@ -60,7 +54,7 @@ public class FragmentMusicInfo extends Fragment {
         favor = (ImageButton)view.findViewById(R.id.si_favor);
         artCover = (ImageView)view.findViewById(R.id.si_cover_art);
 
-        //Set an Apater for the View Pager
+        //Set an Adater for the View Pager
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
         tabLayout.post(new Runnable() {
             @Override
@@ -95,8 +89,6 @@ public class FragmentMusicInfo extends Fragment {
         fmSongLyric.hideQuitButton();
 
         return view;
-
-        //initialize button in here
     }
 
     @Override
