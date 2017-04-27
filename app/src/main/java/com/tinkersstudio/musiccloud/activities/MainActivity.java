@@ -170,6 +170,12 @@ public class MainActivity extends AppCompatActivity
                 //Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentSetting();
                 break;
+            case R.id.navigation_view_quit:
+                myService.getPlayer().releasePlayer();
+                myService.stopForeground(true);
+                finishAffinity();
+                System.exit(0);
+                break;
         }
         //fragmentTransaction.replace(R.id.main_screen_content_frame,fragment);
         fragmentTransaction.replace(R.id.fragment_container,fragment);
@@ -209,6 +215,12 @@ public class MainActivity extends AppCompatActivity
             Log.i(LOG_TAG, "No previous Service found");
         } else {
             Log.i(LOG_TAG, "Has found Previous Service ");
+
+            //FIXME When user click on Notification bar => Show the Music Player
+            Fragment fragment = new FragmentMusicPlayer();
+            ((FragmentMusicPlayer)fragment).setMusicService(myService);
+            fragmentTransaction.replace(R.id.fragment_container,fragment);
+            //fragmentTransaction.commit();
         }
     }
 

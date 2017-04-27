@@ -5,34 +5,29 @@ package com.tinkersstudio.musiccloud.adapter;
  */
 
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.tinkersstudio.musiccloud.R;
 
 import java.util.List;
 
-import com.tinkersstudio.musiccloud.controller.MusicService;
-import com.tinkersstudio.musiccloud.model.Song;
-import com.tinkersstudio.musiccloud.view.SongViewHolder;
+import com.tinkersstudio.musiccloud.model.Info;
+import com.tinkersstudio.musiccloud.view.SongInfoViewHolder;
 
 /**
  * This class binds the visual SongViews and the data behind them (Songs).
  */
-public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
+public class InfoListAdapter extends RecyclerView.Adapter<SongInfoViewHolder> {
 
     /** The application Context in which this SongListAdapter is being used. */
     //private Context m_context;
 
     /** The data set to which this SongListAdapter is bound. */
-    private List<Song> m_songList;
-
-    private MusicService myService;
+    private List<Info> mInfoList;
 
     View v;
 
@@ -41,13 +36,12 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      * it is being used and the Collection of Song objects to which it is bound.
      * m_nSelectedPosition will be initialized to Adapter.NO_SELECTION.
      *
-     * @param songList
+     * @param infoList
      *            The Collection of Song objects to which this SongListAdapter
      *            is bound.
      */
-    public SongListAdapter(List<Song> songList, MusicService musicService) {
-        this.myService = musicService;
-        this.m_songList = songList;
+    public InfoListAdapter(List<Info> infoList) {
+        this.mInfoList = infoList;
     }
 
     /**
@@ -56,7 +50,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      * @return Count of items.
      */
     public int getCount() {
-        return this.m_songList.size();
+        return this.mInfoList.size();
     }
 
     /**
@@ -67,7 +61,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      * @return The data at the specified position.
      */
     public Object getItem(int position) {
-        return this.m_songList.get(position);
+        return this.mInfoList.get(position);
     }
 
     /**
@@ -91,13 +85,12 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      * @see #onBindViewHolder(RecyclerView.ViewHolder, int)
      */
     @Override
-    public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SongInfoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new com.tinkersstudio.musiccloud.view
         v = LayoutInflater.from(parent.getContext())
                 .inflate(viewType, parent, false);
         // set the com.tinkersstudio.musiccloud.view's size, margins, paddings and layout parameters
-        SongViewHolder vh = new SongViewHolder(v, this);
-        vh.setService(myService);
+        SongInfoViewHolder vh = new SongInfoViewHolder(v, this);
         return vh;
 
     }
@@ -105,7 +98,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.song_view;
+        return R.layout.detail_item;
     }
 
     /**
@@ -129,9 +122,8 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      * @param position The position of the item within the com.tinkersstudio.musiccloud.adapter's data set.
      */
     @Override
-    public void onBindViewHolder(SongViewHolder holder, final int position) {
-        holder.setSong(m_songList.get(position));
-
+    public void onBindViewHolder(SongInfoViewHolder holder, final int position) {
+        holder.setInfo(mInfoList.get(position));
     }
 
 
@@ -153,6 +145,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
      */
     @Override
     public int getItemCount() {
-        return this.m_songList.size();
+        return this.mInfoList.size();
     }
 }

@@ -6,7 +6,6 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycle_view_song_list"
         android:scrollbars="vertical"
-        android:padding="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>
