@@ -180,7 +180,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         }
         // The song is feeded into the player and ready to be played
         player.prepareAsync();
-
+        //TODO: Update the database
         owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
     }
 

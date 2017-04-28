@@ -41,9 +41,13 @@
                 android:icon="@drawable/ic_spotify"
                 android:title="@string/spotify" />
             <item
+                android:id="@+id/navigation_view_radio"
+                android:icon="@drawable/ic_radio"
+                android:title="@string/radio" />
+            <!--item
                 android:id="@+id/navigation_view_soundcloud"
                 android:icon="@drawable/ic_soundcloud"
-                android:title="@string/soundcloud" />
+                android:title="@string/soundcloud" /-->
         </menu>
 
 
