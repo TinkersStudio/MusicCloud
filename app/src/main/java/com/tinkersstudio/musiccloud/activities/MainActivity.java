@@ -145,6 +145,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.navigation_view_spotify:
                 Toasty.info(context, "Open Spotify Service", Toast.LENGTH_SHORT, true).show();
                 break;
+            case R.id.navigation_view_radio:
+                Toasty.info(context, "Open Radio Service", Toast.LENGTH_SHORT, true).show();
+                break;
+
             //case R.id.navigation_view_soundcloud:
             //    Toasty.info(context, "Open Soundcloud", Toast.LENGTH_SHORT, true).show();
             //    break;
