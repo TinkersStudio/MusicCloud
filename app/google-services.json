@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "668738642297-dj67o8oq6lfq31svroqg1tukq0h677l4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tinkersstudio.musiccloud",
+            "certificate_hash": "1eea8f89001df1c0718fd9e8350fa82beea8bb94"
+          }
+        },
+        {
           "client_id": "668738642297-chd6km1tnurj2es8hrbjht835mh88ejm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
