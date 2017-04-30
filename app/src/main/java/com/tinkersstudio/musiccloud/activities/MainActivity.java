@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            //FIXME: could be in here
             super.onBackPressed();
         }
     }
