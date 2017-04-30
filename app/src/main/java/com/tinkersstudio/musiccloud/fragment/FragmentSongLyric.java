@@ -39,7 +39,7 @@ import com.tinkersstudio.musiccloud.model.Song;
  */
 public class FragmentSongLyric extends Fragment {
 
-    String API_KEY = "f4337155f55d30c22e85a96f2dc674c8";
+    String API_KEY = getString(R.string.musicMatch_API);
     MusixMatch musixMatch = new MusixMatch(API_KEY);
     String LOG_TAG = "FragmentSongLyric";
     Song currentSong;

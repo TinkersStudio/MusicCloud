@@ -28,6 +28,8 @@ dependencies {
 
     // Optional -- Mockito framework
     compile files('libs/musiXmatchLyricsConnector.jar')
+    //MusixMatch API
+    //last.fm API
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.github.aliab:circular-music-progressbar:v1.1.1'
@@ -50,10 +52,13 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.2.0'
     compile 'com.google.firebase:firebase-ads:10.2.0'
     compile 'com.sachinhandiekar:jMusixMatch:1.1.4'
+    compile 'de.u-mass:lastfm-java:0.1.2'
+    compile 'com.github.deano2390:FlowTextView:2.0.5'
     compile 'com.android.support:support-v4:24.2.1'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
 }
+
 
 
 

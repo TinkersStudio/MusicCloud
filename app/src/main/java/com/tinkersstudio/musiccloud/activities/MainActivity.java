@@ -144,9 +144,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.navigation_view_spotify:
                 Toasty.info(context, "Open Spotify Service", Toast.LENGTH_SHORT, true).show();
                 break;
-            case R.id.navigation_view_soundcloud:
-                Toasty.info(context, "Open Soundcloud", Toast.LENGTH_SHORT, true).show();
-                break;
+            //case R.id.navigation_view_soundcloud:
+            //    Toasty.info(context, "Open Soundcloud", Toast.LENGTH_SHORT, true).show();
+            //    break;
             /** FragmentSetting group*/
             case R.id.navigation_view_user_info:
                 Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();
@@ -169,7 +169,12 @@ public class MainActivity extends AppCompatActivity
         }
         //fragmentTransaction.replace(R.id.main_screen_content_frame,fragment);
         fragmentTransaction.replace(R.id.fragment_container,fragment);
+
+        //Add the fragment to stack and commit
+        //FIXME: Override on backpressed
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

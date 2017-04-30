@@ -17,6 +17,7 @@
     <string name="customize_player">Customize Player</string>
     <string name="spotify">Spotify</string>
     <string name="soundcloud">Sound Cloud</string>
+    <string name="radio">Radio</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="home">Home</string>
     <string name="time_past">00:00</string>
@@ -25,7 +26,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="radio">Radio</string>
+
+    <string name="musicMatch_API">f4337155f55d30c22e85a96f2dc674c8</string>
+    <string name="lastFM_API">ab36c34d518798704d87f0545d55fc1e</string>
+
 
 
 </resources>

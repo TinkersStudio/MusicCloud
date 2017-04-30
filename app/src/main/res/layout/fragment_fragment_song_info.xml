@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp"
+    tools:context="com.tinkersstudio.musiccloud.fragment.FragmentSongInfo">
+
+    <!--Singer info-->
+    <uk.co.deanwild.flowtextview.FlowTextView
+        android:id="@+id/song_info_singer_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="400dip"
+            android:padding="10dip"
+            android:src="@drawable/avatar_blank"/>
+    </uk.co.deanwild.flowtextview.FlowTextView>
+
+    <!--Album-->
+    <uk.co.deanwild.flowtextview.FlowTextView
+        android:id="@+id/song_info_album_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="400dip"
+            android:padding="10dip"
+            android:src="@drawable/avatar_blank"/>
+    </uk.co.deanwild.flowtextview.FlowTextView>
+
+</LinearLayout>
