@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.controller.MusicService;
-import com.tinkersstudio.musiccloud.controller.NoSongToPlayException;
+import com.tinkersstudio.musiccloud.util.NoSongToPlayException;
 import es.dmoral.toasty.Toasty;
 import info.abdolahi.CircularMusicProgressBar;
 import android.graphics.Color;
@@ -26,7 +26,7 @@ import android.media.MediaMetadataRetriever;
 import android.widget.SeekBar;
 import android.view.MotionEvent;
 import com.tinkersstudio.musiccloud.R;
-import com.tinkersstudio.musiccloud.controller.TimeConverter;
+import com.tinkersstudio.musiccloud.util.TimeConverter;
 
 
 /**

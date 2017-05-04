@@ -31,11 +31,12 @@ import com.tinkersstudio.musiccloud.fragment.FragmentFavoriteList;
 import com.tinkersstudio.musiccloud.fragment.FragmentHome;
 import com.tinkersstudio.musiccloud.fragment.FragmentMusicPlayer;
 import com.tinkersstudio.musiccloud.fragment.FragmentProfile;
+import com.tinkersstudio.musiccloud.fragment.FragmentRadio;
 import com.tinkersstudio.musiccloud.fragment.FragmentSetting;
 import com.tinkersstudio.musiccloud.fragment.FragmentSongList;
 
 import com.tinkersstudio.musiccloud.controller.MusicService;
-import com.tinkersstudio.musiccloud.controller.MyFlag;
+import com.tinkersstudio.musiccloud.util.MyFlag;
 import es.dmoral.toasty.Toasty;
 
 /**
@@ -147,11 +148,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.navigation_view_radio:
                 Toasty.info(context, "Open Radio Service", Toast.LENGTH_SHORT, true).show();
+                fragment = new FragmentRadio();
                 break;
-
             //case R.id.navigation_view_soundcloud:
             //    Toasty.info(context, "Open Soundcloud", Toast.LENGTH_SHORT, true).show();
             //    break;
+
             /** FragmentSetting group*/
             case R.id.navigation_view_user_info:
                 Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();

@@ -1,47 +1,46 @@
 package com.tinkersstudio.musiccloud.adapter;
 
-/**
- * Created by Owner on 2/20/2017.
- */
-
-
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.model.Radio;
+import com.tinkersstudio.musiccloud.view.RadioViewHolder;
 
 import java.util.List;
 
-import com.tinkersstudio.musiccloud.model.Info;
-import com.tinkersstudio.musiccloud.view.SongInfoViewHolder;
-
 /**
- * This class binds the visual SongViews and the data behind them (Songs).
+ * Created by anhnguyen on 5/3/17.
+ * version 5/3/2017
  */
-public class InfoListAdapter extends RecyclerView.Adapter<SongInfoViewHolder> {
 
-    /** The application Context in which this SongListAdapter is being used. */
+public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
+    String LOG_TAG = "RadioListAdapter";
+
+    /** The application Context in which this RadioListAdapter is being used. */
     //private Context m_context;
 
-    /** The data set to which this SongListAdapter is bound. */
-    private List<Info> mInfoList;
+    /** The data set to which this RadioListAdapter is bound. */
+    private List<Radio> mRadioList;
 
-    View v;
+    private View v;
 
     /**
      * Parameterized constructor that takes in the application Context in which
-     * it is being used and the Collection of Song objects to which it is bound.
-     * m_nSelectedPosition will be initialized to Adapter.NO_SELECTION.
+     * it is being used and the Collection of Radio objects to which it is bound.
      *
-     * @param infoList
-     *            The Collection of Song objects to which this SongListAdapter
+     * @param radioList
+     *            The Collection of Radio objects to which this RadioListAdapter
      *            is bound.
      */
-    public InfoListAdapter(List<Info> infoList) {
-        this.mInfoList = infoList;
+    public RadioListAdapter(List<Radio> radioList) {
+        this.mRadioList = radioList;
+
+        Log.i(LOG_TAG, "construct RadioListAdapter with " + radioList.size() + " radios");
     }
 
     /**
@@ -50,7 +49,10 @@ public class InfoListAdapter extends RecyclerView.Adapter<SongInfoViewHolder> {
      * @return Count of items.
      */
     public int getCount() {
-        return this.mInfoList.size();
+
+        Log.i(LOG_TAG, "get Count " + mRadioList.size());
+        return this.mRadioList.size();
+
     }
 
     /**
@@ -61,7 +63,8 @@ public class InfoListAdapter extends RecyclerView.Adapter<SongInfoViewHolder> {
      * @return The data at the specified position.
      */
     public Object getItem(int position) {
-        return this.mInfoList.get(position);
+        Log.i(LOG_TAG, "get Item " + position);
+        return this.mRadioList.get(position);
     }
 
     /**
@@ -85,20 +88,19 @@ public class InfoListAdapter extends RecyclerView.Adapter<SongInfoViewHolder> {
      * @see #onBindViewHolder(RecyclerView.ViewHolder, int)
      */
     @Override
-    public SongInfoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RadioViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new com.tinkersstudio.musiccloud.view
         v = LayoutInflater.from(parent.getContext())
                 .inflate(viewType, parent, false);
         // set the com.tinkersstudio.musiccloud.view's size, margins, paddings and layout parameters
-        SongInfoViewHolder vh = new SongInfoViewHolder(v, this);
+        RadioViewHolder vh = new RadioViewHolder(v, this);
         return vh;
-
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.view_detail;
+        return R.layout.view_radio;
     }
 
     /**
@@ -122,8 +124,10 @@ public class InfoListAdapter extends RecyclerView.Adapter<SongInfoViewHolder> {
      * @param position The position of the item within the com.tinkersstudio.musiccloud.adapter's data set.
      */
     @Override
-    public void onBindViewHolder(SongInfoViewHolder holder, final int position) {
-        holder.setInfo(mInfoList.get(position));
+    public void onBindViewHolder(RadioViewHolder holder, final int position) {
+
+        Log.i(LOG_TAG, "call set Radio on position " + position);
+        holder.setRadio(mRadioList.get(position));
     }
 
 
@@ -145,6 +149,6 @@ public class InfoListAdapter extends RecyclerView.Adapter<SongInfoViewHolder> {
      */
     @Override
     public int getItemCount() {
-        return this.mInfoList.size();
+        return this.mRadioList.size();
     }
 }

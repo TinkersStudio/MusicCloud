@@ -1,32 +1,33 @@
 package com.tinkersstudio.musiccloud.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.media.MediaMetadataRetriever;
+import android.widget.ImageButton;
+import android.util.Log;
 
-import java.io.File;
+import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.adapter.RadioListAdapter;
+import com.tinkersstudio.musiccloud.model.Radio;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tinkersstudio.musiccloud.adapter.InfoListAdapter;
-import com.tinkersstudio.musiccloud.util.TimeConverter;
-import com.tinkersstudio.musiccloud.model.Song;
-import com.tinkersstudio.musiccloud.model.Info;
-import com.tinkersstudio.musiccloud.R;
 
 /**
- * Created by anhnguyen on 2/6/17.
+ * Created by anhnguyen on 5/3/17.
  */
 
-public class FragmentMusicInfoDetails extends Fragment {
-    private static final String TAG = "RecyclerViewFragment";
+public class FragmentRadio extends Fragment {
+    private static final String LOG_TAG = "FragmentRadio";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
 
@@ -38,28 +39,29 @@ public class FragmentMusicInfoDetails extends Fragment {
     private LayoutManagerType mCurrentLayoutManagerType;
 
     private RecyclerView mRecyclerView;
-    private InfoListAdapter mAdapter;
+    private RadioListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private List<Info> mInfo;
-    private Song currentSong;
+    private List<Radio> mDataset;
 
-    public void setCurrentSong(Song currentSong) {this.currentSong = currentSong;}
+    private ImageButton addStation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mInfo = new ArrayList<Info>();
+
+        Log.i(LOG_TAG, "Call init data set");
         initDataset();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_song_info_detail, container, false);
-        rootView.setTag(TAG);
+        View rootView = inflater.inflate(R.layout.fragment_radio, container, false);
+        rootView.setTag(LOG_TAG);
 
         // BEGIN_INCLUDE(initializeRecyclerView)
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.si_detail_pane);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_radio_list);
+        addStation = (ImageButton)rootView.findViewById(R.id.fr_add);
 
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
@@ -73,11 +75,33 @@ public class FragmentMusicInfoDetails extends Fragment {
             mCurrentLayoutManagerType = (LayoutManagerType) savedInstanceState
                     .getSerializable(KEY_LAYOUT_MANAGER);
         }
-        setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
+        this.setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        mAdapter = new InfoListAdapter(mInfo);
+        Log.i(LOG_TAG, "create RadioListAdapter with list of " +  mDataset.size() + " radios");
+        mAdapter = new RadioListAdapter(mDataset);
         // Set CustomAdapter as the com.tinkersstudio.musiccloud.adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
+
+        addStation.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    addStation.setColorFilter(Color.RED);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    addStation.setColorFilter(Color.WHITE);
+
+                    // TODO: Popup an dialog fragment to add a station, then update view
+                    mDataset.add(new Radio("some path", "newly added station #" + (mDataset.size() + 1)));
+
+
+                    mAdapter.notifyDataSetChanged();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         return rootView;
     }
@@ -136,31 +160,12 @@ public class FragmentMusicInfoDetails extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
-
-        MediaMetadataRetriever metaRetriver;
-        metaRetriver = new MediaMetadataRetriever();
-        metaRetriver.setDataSource(currentSong.getPath());
-
-        mInfo.add(new Info ("Title", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)));
-        mInfo.add(new Info ("Artist", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)));
-        mInfo.add(new Info ("Album", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM)));
-        mInfo.add(new Info ("Author", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_AUTHOR)));
-        mInfo.add(new Info ("Duration", TimeConverter.milliSecondsToTimeString(
-                Integer.parseInt(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)))));
-        String rate = metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
-        mInfo.add(new Info ("Bit Rate", rate.substring(0, rate.length()-3) + " Kbps"));
-        mInfo.add(new Info ("Genre", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE)));
-        mInfo.add(new Info ("Year", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)));
-        mInfo.add(new Info ("Modified", metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)));
-
-        String value = "";
-        File file = new File(currentSong.getPath());
-        Double file_size = Double.parseDouble(String.valueOf(file.length()/1024));
-        if(file_size >= 1024)
-            value = String.format("%.2f", file_size/1024) +" Mb";
-        else
-            value = String.format("%.0f", file_size) + " Kb";
-        mInfo.add(new Info ("Size", value));
-        metaRetriver.release();
+        mDataset = new ArrayList<Radio>();
+        Radio radio1 = new Radio("http://listen.shoutcast.com:80/SorcererRadio-DisneyParkMusic",
+                "Sorcerer Radio  - Disney Park Music");
+        Radio radio2 = new Radio("http://s6.voscast.com:10478", "Metropolis 95.5");
+        mDataset.add(radio1);
+        mDataset.add(radio2);
+        Log.i(LOG_TAG, "init data set with " + mDataset.size() + " radios");
     }
 }

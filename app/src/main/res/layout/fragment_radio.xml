@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fr_header"
+        android:background="@color/tw__composer_black">
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/fr_header_text"
+            android:text="Radio Stations"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/orange"
+            android:textSize="10pt"
+            android:fontFamily="sans-serif-smallcaps"/>
+
+        <ImageButton
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:id="@+id/fr_add"
+            android:background="@drawable/ripple"
+            android:src="@drawable/ic_action_plus"
+            android:clickable="true" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/orange">
+
+    </View>
+    <!-- List of the radio station-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_radio_list"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/material_blue_grey_800"/>
+</LinearLayout>

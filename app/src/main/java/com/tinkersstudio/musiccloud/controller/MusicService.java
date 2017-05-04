@@ -11,10 +11,11 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.app.Notification;
 import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.util.MyFlag;
+import com.tinkersstudio.musiccloud.util.NoSongToPlayException;
 
 /**
  * Created by Owner on 2/10/2017.
@@ -247,6 +248,7 @@ public class MusicService extends Service {
 
     /**
      *  Access to the Player
+     *      Facilitate and give the correct media player (local media player or Radio Player)
      * @return the media player
      */
     public MyPlayer getPlayer(){return player;}

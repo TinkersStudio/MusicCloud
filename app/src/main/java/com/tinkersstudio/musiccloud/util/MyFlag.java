@@ -1,4 +1,4 @@
-package com.tinkersstudio.musiccloud.controller;
+package com.tinkersstudio.musiccloud.util;
 
 /**
  * Created by anhnguyen on 2/11/17.

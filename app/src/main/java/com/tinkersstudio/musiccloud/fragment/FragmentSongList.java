@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.tinkersstudio.musiccloud.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.tinkersstudio.musiccloud.activities.MainActivity;
@@ -34,7 +33,7 @@ public class FragmentSongList extends Fragment {
         LINEAR_LAYOUT_MANAGER
     }
 
-    protected LayoutManagerType mCurrentLayoutManagerType;
+    private LayoutManagerType mCurrentLayoutManagerType;
 
     protected RecyclerView mRecyclerView;
     protected SongListAdapter mAdapter;

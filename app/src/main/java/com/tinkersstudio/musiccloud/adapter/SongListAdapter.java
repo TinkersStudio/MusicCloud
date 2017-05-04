@@ -105,7 +105,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.song_view;
+        return R.layout.view_song;
     }
 
     /**

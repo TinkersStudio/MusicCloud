@@ -1,6 +1,8 @@
 package com.tinkersstudio.musiccloud.controller;
 
 import com.tinkersstudio.musiccloud.activities.MainActivity;
+import com.tinkersstudio.musiccloud.util.MyFlag;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;

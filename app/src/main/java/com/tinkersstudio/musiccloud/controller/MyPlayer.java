@@ -8,10 +8,11 @@ import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import java.util.ArrayList;
-import java.util.Random;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.model.Song;
+import com.tinkersstudio.musiccloud.util.MyFlag;
+import com.tinkersstudio.musiccloud.util.NoSongToPlayException;
 
 /**
  * Created by anhnguyen on 2/11/17.
