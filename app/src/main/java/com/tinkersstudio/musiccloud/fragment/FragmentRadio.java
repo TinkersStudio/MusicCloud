@@ -1,6 +1,8 @@
 package com.tinkersstudio.musiccloud.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,14 +13,16 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.util.Log;
 
 import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.adapter.RadioListAdapter;
+import com.tinkersstudio.musiccloud.controller.MusicService;
 import com.tinkersstudio.musiccloud.model.Radio;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,6 +48,9 @@ public class FragmentRadio extends Fragment {
     private List<Radio> mDataset;
 
     private ImageButton addStation;
+
+    // Need service to pass to Song View Holder in order to play song at index
+    MusicService myService = ((MainActivity)getActivity()).myService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +85,7 @@ public class FragmentRadio extends Fragment {
         this.setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
         Log.i(LOG_TAG, "create RadioListAdapter with list of " +  mDataset.size() + " radios");
-        mAdapter = new RadioListAdapter(mDataset);
+        mAdapter = new RadioListAdapter(mDataset, myService);
         // Set CustomAdapter as the com.tinkersstudio.musiccloud.adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
 
@@ -92,11 +99,34 @@ public class FragmentRadio extends Fragment {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     addStation.setColorFilter(Color.WHITE);
 
-                    // TODO: Popup an dialog fragment to add a station, then update view
-                    mDataset.add(new Radio("some path", "newly added station #" + (mDataset.size() + 1)));
+                    // Popup an dialog fragment to add a station, then update view
+                    View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.view_add_radio, (ViewGroup) getView(), false);
 
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Add New Chanel");
 
-                    mAdapter.notifyDataSetChanged();
+                    // Set up the input
+                    final EditText name = (EditText)viewInflated.findViewById(R.id.fr_dialog_name);
+                    final EditText url = (EditText) viewInflated.findViewById(R.id.fr_dialog_url);
+
+                    builder.setView(viewInflated);
+
+                    // Set up the buttons
+                    builder.setPositiveButton("ADD Channel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mDataset.add(new Radio(url.getText().toString(), name.getText().toString()));
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
                     return true;
                 }
                 return false;
@@ -160,12 +190,6 @@ public class FragmentRadio extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
-        mDataset = new ArrayList<Radio>();
-        Radio radio1 = new Radio("http://listen.shoutcast.com:80/SorcererRadio-DisneyParkMusic",
-                "Sorcerer Radio  - Disney Park Music");
-        Radio radio2 = new Radio("http://s6.voscast.com:10478", "Metropolis 95.5");
-        mDataset.add(radio1);
-        mDataset.add(radio2);
-        Log.i(LOG_TAG, "init data set with " + mDataset.size() + " radios");
+        mDataset = myService.getRadio().getRadioList();
     }
 }

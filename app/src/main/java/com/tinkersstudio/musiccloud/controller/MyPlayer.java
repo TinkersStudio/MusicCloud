@@ -131,8 +131,13 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * @param index
      */
     public void playAtIndex(int index){
+        if (player.isPlaying()) {
+            this.pause();
+            if (currentSongPosition == index){
+                return;
+            }
+        }
         setCurrentSongPosition(index);
-        this.pause();
         this.play();
     }
     /**
@@ -140,6 +145,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * This will either play the music or pause the music
      */
     public void play() {
+        owner.setMode(MyFlag.OFFLINE_MUSIC_MODE);
         // Check to see if there is a valid song to play
         if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
@@ -189,6 +195,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * Pause player
      */
     public void pause() {
+        isPaused = true;
         player.pause();
     }
 

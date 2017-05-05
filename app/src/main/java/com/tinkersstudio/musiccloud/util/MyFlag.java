@@ -5,5 +5,6 @@ package com.tinkersstudio.musiccloud.util;
  */
 
 public enum MyFlag {
-    PLAY, PAUSE, SHUFFLE, REPEAT, NOSHUFFLE, NOREPEAT, IS_ON, IS_OFF
+    PLAY, PAUSE, SHUFFLE, REPEAT, NOSHUFFLE, NOREPEAT, IS_ON, IS_OFF,
+    OFFLINE_MUSIC_MODE, ONLINE_MUSIC_MODE, RADIO_MODE
 }

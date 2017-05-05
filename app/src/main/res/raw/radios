@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<playlist version="1" xmlns="http://xspf.org/ns/0/">
+    <track>
+        <location>http://listen.shoutcast.com:80/SorcererRadio-DisneyParkMusic</location>
+        <title>Sorcerer Radio  - Disney Park Music</title>
+    </track>
+
+    <track>
+        <location>http://37.251.146.169:8300/stream</location>
+        <title>RADIO CLASIC MOZART</title>
+    </track>
+
+    <track>
+        <location>http://198.143.144.226:8037/stream</location>
+        <title>SignPilot LLC Stream - Powered by SignPilot.com</title>
+    </track>
+
+    <track>
+        <location>http://listen.shoutcast.com/113fmbigkickin-country</location>
+        <title>.113FM Big Kickin' Country</title>
+    </track>
+
+    <track>
+        <location>http://listen.radionomy.com/Feeling-LOVE</location>
+        <title>Feeling LOVE</title>
+    </track>
+
+    <track>
+        <location>http://45.43.200.42:15348</location>
+        <title>Love Songs</title>
+    </track>
+
+    <track>
+        <location>http://149.56.23.7:20082/stream</location>
+        <title>CINEMIX</title>
+    </track>
+
+    <track>
+        <location>http://138.201.248.219:8018/stream</location>
+        <title>Radio 101 ROCK</title>
+    </track>
+
+    <track>
+        <location>http://46.232.185.99:8000/gong971</location>
+        <title>Radio Gong 97.1</title>
+    </track>
+
+    <track>
+        <location>http://178.33.45.203:80/stream2</location>
+        <title>ANTENA1 - 94 7 FM</title>
+    </track>
+
+    <track>
+        <location>http://66.85.88.174:80/officemix</location>
+        <title>POWERHITZ.COM - THE OFFICEMIX - The Best Soft Rock And Pop</title>
+    </track>
+
+    <track>
+        <location>http://173.192.105.231:7316/Live</location>
+        <title>Kpopway</title>
+    </track>
+
+    <track>
+        <location>http://s2.voscast.com:7932</location>
+        <title>Relaxation Island</title>
+    </track>
+
+    <track>
+        <location>http://80.195.148.109:3384</location>
+        <title>Phoenix Radio | Chart | Dance | Pop | House</title>
+    </track>
+
+    <track>
+        <location>http://listen.radionomy.com:80/-Pophits</location>
+        <title>#Pophits</title>
+    </track>
+</playlist>

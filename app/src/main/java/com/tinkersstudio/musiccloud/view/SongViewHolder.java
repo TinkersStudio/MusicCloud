@@ -68,7 +68,8 @@ public class SongViewHolder extends RecyclerView.ViewHolder{
         this.songSinger.setText(song.getArtist());
         this.songTitle.setText(song.getTitle());
 
-        if(getAdapterPosition() == myService.getPlayer().getCurrentSongPosition()) {
+        if(getAdapterPosition() == myService.getPlayer().getCurrentSongPosition()
+                && !myService.getPlayer().getIsPause()) {
             playButton.setImageResource(R.drawable.ic_action_pause);
             playButton.setColorFilter(Color.RED);
         } else {

@@ -1,17 +1,15 @@
 package com.tinkersstudio.musiccloud.view;
 
 import android.graphics.Color;
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
-import android.view.MotionEvent;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tinkersstudio.musiccloud.R;
-import com.tinkersstudio.musiccloud.adapter.InfoListAdapter;
 import com.tinkersstudio.musiccloud.adapter.RadioListAdapter;
+import com.tinkersstudio.musiccloud.controller.MusicService;
 import com.tinkersstudio.musiccloud.model.Radio;
 
 /**
@@ -19,7 +17,7 @@ import com.tinkersstudio.musiccloud.model.Radio;
  */
 
 public class RadioViewHolder extends RecyclerView.ViewHolder{
-
+    private String LOG_TAG = "RadioViewHolder";
     View view;
     TextView name;
     ImageButton play;
@@ -27,7 +25,11 @@ public class RadioViewHolder extends RecyclerView.ViewHolder{
     //LinearLayout station;
     RadioListAdapter adapter;
 
+    MusicService myService;
+
     Radio radio;
+
+    public void setService(MusicService musicService){myService = musicService;}
 
     public RadioViewHolder(View itemView, RadioListAdapter adapter) {
         super(itemView);
@@ -43,52 +45,44 @@ public class RadioViewHolder extends RecyclerView.ViewHolder{
         delete = (ImageButton)view.findViewById(R.id.fr_delete);
         play.setBackgroundColor(Color.TRANSPARENT);
         delete.setBackgroundColor(Color.TRANSPARENT);
-
-        setListener();
-    }
-
-    private void setListener(){
-        play.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-                    play.setColorFilter(Color.RED);
-                    return true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Play Radio & set PAUSE button
-                    play.setImageResource(R.drawable.ic_action_pause);
-
-                    play.setColorFilter(Color.WHITE);
-                    return true;
-                }
-                return false;
-            }
-        });
-
-
-        delete.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-                    delete.setColorFilter(Color.RED);
-                    return true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // delete this radio station
-
-                    delete.setColorFilter(Color.WHITE);
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     public void setRadio(Radio radio){
+        Log.i(LOG_TAG, "seting radio : " + radio.getName());
         this.radio = radio;
         name.setText(radio.getName());
+
+        Log.i(LOG_TAG,"adapterPos: " + getAdapterPosition() + " , stationPos: " + myService.getRadio().getCurrentStation() + !myService.getRadio().getIsPause());
+
+        if(getAdapterPosition() == myService.getRadio().getCurrentStation() &&
+                !myService.getRadio().getIsPause()) {
+            play.setImageResource(R.drawable.ic_action_pause);
+            play.setColorFilter(Color.RED);
+        } else {
+            play.setImageResource(R.drawable.ic_action_play);
+            play.setColorFilter(Color.WHITE);
+            delete.setColorFilter(Color.WHITE);
+        }
+
+        play.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                myService.getRadio().playAtIndex(getAdapterPosition());
+                play.setImageResource(R.drawable.ic_action_pause);
+                play.setColorFilter(Color.RED);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                delete.setColorFilter(Color.RED);
+                myService.getRadio().deleteStation(getAdapterPosition());
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 }

@@ -43,5 +43,5 @@
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/material_blue_grey_800"/>
+        android:background="@drawable/background_radio"/>
 </LinearLayout>

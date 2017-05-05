@@ -147,7 +147,6 @@ public class MainActivity extends AppCompatActivity
                 Toasty.info(context, "Open Spotify Service", Toast.LENGTH_SHORT, true).show();
                 break;
             case R.id.navigation_view_radio:
-                Toasty.info(context, "Open Radio Service", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentRadio();
                 break;
             //case R.id.navigation_view_soundcloud:
