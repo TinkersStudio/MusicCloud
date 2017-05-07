@@ -1,7 +1,7 @@
 package com.tinkersstudio.musiccloud.authentication;
 
 /**
- * Created by Owner on 4/30/2017.
+ * DEPRECATED
  */
 
 import android.content.Context;
@@ -38,6 +38,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * This activity has been deprecated
+ */
 public class AuthUiActivity extends AppCompatActivity {
     private static final String UNCHANGED_CONFIG_VALUE = "CHANGE-ME";
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
@@ -118,6 +121,7 @@ public class AuthUiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
+        //user signed in
         if (auth.getCurrentUser() != null) {
             startActivity(SignedInActivity.createIntent(this, null));
             finish();

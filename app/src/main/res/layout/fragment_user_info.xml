@@ -9,5 +9,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sign In"/>
+    <Button
+        android:id="@+id/user_info_sign_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Out"/>
 
 </LinearLayout>

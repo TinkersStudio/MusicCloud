@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.fragment.FragmentEqualizer;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private Context context;
     private Toolbar toolbar = null;
+    private FirebaseAuth mAuth;
 
     /*Fragment control*/
     FragmentTransaction fragmentTransaction;
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
 
         if(savedInstanceState!=null)
             Log.i(LOG_TAG, "there was some saved stated " + myService);
@@ -119,8 +123,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        //initialize in case of failure
-        //FIXME Use this to avoid the case of cloud service
         Fragment fragment = new FragmentHome();
 
         switch (id) {
@@ -177,7 +179,6 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.fragment_container,fragment);
 
         //Add the fragment to stack and commit
-        //FIXME: Override on backpressed
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
@@ -186,11 +187,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * The function is called if the authentication is made. Update the UI
+     * @param currentUser
+     */
+    protected void updateUI(FirebaseUser currentUser)
+    {
+
+    }
+    /**
      * Everytime we start this activity, bind it to the Service
      */
     @Override
     protected void onStart() {
         super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null)
+        {
+            updateUI(currentUser);
+        }
+        else {
+            //TODO: Set the default UI
+        }
 
         if (bindingIntent == null) {
             bindingIntent = new Intent(this, MusicService.class);
