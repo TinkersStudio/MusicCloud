@@ -35,6 +35,12 @@ public class MusicService extends Service {
     /* the Offline Media Player */
     private MyPlayer player;
 
+    /* the Radio Player */
+    private  MyRadio radio;
+
+    /* toggle between music mode or radio mode, default OFFLINE_MUSIC_MODE */
+    private MyFlag mode = MyFlag.OFFLINE_MUSIC_MODE;
+
     /* notification bar */
     private Notification notifBar;
     private NotificationManager notificationManager;
@@ -69,6 +75,7 @@ public class MusicService extends Service {
     @Override
     public void onDestroy() {
         player.releasePlayer();
+        radio.releaseRadio();
         super.onDestroy();
     }
 
@@ -89,6 +96,7 @@ public class MusicService extends Service {
         if (intent.getAction() == null) {
             // Getting Music files from Storage
             player = new MyPlayer(this);
+            radio = new MyRadio(this);
             if (player.getSongFromStorage() == 0) {
                 setNotificationBar(MyFlag.PLAY, "No song to play", "------");
             }
@@ -102,17 +110,23 @@ public class MusicService extends Service {
         else if (intent.getAction().equals("ACTION.NEXT_ACTION")) {
             // Pass action to MyPlayer, and rebuild notif bar
             try {
-                if(player.getIsPause()) {
-                    player.seekNext(false);
-                    setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
-                            player.getCurrentSong().getTitle(),
-                            player.getCurrentSong().getTitle());
-                }
-                else {
-                    player.seekNext(true);
-                    setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
-                            player.getCurrentSong().getTitle(),
-                            player.getCurrentSong().getTitle());
+                switch (mode) {
+                    case OFFLINE_MUSIC_MODE:
+                        if (player.getIsPause()) {
+                            player.seekNext(false);
+                            setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
+                                    player.getCurrentSong().getTitle(),
+                                    player.getCurrentSong().getArtist());
+                        } else {
+                            player.seekNext(true);
+                            setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
+                                    player.getCurrentSong().getTitle(),
+                                    player.getCurrentSong().getArtist());
+                        }
+                        break;
+                    case RADIO_MODE:
+                        radio.playNext();
+                        break;
                 }
             } catch (NoSongToPlayException e) {
                 setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
@@ -126,17 +140,23 @@ public class MusicService extends Service {
         else if (intent.getAction().equals("ACTION.PREV_ACTION")) {
             // Pass action to MyPlayer, and rebuild notif bar
             try {
-                if(player.getIsPause()) {
-                    player.seekPrev(false);
-                    setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
-                            player.getCurrentSong().getTitle(),
-                            player.getCurrentSong().getTitle());
-                }
-                else {
-                    player.seekPrev(true);
-                    setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
-                            player.getCurrentSong().getTitle(),
-                            player.getCurrentSong().getTitle());
+                switch (mode) {
+                    case OFFLINE_MUSIC_MODE:
+                        if (player.getIsPause()) {
+                            player.seekPrev(false);
+                            setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
+                                    player.getCurrentSong().getTitle(),
+                                    player.getCurrentSong().getArtist());
+                        } else {
+                            player.seekPrev(true);
+                            setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
+                                    player.getCurrentSong().getTitle(),
+                                    player.getCurrentSong().getArtist());
+                        }
+                        break;
+                    case RADIO_MODE:
+                        radio.playPrev();
+                        break;
                 }
             } catch (NoSongToPlayException e) {
                 setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
@@ -150,9 +170,16 @@ public class MusicService extends Service {
         else if (intent.getAction().equals("ACTION.PLAY_ACTION")) {
             // Pass action to MyPlayer, and rebuild notif bar
             try {
-                player.play();
-                setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
-                        player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+                switch (mode) {
+                    case OFFLINE_MUSIC_MODE:
+                        player.play();
+                        setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
+                                player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
+                        break;
+                    case RADIO_MODE:
+                        radio.playRadio();
+                        break;
+                }
             } catch (NoSongToPlayException e) {
                 setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
             }
@@ -248,9 +275,21 @@ public class MusicService extends Service {
 
     /**
      *  Access to the Player
-     *      Facilitate and give the correct media player (local media player or Radio Player)
      * @return the media player
      */
     public MyPlayer getPlayer(){return player;}
 
+    /**
+     *  Access to the Radio
+     * @return the radio player
+     */
+    public MyRadio getRadio(){return radio;}
+
+    public MyFlag getMode() {
+        return mode;
+    }
+
+    public void setMode(MyFlag mode) {
+        this.mode = mode;
+    }
 }

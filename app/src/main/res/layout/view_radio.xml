@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/fr_station"
-    android:background="@color/tw__composer_black">
+    android:background="#0000">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -17,9 +17,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/fr_header_text"
-            android:text="A Sample Radio Station, let see how long"
+            android:text="A Sample Radio Station"
             android:layout_gravity="center"
-            android:textColor="@color/white"
+            android:textColor="#FFFF"
             android:textSize="8pt"
             android:maxLines="1" />
 
@@ -41,7 +41,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#F2F7FF">
+        android:background="@color/orange">
     </View>
 
 

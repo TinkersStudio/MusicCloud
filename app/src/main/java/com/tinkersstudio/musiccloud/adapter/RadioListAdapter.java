@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.controller.MusicService;
 import com.tinkersstudio.musiccloud.model.Radio;
 import com.tinkersstudio.musiccloud.view.RadioViewHolder;
 
@@ -26,6 +27,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
 
     /** The data set to which this RadioListAdapter is bound. */
     private List<Radio> mRadioList;
+    private MusicService myService;
 
     private View v;
 
@@ -37,9 +39,9 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
      *            The Collection of Radio objects to which this RadioListAdapter
      *            is bound.
      */
-    public RadioListAdapter(List<Radio> radioList) {
+    public RadioListAdapter(List<Radio> radioList, MusicService musicService) {
         this.mRadioList = radioList;
-
+        this.myService = musicService;
         Log.i(LOG_TAG, "construct RadioListAdapter with " + radioList.size() + " radios");
     }
 
@@ -63,7 +65,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
      * @return The data at the specified position.
      */
     public Object getItem(int position) {
-        Log.i(LOG_TAG, "get Item " + position);
+        //Log.i(LOG_TAG, "get Item " + position);
         return this.mRadioList.get(position);
     }
 
@@ -89,11 +91,13 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
      */
     @Override
     public RadioViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.i(LOG_TAG, "inflate new Radio");
         // create a new com.tinkersstudio.musiccloud.view
         v = LayoutInflater.from(parent.getContext())
                 .inflate(viewType, parent, false);
         // set the com.tinkersstudio.musiccloud.view's size, margins, paddings and layout parameters
         RadioViewHolder vh = new RadioViewHolder(v, this);
+        vh.setService(myService);
         return vh;
     }
 
@@ -126,7 +130,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
     @Override
     public void onBindViewHolder(RadioViewHolder holder, final int position) {
 
-        Log.i(LOG_TAG, "call set Radio on position " + position);
+        //Log.i(LOG_TAG, "call set Radio on position " + position);
         holder.setRadio(mRadioList.get(position));
     }
 
