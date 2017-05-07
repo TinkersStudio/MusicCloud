@@ -21,7 +21,9 @@ import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.adapter.RadioListAdapter;
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.controller.MyRadio;
 import com.tinkersstudio.musiccloud.model.Radio;
+import com.tinkersstudio.musiccloud.util.MyFlag;
 
 import java.util.List;
 
@@ -190,6 +192,6 @@ public class FragmentRadio extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
-        mDataset = myService.getRadio().getRadioList();
+        mDataset = ((MyRadio)myService.getPlayer(MyFlag.RADIO_MODE)).getRadioList();
     }
 }

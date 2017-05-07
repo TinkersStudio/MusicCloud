@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.controller.MyPlayer;
 import com.tinkersstudio.musiccloud.fragment.FragmentEqualizer;
 import com.tinkersstudio.musiccloud.fragment.FragmentFavoriteList;
 import com.tinkersstudio.musiccloud.fragment.FragmentHome;
@@ -162,14 +163,14 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.navigation_view_equalizer:
                 fragment = new FragmentEqualizer();
-                ((FragmentEqualizer)fragment).setMusicPlayer(myService.getPlayer());
+                ((FragmentEqualizer)fragment).setMusicPlayer(((MyPlayer)myService.getPlayer(myService.getMode())));
                 break;
             case R.id.navigation_view_customize:
                 Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentSetting();
                 break;
             case R.id.navigation_view_quit:
-                myService.getPlayer().releasePlayer();
+                myService.releasePlayer();
                 myService.stopForeground(true);
                 finishAffinity();
                 System.exit(0);

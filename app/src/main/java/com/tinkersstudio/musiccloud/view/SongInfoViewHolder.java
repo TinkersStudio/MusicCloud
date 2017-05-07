@@ -14,9 +14,9 @@ import com.tinkersstudio.musiccloud.R;
 
 public class SongInfoViewHolder extends RecyclerView.ViewHolder {
 
-    View view;
-    TextView attribute;
-    TextView value;
+    private View view;
+    private TextView attribute;
+    private TextView value;
 
     public SongInfoViewHolder(View itemView, InfoListAdapter adapter) {
         super(itemView);

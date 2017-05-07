@@ -12,6 +12,8 @@ import android.os.IBinder;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.app.Notification;
+import android.util.Log;
+
 import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.util.MyFlag;
@@ -32,11 +34,14 @@ public class MusicService extends Service {
     /* to bind with the MainActivity */
     private final IBinder musicBind = new MusicBinder();
 
+    /* the reference to the Player */
+    private Player thePlayer = null;
+
     /* the Offline Media Player */
-    private MyPlayer player;
+    private MyPlayer player = null;
 
     /* the Radio Player */
-    private  MyRadio radio;
+    private  MyRadio radio = null;
 
     /* toggle between music mode or radio mode, default OFFLINE_MUSIC_MODE */
     private MyFlag mode = MyFlag.OFFLINE_MUSIC_MODE;
@@ -79,6 +84,49 @@ public class MusicService extends Service {
         super.onDestroy();
     }
 
+    public void releasePlayer(){
+        player.releasePlayer();
+        radio.releaseRadio();
+    }
+    /**
+     * Toggle the Player between MyPlayer and MyRadio mode
+     */
+    public void toggle(MyFlag mode) {
+        if (this.mode == mode) {
+            return;
+        }
+        // Pause what ever is playing
+        if(thePlayer != null & !thePlayer.getIsPause()) {
+            thePlayer.pausePlayer();
+        }
+        //switch references of Player
+        switch (mode) {
+            case RADIO_MODE:
+                if (radio == null) {
+                    thePlayer = new MyRadio(this);
+                }
+                else {
+                    thePlayer = radio;
+                }
+                break;
+            case OFFLINE_MUSIC_MODE:
+                if (player == null) {
+                    thePlayer = new MyPlayer(this);
+                }
+                else {
+                    thePlayer = player;
+                }
+                break;
+            case ONLINE_MUSIC_MODE:
+                //TODO switch to other Online mode
+                break;
+        }
+
+        Log.i(LOG_TAG, "toogle " + this.mode + " to " + mode);
+        this.mode = mode;
+
+    }
+
     /**
      * This method will be call first right after Service is up
      * Start a Notification Bar on top of device represent this Service
@@ -94,23 +142,26 @@ public class MusicService extends Service {
         // When service is just start, there is no action Intent received.
         // Initialize the Foreground service and Notif Bar
         if (intent.getAction() == null) {
-            // Getting Music files from Storage
-            player = new MyPlayer(this);
-            radio = new MyRadio(this);
-            if (player.getSongFromStorage() == 0) {
+            this.player = new MyPlayer(this);
+            this.radio = new MyRadio(this);
+            thePlayer = this.player; // default player is initialize with offline music mode
+
+            if (thePlayer.getDataSource() == 0) {
                 setNotificationBar(MyFlag.PLAY, "No song to play", "------");
             }
             else {
-                setNotificationBar(MyFlag.PLAY, "song title", "artist");
+                setNotificationBar(MyFlag.PLAY, "Song Title", "Artist");
             }
             startForeground(notificaitonId, notifBar);
 
         }
         // Receive action NEXT, pass the action to MyPlayer, rebuild and update notif bar
         else if (intent.getAction().equals("ACTION.NEXT_ACTION")) {
+            Log.i(LOG_TAG, "mode: " + mode + "player " + " wasPlaying" + thePlayer.getIsPause());
             // Pass action to MyPlayer, and rebuild notif bar
             try {
-                switch (mode) {
+                thePlayer.seekNext(!thePlayer.getIsPause());
+                /*switch (mode) {
                     case OFFLINE_MUSIC_MODE:
                         if (player.getIsPause()) {
                             player.seekNext(false);
@@ -125,9 +176,9 @@ public class MusicService extends Service {
                         }
                         break;
                     case RADIO_MODE:
-                        radio.playNext();
+                        radio.seekNext(radio.getIsPause());
                         break;
-                }
+                }*/
             } catch (NoSongToPlayException e) {
                 setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
             }
@@ -138,9 +189,12 @@ public class MusicService extends Service {
         }
         // Receive action PREV, pass the action to MyPlayer, rebuild and update notif bar
         else if (intent.getAction().equals("ACTION.PREV_ACTION")) {
+
+            Log.i(LOG_TAG, "mode: " + mode + "player" + (thePlayer.getClass().isInstance(MyPlayer.class)? "MyPlayer" : "MyRadio"));
             // Pass action to MyPlayer, and rebuild notif bar
             try {
-                switch (mode) {
+                thePlayer.seekPrev(!thePlayer.getIsPause());
+                /*switch (mode) {
                     case OFFLINE_MUSIC_MODE:
                         if (player.getIsPause()) {
                             player.seekPrev(false);
@@ -155,9 +209,9 @@ public class MusicService extends Service {
                         }
                         break;
                     case RADIO_MODE:
-                        radio.playPrev();
+                        radio.seekPrev(radio.getIsPause());
                         break;
-                }
+                }*/
             } catch (NoSongToPlayException e) {
                 setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
             }
@@ -168,18 +222,22 @@ public class MusicService extends Service {
         }
         // Receive action PLAY/PAUSE, pass the action to MyPlayer, rebuild and update notif bar
         else if (intent.getAction().equals("ACTION.PLAY_ACTION")) {
+
+            Log.i(LOG_TAG, "mode: " + mode + "player" + (thePlayer.getClass().isInstance(MyPlayer.class)? "MyPlayer" : "MyRadio"));
             // Pass action to MyPlayer, and rebuild notif bar
             try {
+                thePlayer.playCurrent();
+                /*
                 switch (mode) {
                     case OFFLINE_MUSIC_MODE:
-                        player.play();
+                        player.playCurrent();
                         setNotificationBar(player.getIsPause() ? MyFlag.PLAY : MyFlag.PAUSE,
                                 player.getCurrentSong().getTitle(), player.getCurrentSong().getTitle());
                         break;
                     case RADIO_MODE:
-                        radio.playRadio();
+                        radio.playCurrent();
                         break;
-                }
+                }*/
             } catch (NoSongToPlayException e) {
                 setNotificationBar(MyFlag.PAUSE, "No song to play", "------");
             }
@@ -275,21 +333,18 @@ public class MusicService extends Service {
 
     /**
      *  Access to the Player
-     * @return the media player
+     * @return the player
      */
-    public MyPlayer getPlayer(){return player;}
-
-    /**
-     *  Access to the Radio
-     * @return the radio player
-     */
-    public MyRadio getRadio(){return radio;}
+    public Player getPlayer(MyFlag mode){
+        return (mode == MyFlag.OFFLINE_MUSIC_MODE? player : radio);
+    }
 
     public MyFlag getMode() {
         return mode;
     }
 
     public void setMode(MyFlag mode) {
+        thePlayer = (mode == MyFlag.OFFLINE_MUSIC_MODE? player :radio);
         this.mode = mode;
     }
 }

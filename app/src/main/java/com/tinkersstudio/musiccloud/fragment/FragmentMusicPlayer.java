@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.controller.MyPlayer;
+import com.tinkersstudio.musiccloud.util.MyFlag;
 import com.tinkersstudio.musiccloud.util.NoSongToPlayException;
 import es.dmoral.toasty.Toasty;
 import info.abdolahi.CircularMusicProgressBar;
@@ -52,6 +54,7 @@ public class FragmentMusicPlayer extends Fragment {
 
     //Service to control playback (provide by Main activity)
     private MusicService musicService;
+    private MyPlayer myPlayer;
 
     // The album picture to extract color;
     private Bitmap bitmap;
@@ -77,6 +80,7 @@ public class FragmentMusicPlayer extends Fragment {
      */
     public void setMusicService(MusicService musicService) {
         this.musicService = musicService;
+        this.myPlayer = (MyPlayer)musicService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE);
     }
 
     /**
@@ -131,15 +135,17 @@ public class FragmentMusicPlayer extends Fragment {
     private Runnable mUpdateTimeTask = new Runnable() {
         @Override
         public void run() {
+            //TODO: Stop this Runnable when the fragment is not on top
+            // now it keep running.
             try {
                 // Update seekbar only if the song playing
-                if (!musicService.getPlayer().getIsPause()) {
+                if (!myPlayer.getIsPause()) {
                     // Displaying time completed playing
-                    long currentDuration = musicService.getPlayer().getCurrentPosn();
+                    long currentDuration = myPlayer.getCurrentPosn();
                     timePast.setText("" + TimeConverter.milliSecondsToTimeString(currentDuration));
 
                     // Displaying Total Duration time
-                    long totalDuration = musicService.getPlayer().getTotalDuration();
+                    long totalDuration = myPlayer.getTotalDuration();
                     timeTotal.setText("" + TimeConverter.milliSecondsToTimeString(totalDuration));
 
                     // Updating progress bar
@@ -201,6 +207,8 @@ public class FragmentMusicPlayer extends Fragment {
         lyricsButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                musicService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     lyricsButton.setColorFilter(Color.RED);
                     return true;
@@ -208,16 +216,17 @@ public class FragmentMusicPlayer extends Fragment {
                     lyricsButton.setColorFilter(compColor);
                     try {
                         // Try get song to make sure there is a current song playing
-                        musicService.getPlayer().getCurrentSong();
+                        myPlayer.getCurrentSong();
                         FragmentManager fragmentManager = getFragmentManager();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         FragmentSongLyric songLyric = new FragmentSongLyric();
-                        songLyric.setCurrentSong(musicService.getPlayer().getCurrentSong());
+                        songLyric.setCurrentSong(myPlayer.getCurrentSong());
                         fragmentTransaction.addToBackStack("FragmentMusicPlayer");
                         fragmentTransaction.hide(FragmentMusicPlayer.this);
                         fragmentTransaction.add(R.id.fragment_container, songLyric);
                         fragmentTransaction.commit();
                     } catch (Exception e) {
+                        e.printStackTrace();
                         Toasty.info(context, "Current Song Empty", Toast.LENGTH_SHORT, true).show();
                         // No need to report
                     }
@@ -232,6 +241,8 @@ public class FragmentMusicPlayer extends Fragment {
         infoButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                musicService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     infoButton.setColorFilter(Color.RED);
                     return true;
@@ -239,14 +250,14 @@ public class FragmentMusicPlayer extends Fragment {
                     infoButton.setColorFilter(compColor);
                     try {
                         // Try get song to make sure there is a current song playing
-                        musicService.getPlayer().getCurrentSong();
+                        myPlayer.getCurrentSong();
                         FragmentManager fragmentManager = getFragmentManager();
                         android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentMusicInfo songLyric = new FragmentMusicInfo();
-                        songLyric.setCurrentSong(musicService.getPlayer().getCurrentSong());
+                        FragmentMusicInfo songInfo = new FragmentMusicInfo();
+                        songInfo.setCurrentSong(myPlayer.getCurrentSong());
                         fragmentTransaction.addToBackStack("FragmentMusicPlayer");
                         fragmentTransaction.hide(FragmentMusicPlayer.this);
-                        fragmentTransaction.add(R.id.fragment_container, songLyric);
+                        fragmentTransaction.add(R.id.fragment_container, songInfo);
                         fragmentTransaction.commit();
                     } catch (Exception e) {
                         Toasty.info(context, "Current Song Empty", Toast.LENGTH_SHORT, true).show();
@@ -273,11 +284,12 @@ public class FragmentMusicPlayer extends Fragment {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                musicService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
                 if (isMovingSeekBar) {
-                    long totalDuration = musicService.getPlayer().getTotalDuration();
+                    long totalDuration = myPlayer.getTotalDuration();
                     int seekToPosition = TimeConverter.percentageToCurrentDuration(seekBar.getProgress(), totalDuration);
                     // forward or backward to certain seconds
-                    musicService.getPlayer().seekPosition(seekToPosition);
+                    myPlayer.seekPosition(seekToPosition);
                 }
             }
         });
@@ -288,12 +300,13 @@ public class FragmentMusicPlayer extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
+                musicService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     repeatButton.setColorFilter(Color.RED);
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    repeatButton.setImageResource(musicService.getPlayer().setRepeat() ?
+                    repeatButton.setImageResource(myPlayer.setRepeat() ?
                             R.drawable.ic_action_replay : R.drawable.ic_action_repeat);
                     repeatButton.setColorFilter(compColor);
                     return true;
@@ -306,6 +319,8 @@ public class FragmentMusicPlayer extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                musicService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     playPrevButton.setColorFilter(Color.RED);
@@ -314,13 +329,7 @@ public class FragmentMusicPlayer extends Fragment {
                     // Move the prev song if there is a valid prev song
                     try {
                         // Pause player if the player was pausing before move to prev song
-                        if (musicService.getPlayer().getIsPause()) {
-                            musicService.getPlayer().seekPrev(false);
-                        }
-                        // Play if the player was playing before moving to prev song
-                        else {
-                            musicService.getPlayer().seekPrev(true);
-                        }
+                        myPlayer.seekPrev(!myPlayer.getIsPause());
                         // update whole screen with new song info
                         updateSongPlaying();
                         setColor();
@@ -338,13 +347,15 @@ public class FragmentMusicPlayer extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                musicService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     playButton.setColorFilter(Color.RED);
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     try {
-                        musicService.getPlayer().play();
+                        myPlayer.playCurrent();
                         // Need to update whole screen incase of the first time launching this fragment
                         // other cases, song info should stay the same after user click on play/pause
                         updateSongPlaying();
@@ -364,6 +375,8 @@ public class FragmentMusicPlayer extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                musicService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     playNextButton.setColorFilter(Color.RED);
@@ -372,12 +385,7 @@ public class FragmentMusicPlayer extends Fragment {
                     // Move the prev song if there is a valid prev song
                     try {
                         // Pause player if the player was pausing before move to next song
-                        if (musicService.getPlayer().getIsPause()) {
-                            musicService.getPlayer().seekNext(false);
-                        } else {
-                            // Pause player if the player was pausing before move to next song
-                            musicService.getPlayer().seekNext(true);
-                        }
+                        myPlayer.seekNext(!myPlayer.getIsPause());
                         // update whole screen with new song info
                         updateSongPlaying();
                         setColor();
@@ -397,12 +405,14 @@ public class FragmentMusicPlayer extends Fragment {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+                musicService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     shuffleButton.setColorFilter(Color.RED);
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    shuffleButton.setImageResource(musicService.getPlayer().setShuffle() ?
+                    shuffleButton.setImageResource(myPlayer.setShuffle() ?
                             R.drawable.ic_action_shuffle : R.drawable.ic_action_shuffle_disabled);
                     shuffleButton.setColorFilter(compColor);
                     return true;
@@ -410,116 +420,6 @@ public class FragmentMusicPlayer extends Fragment {
                 return false;
             }
         });
-
-
-        /*-------------- THESE BUTTON OnClickListener works with ripple effect----------*/
-        /*
-        // Open a new fragment when click on lyrics button
-        lyricsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                FragmentSongLyric songLyric = new FragmentSongLyric();
-                fragmentTransaction.addToBackStack("FragmentMusicPlayer");
-                fragmentTransaction.hide(FragmentMusicPlayer.this);
-                fragmentTransaction.add(R.id.fragment_container, songLyric);
-                fragmentTransaction.commit();
-            }
-        });
-
-        // Open a new fragment when click on info button
-        infoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                FragmentMusicInfo songLyric = new FragmentMusicInfo();
-                fragmentTransaction.addToBackStack("FragmentMusicPlayer");
-                fragmentTransaction.hide(FragmentMusicPlayer.this);
-                fragmentTransaction.add(R.id.fragment_container, songLyric);
-                fragmentTransaction.commit();
-            }
-        });
-
-        // Set repeat mode on player, also change the button view
-        this.repeatButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                repeatButton.setImageResource(musicService.getPlayer().setRepeat() ?
-                        R.drawable.ic_action_replay: R.drawable.ic_action_repeat);
-            }
-        });
-
-        this.playPrevButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(LOG_TAG, "Received Intent : PREV");
-                // Move the prev song if there is a valid prev song
-                try {
-                    // Pause player if the player was pausing before move to prev song
-                    if(musicService.getPlayer().getIsPause()) {
-                        musicService.getPlayer().seekPrev(false);
-                    }
-                    // Play if the player was playing before moving to prev song
-                    else {
-                        musicService.getPlayer().seekPrev(true);
-                    }
-                    // update whole screen with new song info
-                    updateSongPlaying();
-                    setColor();
-                } catch (NoSongToPlayException e) {
-                    Toasty.info(context, "No Song To Play", Toast.LENGTH_SHORT, true).show();
-                }
-            }
-        });
-
-        this.playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    musicService.getPlayer().play();
-                    // Need to update whole screen incase of the first time launching this fragment
-                    // other cases, song info should stay the same after user click on play/pause
-                    updateSongPlaying();
-                    setColor();
-                } catch (NoSongToPlayException e) {
-                    Toasty.info(context, "No Song To Play", Toast.LENGTH_SHORT, true).show();
-                }
-            }
-        });
-
-        this.playNextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Move the prev song if there is a valid prev song
-                try {
-                    // Pause player if the player was pausing before move to next song
-                    if(musicService.getPlayer().getIsPause()) {
-                        musicService.getPlayer().seekNext(false);
-                    }
-                    else {
-                        // Pause player if the player was pausing before move to next song
-                        musicService.getPlayer().seekNext(true);
-                    }
-                    // update whole screen with new song info
-                    updateSongPlaying();
-                    setColor();
-                } catch (NoSongToPlayException e) {
-                    Toasty.info(context, "No Song To Play", Toast.LENGTH_SHORT, true).show();
-                }
-            }
-        });
-
-        // Set shuffle mode on player, also change the button view
-        this.shuffleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shuffleButton.setImageResource(musicService.getPlayer().setShuffle() ?
-                        R.drawable.ic_action_shuffle: R.drawable.ic_action_shuffle_disabled);
-            }
-        });*/
     }
 
     /**
@@ -527,10 +427,10 @@ public class FragmentMusicPlayer extends Fragment {
      * elems to be updated: SONG TITLE, ARTIST, COVER ART
      */
     private void updateSongPlaying() {
-        songTitle.setText(musicService.getPlayer().getCurrentSong().getTitle());
-        artist.setText(musicService.getPlayer().getCurrentSong().getArtist());
+        songTitle.setText(myPlayer.getFirstTitle());
+        artist.setText(myPlayer.getSecondTitle());
 
-        if (musicService.getPlayer().getIsPause())
+        if (myPlayer.getIsPause())
             playButton.setImageResource(R.drawable.ic_action_play);
         else
             playButton.setImageResource(R.drawable.ic_action_pause);
@@ -539,7 +439,7 @@ public class FragmentMusicPlayer extends Fragment {
         {
             try {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(musicService.getPlayer().getCurrentSong().getPath());
+                retriever.setDataSource(myPlayer.getCurrentSong().getPath());
                 byte[] art = retriever.getEmbeddedPicture();
                 bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
                 retriever.release();
@@ -555,14 +455,14 @@ public class FragmentMusicPlayer extends Fragment {
             }
         }
 
-        if (musicService.getPlayer().isRepeat()) {
+        if (myPlayer.isRepeat()) {
             repeatButton.setImageResource(R.drawable.ic_action_replay);
         }
         else {
             repeatButton.setImageResource(R.drawable.ic_action_repeat);
         }
 
-        if (musicService.getPlayer().isShuffle()) {
+        if (myPlayer.isShuffle()) {
             shuffleButton.setImageResource(R.drawable.ic_action_shuffle);
         }
         else {

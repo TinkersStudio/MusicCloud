@@ -17,7 +17,9 @@ import java.util.List;
 import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.adapter.SongListAdapter;
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.controller.MyPlayer;
 import com.tinkersstudio.musiccloud.model.Song;
+import com.tinkersstudio.musiccloud.util.MyFlag;
 
 /**
  * Created by anhnguyen on 2/6/17.
@@ -35,10 +37,10 @@ public class FragmentSongList extends Fragment {
 
     private LayoutManagerType mCurrentLayoutManagerType;
 
-    protected RecyclerView mRecyclerView;
-    protected SongListAdapter mAdapter;
-    protected RecyclerView.LayoutManager mLayoutManager;
-    protected List<Song> mDataset;
+    private RecyclerView mRecyclerView;
+    private SongListAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private List<Song> mDataset;
 
     // Need service to pass to Song View Holder in order to play song at index
     MusicService myService = ((MainActivity)getActivity()).myService;
@@ -134,6 +136,6 @@ public class FragmentSongList extends Fragment {
      * from a local content provider or remote server.
      */
     private void initDataset() {
-        mDataset = myService.getPlayer().getSongList();
+        mDataset = ((MyPlayer)myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE)).getSongList();
     }
 }

@@ -10,7 +10,9 @@ import android.widget.TextView;
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.adapter.RadioListAdapter;
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.controller.MyRadio;
 import com.tinkersstudio.musiccloud.model.Radio;
+import com.tinkersstudio.musiccloud.util.MyFlag;
 
 /**
  * Created by anhnguyen on 5/3/17.
@@ -18,16 +20,16 @@ import com.tinkersstudio.musiccloud.model.Radio;
 
 public class RadioViewHolder extends RecyclerView.ViewHolder{
     private String LOG_TAG = "RadioViewHolder";
-    View view;
-    TextView name;
-    ImageButton play;
-    ImageButton delete;
+    private View view;
+    private TextView name;
+    private ImageButton play;
+    private ImageButton delete;
     //LinearLayout station;
-    RadioListAdapter adapter;
+    private RadioListAdapter adapter;
 
-    MusicService myService;
+    private MusicService myService;
 
-    Radio radio;
+    private Radio radio;
 
     public void setService(MusicService musicService){myService = musicService;}
 
@@ -51,11 +53,12 @@ public class RadioViewHolder extends RecyclerView.ViewHolder{
         //Log.i(LOG_TAG, "seting radio : " + radio.getName());
         this.radio = radio;
         name.setText(radio.getName());
+        final MyRadio myRadio = ((MyRadio)myService.getPlayer(MyFlag.RADIO_MODE));
 
-        //Log.i(LOG_TAG,"adapterPos: " + getAdapterPosition() + " , stationPos: " + myService.getRadio().getCurrentStation() + !myService.getRadio().getIsPause());
+        Log.i(LOG_TAG,"adapterPos: " + getAdapterPosition() + " , stationPos: " + myRadio.getCurrentStation() + !myRadio.getIsPause());
 
-        if(getAdapterPosition() == myService.getRadio().getCurrentStation() &&
-                !myService.getRadio().getIsPause()) {
+        if(getAdapterPosition() == myRadio.getCurrentStation() &&
+                !myRadio.getIsPause()) {
             play.setImageResource(R.drawable.ic_action_pause);
             play.setColorFilter(Color.RED);
         } else {
@@ -68,7 +71,8 @@ public class RadioViewHolder extends RecyclerView.ViewHolder{
 
             @Override
             public void onClick(View view) {
-                myService.getRadio().playAtIndex(getAdapterPosition());
+                myService.toggle(MyFlag.RADIO_MODE);
+                myRadio.playAtIndex(getAdapterPosition());
                 play.setImageResource(R.drawable.ic_action_pause);
                 play.setColorFilter(Color.RED);
                 adapter.notifyDataSetChanged();
@@ -81,7 +85,7 @@ public class RadioViewHolder extends RecyclerView.ViewHolder{
             @Override
             public void onClick(View view) {
                 delete.setColorFilter(Color.RED);
-                myService.getRadio().deleteStation(getAdapterPosition());
+                myRadio.deleteStation(getAdapterPosition());
                 adapter.notifyDataSetChanged();
             }
         });

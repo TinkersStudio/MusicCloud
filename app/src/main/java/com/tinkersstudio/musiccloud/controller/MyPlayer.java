@@ -21,7 +21,7 @@ import com.tinkersstudio.musiccloud.util.NoSongToPlayException;
  *           modify getSong to also get the data path
  */
 
-public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
+public class MyPlayer implements Player, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
                                  MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnErrorListener
 {
     private static final String LOG_TAG = "MyPlayer";
@@ -86,7 +86,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         seekNext(true);
-        play();
+        playCurrent();
     }
 
     @Override
@@ -132,22 +132,22 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      */
     public void playAtIndex(int index){
         if (player.isPlaying()) {
-            this.pause();
+            this.pausePlayer();
             if (currentSongPosition == index){
                 return;
             }
         }
         setCurrentSongPosition(index);
-        this.play();
+        this.playCurrent();
     }
     /**
      * This method get called when client the button play/pause invoked
      * This will either play the music or pause the music
      */
-    public void play() {
+    public void playCurrent() {
         owner.setMode(MyFlag.OFFLINE_MUSIC_MODE);
         // Check to see if there is a valid song to play
-        if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
+        if (songList == null && getDataSource() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
 
@@ -159,7 +159,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
         // Pause player if it is playing, then return
         if (player.isPlaying()) {
             lastCurrentPosition = player.getCurrentPosition();
-            pause();
+            pausePlayer();
             isPaused = true;
             owner.updateNotifBar(MyFlag.PLAY, currentSong.getTitle(), currentSong.getArtist());
             return;
@@ -194,9 +194,11 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     /**
      * Pause player
      */
-    public void pause() {
+    public void pausePlayer() {
         isPaused = true;
-        player.pause();
+        if (player.isPlaying()) {
+            player.pause();
+        }
     }
 
     /**
@@ -206,7 +208,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      */
     public void seekPrev(boolean wasPlaying) {
         // Check for valid prev song
-        if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
+        if (songList == null && getDataSource() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
 
@@ -214,7 +216,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
         // If the player is playing, pause it first before seeking to prev song
         if (player.isPlaying())
-            pause();
+            pausePlayer();
 
         // MOVE index to prev song according to shuffle/repeat/regular mode
 
@@ -234,7 +236,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
         // After moving the index to prev song, resume the player, update the notif bar
         if(wasPlaying) {
-            play();
+            playCurrent();
             isPaused = false;
             owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
         } else {
@@ -251,7 +253,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      */
     public void seekNext(boolean wasPlaying) {
         // Check for valid next song
-        if (songList == null && getSongFromStorage() <= 0 || songList.size() == 0) {
+        if (songList == null && getDataSource() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");
         }
 
@@ -259,7 +261,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
         // If the player is playing, pause it first before seeking to next song
         if (player.isPlaying())
-            pause();
+            pausePlayer();
 
         // MOVE index to next song according to shuffle/repeat/regular mode
         //shuffle case
@@ -278,7 +280,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
 
         // After moving the index to prev song, resume the player
         if(wasPlaying) {
-            play();
+            playCurrent();
             isPaused = false;
             owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
         } else {
@@ -291,7 +293,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
      * Get the whole list of song. The player will search and play all song in case
      * playlist of song have not been set by user.
      */
-    public int getSongFromStorage() {
+    public int getDataSource() {
 
         if (songList == null) {
             songList = new ArrayList<Song>();
@@ -370,6 +372,7 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     }
 
     public boolean getIsPause(){
+        //Log.i(LOG_TAG, "MyPlayer isPause = " + isPaused );
         return isPaused;
     }
 
@@ -394,4 +397,6 @@ public class MyPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnC
     public void setVolume(float left, float right) {
         player.setVolume(left,right);
     }
+    public String getFirstTitle(){return this.getCurrentSong().getTitle();}
+    public String getSecondTitle(){return this.getCurrentSong().getArtist();}
 }

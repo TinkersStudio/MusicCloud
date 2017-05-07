@@ -32,6 +32,7 @@ import org.jmusixmatch.entity.track.TrackData;
 import java.util.ArrayList;
 
 import com.tinkersstudio.musiccloud.model.Song;
+import com.tinkersstudio.musiccloud.R;
 
 /**
  * Created by Owner on 3/4/2017.
@@ -39,7 +40,9 @@ import com.tinkersstudio.musiccloud.model.Song;
  */
 public class FragmentSongLyric extends Fragment {
 
-    String API_KEY = getString(R.string.musicMatch_API);
+    //TODO: getString from R.string throws exception : fragment not attached to Activity
+    //String API_KEY = getString(R.string.musicMatch_API);
+    String API_KEY = "f4337155f55d30c22e85a96f2dc674c8";
     MusixMatch musixMatch = new MusixMatch(API_KEY);
     String LOG_TAG = "FragmentSongLyric";
     Song currentSong;
