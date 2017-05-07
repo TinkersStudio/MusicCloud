@@ -20,7 +20,7 @@ import java.util.List;
  */
 
 public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
-    String LOG_TAG = "RadioListAdapter";
+    //String LOG_TAG = "RadioListAdapter";
 
     /** The application Context in which this RadioListAdapter is being used. */
     //private Context m_context;
@@ -42,7 +42,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
     public RadioListAdapter(List<Radio> radioList, MusicService musicService) {
         this.mRadioList = radioList;
         this.myService = musicService;
-        Log.i(LOG_TAG, "construct RadioListAdapter with " + radioList.size() + " radios");
+        //Log.i(LOG_TAG, "construct RadioListAdapter with " + radioList.size() + " radios");
     }
 
     /**
@@ -52,7 +52,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
      */
     public int getCount() {
 
-        Log.i(LOG_TAG, "get Count " + mRadioList.size());
+        //Log.i(LOG_TAG, "get Count " + mRadioList.size());
         return this.mRadioList.size();
 
     }
@@ -91,7 +91,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
      */
     @Override
     public RadioViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.i(LOG_TAG, "inflate new Radio");
+        //Log.i(LOG_TAG, "inflate new Radio");
         // create a new com.tinkersstudio.musiccloud.view
         v = LayoutInflater.from(parent.getContext())
                 .inflate(viewType, parent, false);

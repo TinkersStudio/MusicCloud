@@ -48,11 +48,11 @@ public class RadioViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setRadio(Radio radio){
-        Log.i(LOG_TAG, "seting radio : " + radio.getName());
+        //Log.i(LOG_TAG, "seting radio : " + radio.getName());
         this.radio = radio;
         name.setText(radio.getName());
 
-        Log.i(LOG_TAG,"adapterPos: " + getAdapterPosition() + " , stationPos: " + myService.getRadio().getCurrentStation() + !myService.getRadio().getIsPause());
+        //Log.i(LOG_TAG,"adapterPos: " + getAdapterPosition() + " , stationPos: " + myService.getRadio().getCurrentStation() + !myService.getRadio().getIsPause());
 
         if(getAdapterPosition() == myService.getRadio().getCurrentStation() &&
                 !myService.getRadio().getIsPause()) {
@@ -72,6 +72,7 @@ public class RadioViewHolder extends RecyclerView.ViewHolder{
                 play.setImageResource(R.drawable.ic_action_pause);
                 play.setColorFilter(Color.RED);
                 adapter.notifyDataSetChanged();
+                name.setSelected(true);
             }
         });
 
