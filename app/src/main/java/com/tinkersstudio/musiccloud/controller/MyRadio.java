@@ -31,8 +31,8 @@ import com.tinkersstudio.musiccloud.util.MyFlag;
  * Created by anhnguyen on 5/3/17.
  */
 
-public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener,
-                                MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnInfoListener{
+public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener{
 
     private String LOG_TAG = "MyRadio";
     private MediaPlayer radioPlayer;
@@ -41,12 +41,16 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
     private boolean isPaused;
     private static int currentStation = -1;
 
+    private static boolean infoReady = false;
+    private static boolean currentStationChanged = false;
     private static String currentStationName = "";
     private static String currentStationGenre = "";
-    private static String currentStationBitRate = "";
+    private static String currentStationStatus = "";
     private static String currentStationDescription = "";
     private static String currentTitle = "";
     private static String currentArtist = "";
+    private static String currentSource = "";
+    private static String currentBitrate = "";
 
 
     private static ArrayList<Radio> radioList;
@@ -73,7 +77,6 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
 
         radioPlayer.setWakeMode(owner.getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         radioPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        radioPlayer.setOnBufferingUpdateListener(this);
         radioPlayer.setOnErrorListener(this);
         radioPlayer.setOnCompletionListener(this);
         radioPlayer.setOnInfoListener(this);
@@ -93,6 +96,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
             }
         }
         currentStation = index;
+        currentStationChanged = true;
         playCurrent();
     }
 
@@ -116,25 +120,32 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
 
         try {
             radioPlayer.setDataSource(radioList.get(currentStation).getUrl());
-        } catch (IllegalArgumentException e) {
+
+            radioPlayer.prepareAsync();
+
+            radioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+                public void onPrepared(MediaPlayer mp) {
+                    radioPlayer.start();  //start streaming
+                }
+            });
+
+            // fetch data from server to update notification bar
+            fetch(radioList.get(currentStation).getUrl());
+        } catch (Exception e) {
+            // IllegalArgumentException , IOException, IllegalStateException
+            // Are all because of Error setting data source (bad url)
             e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            currentStationName = radioList.get(currentStation).getName();
+            currentStationGenre = "";
+            currentStationStatus = "Url not accessible";
+            currentStationDescription = "";
+            currentTitle = "";
+            currentArtist = "";
+            currentSource = radioList.get(currentStation).getUrl();
+            owner.updateNotifBar(MyFlag.PAUSE, currentStationName, currentStationStatus);
+            infoReady = true;
         }
-
-        radioPlayer.prepareAsync();
-
-        radioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-            public void onPrepared(MediaPlayer mp) {
-                radioPlayer.start();  //start streaming
-            }
-        });
-
-        // fetch data from server to update notification bar
-        fetch(radioList.get(currentStation).getUrl());
     }
 
     public void seekNext(boolean wasPlaying) {
@@ -144,6 +155,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
         else {
             radioPlayer.pause();
             currentStation = (currentStation == radioList.size() - 1) ? 0 : currentStation + 1;
+            currentStationChanged = true;
             owner.updateNotifBar(MyFlag.PLAY,
                     radioList.get(currentStation).getName(), radioList.get(currentStation).getUrl());
         }
@@ -155,6 +167,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
         else {
             radioPlayer.pause();
             currentStation = (currentStation == 0) ? radioList.size()-1 : currentStation - 1;
+            currentStationChanged = true;
             owner.updateNotifBar(MyFlag.PLAY,
                     radioList.get(currentStation).getName(), radioList.get(currentStation).getUrl());
         }
@@ -215,7 +228,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
                     Element eElement = (Element) nNode;
                     String title = eElement.getElementsByTagName("title").item(0).getTextContent();
                     String url = eElement.getElementsByTagName("location").item(0).getTextContent();
-                    Log.i(LOG_TAG,"\t\t" + nNode.getNodeName() + " #" + temp + ": Title :" + title + " | Url :" + url);
+                    Log.i(LOG_TAG,"\t" + nNode.getNodeName() + " #" + temp + ": Title :" + title + " | Url :" + url);
                     radioList.add(new Radio(url, title));
                 }
             }
@@ -250,7 +263,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
      *  Make an AsyncTask to Retrieve Metadata from Server
      */
     public void fetch(String serverUrl) {
-        Log.i(LOG_TAG, "Make Asynctask to fetch meta data");
+        //Log.i(LOG_TAG, "Make Asynctask to fetch meta data");
         new FetchMetaDataTask().execute(serverUrl);
     }
 
@@ -275,6 +288,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
 
     /**
      * delete a station in xml source, update the list of Radios
+     *
      * @param index
      */
     public void deleteStation (int index){
@@ -376,6 +390,8 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
                 sb.append("Not Valid for Progressive Playback");
                 break;
             case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
+                currentStationStatus = "Server is currently unavailable";
+                infoReady = true;
                 sb.append("Server Died");
                 break;
             case MediaPlayer.MEDIA_ERROR_UNKNOWN:
@@ -405,11 +421,15 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
             // MediaPlayer is temporarily pausing playback internally in order to buffer more data.
             case MediaPlayer.MEDIA_INFO_BUFFERING_START :
                 Log.i(LOG_TAG, "got info from server : BUFFERING_START");
+                currentStationStatus = "Buffering....";
                 owner.updateNotifBar(MyFlag.PAUSE, currentStationName, "buffering...");
+                infoReady = true;
                 break;
             case MediaPlayer.MEDIA_INFO_BUFFERING_END :
                 Log.i(LOG_TAG, "got info from server : BUFFERING_END");
+                currentStationStatus = currentBitrate + " Kbps";
                 owner.updateNotifBar(MyFlag.PAUSE, currentStationName, currentTitle + " - " + currentArtist);
+                infoReady = true;
                 break;
             case MediaPlayer.MEDIA_INFO_METADATA_UPDATE:
                 Log.i(LOG_TAG, "got info from server : METADATA_UPDATE");
@@ -421,21 +441,16 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
             case MediaPlayer.MEDIA_INFO_SUBTITLE_TIMED_OUT:
                 Log.i(LOG_TAG, "got info from server : SUBTITLE_TIMED_OUT");
                 break;
+            case 703: //MediaPlayer.MEDIA_INFO_NETWORK_BANDWIDTH
+                Log.i(LOG_TAG, "got info from server : NETWORK_BANDWIDTH");
+                currentStationStatus = "slow connection...";
+                infoReady = true;
+                break;
             default:
                 Log.i(LOG_TAG, "got info from server : " + what + ", " + extra);
                 break;
         }
         return true;
-    }
-
-    /**
-     * Update the buffering number
-     * @param mp
-     * @param percent
-     */
-    @Override
-    public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        Log.d(LOG_TAG, "PlayerService onBufferingUpdate : " + percent + "%");
     }
 
     public String getFirstTitle(){
@@ -463,8 +478,8 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
         return currentStationDescription;
     }
 
-    public static String getCurrentStationBitRate() {
-        return currentStationBitRate;
+    public static String getCurrentStationStatus() {
+        return currentStationStatus;
     }
 
     public static String getCurrentStationGenre() {
@@ -475,8 +490,37 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
         return currentStationName;
     }
 
+    public static String getCurrentSource() {
+        return currentSource;
+    }
+
     public int getCurrentStation() {
         return currentStation;
+    }
+
+    public void setCurrentStationChanged() {currentStationChanged = false;}
+    public boolean getCurrentStationChanged() { return currentStationChanged;}
+
+    /**
+     * Tell client that info from fetching is ready to use
+     * @return
+     */
+    public boolean isInfoReady() {
+        return infoReady;
+    }
+
+    /**
+     * After client pickup info from fetching, reset the flag
+     * @param infoReady
+     */
+    public void setInfoReady(boolean infoReady) {
+        this.infoReady = infoReady;
+    }
+
+    public int getAudioSessionId(){return radioPlayer.getAudioSessionId();}
+
+    public void setVolume(float left, float right) {
+        radioPlayer.setVolume(left,right);
     }
 
     public boolean getIsPause(){
@@ -506,16 +550,17 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
          */
         protected String doInBackground(String... serverUrls) {
             // Reset metadata to make sure it's not holding previous station's data
-            currentStationName = "";
+            currentStationName = radioList.get(currentStation).getName();
             currentStationGenre = "";
-            currentStationBitRate = "";
+            currentStationStatus = "";
             currentStationDescription = "";
             currentTitle = "";
             currentArtist = "";
+            currentSource = serverUrls[0];
 
             try {
                 //Open connection to streamming server with a specific stream URL
-                Log.i(LOG_Task, "Open connection....");
+                //Log.i(LOG_Task, "Open connection....");
                 url = new URL(serverUrls[0]);
                 conn = url.openConnection();
 
@@ -524,7 +569,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
                 conn.connect();
 
                 // Retrieve and print the metadata just got from streaming server
-                Log.i(LOG_Task, "Connect success, printing metadata in return header from server...");
+                //Log.i(LOG_Task, "Connect success, printing metadata in return header from server...");
                 hList = conn.getHeaderFields();
                 // The headerFields is a Map<String, List<String>>
                 for (Map.Entry<String, List<String>> entry : hList.entrySet()) {
@@ -535,7 +580,8 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
                         switch (key) {
                             case "icy-br":
                                 Log.i(LOG_Task, "BiteRate: " + values.get(0));
-                                currentStationBitRate = values.get(0);
+                                currentBitrate = values.get(0);
+                                currentStationStatus = currentBitrate + " Kbps";
                                 break;
                             case "icy-description":
                                 Log.i(LOG_Task, "Description: " + values.get(0));
@@ -549,9 +595,13 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
                                 Log.i(LOG_Task, "StationGenre: " + values.get(0));
                                 currentStationGenre = values.get(0);
                                 break;
+                            case "icy-url":
+                                Log.i(LOG_Task, "URL: " + values.get(0));
+                                currentSource = values.get(0);
+                                break;
                             // read metadata in the middle of the stream
                             case "icy-metaint":
-                                Log.i(LOG_Task, "MetaInt: " + values.get(0));
+                                //Log.i(LOG_Task, "MetaInt: " + values.get(0));
                                 readMetaData(Integer.parseInt(hList.get("icy-metaint").get(0) + ""));
                                 break;
                         }
@@ -559,8 +609,11 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
                 }
             } catch (java.net.ConnectException e1) {
                 return connError;
-            } catch (Exception e2) {
-                e2.printStackTrace();
+            } catch (IOException e2) {
+                //Just some error reading metadata, we still sucess in reading header
+                return success;
+            } catch (Exception e3) {
+                e3.printStackTrace();
                 return fail;
             }
 
@@ -626,6 +679,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener, MediaP
         protected void onPostExecute(String result) {
             Log.i(LOG_Task, "onPostExecute " + this.getStatus().toString() + " arg " + result);
             super.onPostExecute(result);
+            infoReady = true; // turn on flag saying info is all set and ready to be use
 
             // Need to setup Notif Bar if the preExecute was failing
             if (result.compareTo(connError) == 0) {

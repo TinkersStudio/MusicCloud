@@ -73,10 +73,10 @@ public class SongViewHolder extends RecyclerView.ViewHolder{
         if(getAdapterPosition() == ((MyPlayer)myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE)).getCurrentSongPosition()
                 && !myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE).getIsPause()) {
             playButton.setImageResource(R.drawable.ic_action_pause);
-            playButton.setColorFilter(Color.RED);
+            pane.setBackgroundColor(item.getContext().getResources().getColor(R.color.play_red));
         } else {
             playButton.setImageResource(R.drawable.ic_action_play);
-            playButton.setColorFilter(Color.WHITE);
+            pane.setBackgroundColor(item.getContext().getResources().getColor(R.color.tw__composer_black));
         }
 
         playButton.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +86,6 @@ public class SongViewHolder extends RecyclerView.ViewHolder{
                 myService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
                 myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE).playAtIndex(getAdapterPosition());
                 playButton.setImageResource(R.drawable.ic_action_pause);
-                playButton.setColorFilter(Color.RED);
                 adapter.notifyDataSetChanged();
             }
         });

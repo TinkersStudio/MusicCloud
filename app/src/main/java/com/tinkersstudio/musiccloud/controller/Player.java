@@ -16,4 +16,6 @@ public interface Player {
     public void seekPrev(boolean wasPlaying);
     public String getFirstTitle();
     public String getSecondTitle();
+    public int getAudioSessionId();
+    public void setVolume(float left, float right);
 }

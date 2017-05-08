@@ -90,7 +90,7 @@ public class MyPlayer implements Player, MediaPlayer.OnPreparedListener, MediaPl
     }
 
     @Override
-    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+    public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
         mediaPlayer.reset();
         return false;
     }

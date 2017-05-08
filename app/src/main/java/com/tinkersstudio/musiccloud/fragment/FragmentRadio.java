@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +17,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.util.Log;
+import android.widget.TextView;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.activities.MainActivity;
 import com.tinkersstudio.musiccloud.adapter.RadioListAdapter;
@@ -49,16 +52,26 @@ public class FragmentRadio extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private List<Radio> mDataset;
 
+
+    // A handler to manage the Runnable which is used to update UI
+    private static Handler mHandler = new Handler();
     private ImageButton addStation;
+    private TextView stationName;
+    private TextView title;
+    private TextView artist;
+    private TextView genre;
+    private TextView status;
+    private TextView source;
 
     // Need service to pass to Song View Holder in order to play song at index
     MusicService myService = ((MainActivity)getActivity()).myService;
+    MyRadio myRadio = (MyRadio)myService.getPlayer(MyFlag.RADIO_MODE);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.i(LOG_TAG, "Call init data set");
+        //Log.i(LOG_TAG, "Call init data set");
         initDataset();
     }
 
@@ -71,7 +84,12 @@ public class FragmentRadio extends Fragment {
         // BEGIN_INCLUDE(initializeRecyclerView)
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_radio_list);
         addStation = (ImageButton)rootView.findViewById(R.id.fr_add);
-
+        stationName = (TextView)rootView.findViewById(R.id.fr_header_station_name);
+        title = (TextView)rootView.findViewById(R.id.fr_header_title);
+        artist = (TextView)rootView.findViewById(R.id.fr_header_artist);
+        genre = (TextView)rootView.findViewById(R.id.fr_header_genre);
+        status = (TextView)rootView.findViewById(R.id.fr_header_status);
+        source = (TextView)rootView.findViewById(R.id.fr_header_source);
         // LinearLayoutManager is used here, this will layout the elements in a similar fashion
         // to the way ListView would layout elements. The RecyclerView.LayoutManager defines how
         // elements are laid out.
@@ -86,7 +104,7 @@ public class FragmentRadio extends Fragment {
         }
         this.setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        Log.i(LOG_TAG, "create RadioListAdapter with list of " +  mDataset.size() + " radios");
+        //Log.i(LOG_TAG, "create RadioListAdapter with list of " +  mDataset.size() + " radios");
         mAdapter = new RadioListAdapter(mDataset, myService);
         // Set CustomAdapter as the com.tinkersstudio.musiccloud.adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
@@ -100,6 +118,8 @@ public class FragmentRadio extends Fragment {
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     addStation.setColorFilter(Color.WHITE);
+
+                    //TODO: need a better way to add station since most user not knowing streaming url to enter
 
                     // Popup an dialog fragment to add a station, then update view
                     View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.view_add_radio, (ViewGroup) getView(), false);
@@ -117,7 +137,7 @@ public class FragmentRadio extends Fragment {
                     builder.setPositiveButton("ADD Channel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mDataset.add(new Radio(url.getText().toString(), name.getText().toString()));
+                            myRadio.addRadio(new Radio(url.getText().toString(), name.getText().toString()));
                             mAdapter.notifyDataSetChanged();
                         }
                     });
@@ -138,6 +158,60 @@ public class FragmentRadio extends Fragment {
         return rootView;
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Start the handler, which run the Runnable mUpdateTimeTask
+        mHandler.postDelayed(mUpdateStreamTask, 1000);
+
+        // Not pausing means there is a radio that is playing,
+        // need to trigger the infoReady to update
+        if (!myRadio.getIsPause()) {
+            myRadio.setInfoReady(true);
+        }
+    }
+
+    /**
+     * A Runnable which run separately on the back ground to update UI of this fragment
+     * It is scheduled to update the seekbar every 1 second,
+     * and update the whole screen when a song is complete playing
+     */
+    private Runnable mUpdateStreamTask = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Log.i(LOG_TAG, "mUpdateStreamTask");
+                // Update seekbar only if the song playing
+                if (myRadio.isInfoReady()) {
+                    //Log.i(LOG_TAG, "Updating info");
+                    stationName.setText(myRadio.getCurrentStationName());
+                    stationName.setSelected(true);
+                    title.setText(myRadio.getCurrentTitle());
+                    title.setSelected(true);
+                    artist.setText(myRadio.getCurrentArtist());
+                    artist.setSelected(true);
+                    genre.setText(myRadio.getCurrentStationGenre());
+                    genre.setSelected(true);
+                    status.setText(myRadio.getCurrentStationStatus());
+                    source.setText(myRadio.getCurrentSource());
+                    source.setSelected(true);
+
+                    if (myRadio.getCurrentStationChanged()) {
+                        mAdapter.notifyDataSetChanged();
+                        myRadio.setCurrentStationChanged();
+                    }
+                    myRadio.setInfoReady(false);
+                }
+                // Running this thread after 1000 milliseconds
+                mHandler.postDelayed(mUpdateStreamTask, 1000);
+            } catch (Exception e) {
+                //Exception thrown when Service haven't up yet
+                e.printStackTrace();
+                FirebaseCrash.report(e);
+            }
+        }
+    };
     /**
      * Set RecyclerView's LayoutManager to the one given.
      *
@@ -180,6 +254,12 @@ public class FragmentRadio extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        mHandler.removeCallbacks(mUpdateStreamTask);
     }
 
     @Override

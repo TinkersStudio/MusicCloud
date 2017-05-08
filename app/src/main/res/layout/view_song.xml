@@ -1,57 +1,61 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/songlist_background"
     android:id="@+id/song_fragment_pane">
     <!-- The fragment is used for both music list and favorite list-->
-    <ImageView
-        android:layout_margin="3dp"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/song_fragment_cover_art"/>
     <LinearLayout
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:orientation="vertical"
-        android:paddingLeft="10dp">
-        <TextView
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_margin="3dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/song_fragment_cover_art"/>
+        <LinearLayout
             android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:paddingLeft="10dp">
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/song_fragment_song_title"
+                android:textSize="8pt"
+                android:fontFamily="sans-serif"
+                android:maxLines="1"
+                android:textColor="#faf4f1"
+                />
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="13dp"
+                android:id="@+id/song_fragment_singer"
+                android:textSize="6pt"
+                android:fontFamily="sans-serif"
+                android:maxLines="1"
+                android:textColor="#f6ebe6"/>
+        </LinearLayout>
+
+        <ImageButton
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginLeft="5dp"
-            android:id="@+id/song_fragment_song_title"
-            android:textSize="8pt"
-            android:fontFamily="sans-serif"
-            android:maxLines="1"
-            android:textColor="#faf4f1"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:id="@+id/song_fragment_play"
+            android:clickable="true"
+            android:background="#0000"
             />
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginLeft="13dp"
-            android:id="@+id/song_fragment_singer"
-            android:textSize="6pt"
-            android:fontFamily="sans-serif"
-            android:maxLines="1"
-            android:textColor="#f6ebe6"/>
-        <View
-            android:layout_marginBottom="0dp"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#d6c982"/>
+
     </LinearLayout>
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:id="@+id/song_fragment_play"
-        android:clickable="true"
-        android:background="#0000"
-        />
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/orange">
+    </View>
 </LinearLayout>

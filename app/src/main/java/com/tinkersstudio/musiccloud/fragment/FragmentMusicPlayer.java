@@ -50,7 +50,7 @@ public class FragmentMusicPlayer extends Fragment {
     private boolean isMovingSeekBar;
 
     // A handler to manage the Runnable which is used to update UI
-    private Handler mHandler = new Handler();
+    private static Handler mHandler = new Handler();
 
     //Service to control playback (provide by Main activity)
     private MusicService musicService;
@@ -135,8 +135,6 @@ public class FragmentMusicPlayer extends Fragment {
     private Runnable mUpdateTimeTask = new Runnable() {
         @Override
         public void run() {
-            //TODO: Stop this Runnable when the fragment is not on top
-            // now it keep running.
             try {
                 // Update seekbar only if the song playing
                 if (!myPlayer.getIsPause()) {
@@ -549,6 +547,11 @@ public class FragmentMusicPlayer extends Fragment {
         return ave >= Color.BLACK ? Color.WHITE : -1;
     }
 
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        mHandler.removeCallbacks(mUpdateTimeTask);
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
