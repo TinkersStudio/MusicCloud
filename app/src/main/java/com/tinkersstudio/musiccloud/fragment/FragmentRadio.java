@@ -181,7 +181,7 @@ public class FragmentRadio extends Fragment {
         @Override
         public void run() {
             try {
-                Log.i(LOG_TAG, "mUpdateStreamTask");
+                //Log.i(LOG_TAG, "mUpdateStreamTask");
                 // Update seekbar only if the song playing
                 if (myRadio.isInfoReady()) {
                     //Log.i(LOG_TAG, "Updating info");
