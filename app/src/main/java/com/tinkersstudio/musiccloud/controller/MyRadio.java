@@ -90,6 +90,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
         if(radioPlayer.isPlaying()) {
             radioPlayer.pause();
             this.isPaused = true;
+            infoReady = true;
             //User mean to pause the player
             if (currentStation == index){
                 return;
@@ -106,12 +107,24 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
      */
     public void playCurrent() {
         owner.setMode(MyFlag.RADIO_MODE);
-        owner.updateNotifBar(MyFlag.PAUSE, radioList.get(currentStation).getName(), "Loading Stream .......");
+
+        currentStationName = radioList.get(currentStation).getName();
+        currentStationGenre = "";
+        currentStationStatus = "Loading Stream...";
+        currentStationDescription = "";
+        currentTitle = "";
+        currentArtist = "";
+        currentSource = radioList.get(currentStation).getUrl();
+        owner.updateNotifBar(MyFlag.PAUSE, currentStationName, currentStationStatus);
+        infoReady = true;
+
 
         if(radioPlayer.isPlaying()){
             radioPlayer.pause();
             this.isPaused = true;
             owner.updateNotifBar(MyFlag.PLAY, currentStationName, currentStationGenre);
+            currentStationStatus = "";
+            infoReady = true;
             return;
         }
 
@@ -135,7 +148,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
         } catch (Exception e) {
             // IllegalArgumentException , IOException, IllegalStateException
             // Are all because of Error setting data source (bad url)
-            e.printStackTrace();
+            //e.printStackTrace();
             currentStationName = radioList.get(currentStation).getName();
             currentStationGenre = "";
             currentStationStatus = "Url not accessible";
@@ -263,6 +276,8 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
      *  Make an AsyncTask to Retrieve Metadata from Server
      */
     public void fetch(String serverUrl) {
+
+        owner.updateNotifBar(MyFlag.PAUSE, radioList.get(currentStation).getName(), "buffering...");
         //Log.i(LOG_TAG, "Make Asynctask to fetch meta data");
         new FetchMetaDataTask().execute(serverUrl);
     }
@@ -549,20 +564,13 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
          * @return
          */
         protected String doInBackground(String... serverUrls) {
-            // Reset metadata to make sure it's not holding previous station's data
-            currentStationName = radioList.get(currentStation).getName();
-            currentStationGenre = "";
-            currentStationStatus = "";
-            currentStationDescription = "";
-            currentTitle = "";
-            currentArtist = "";
-            currentSource = serverUrls[0];
 
             try {
                 //Open connection to streamming server with a specific stream URL
                 //Log.i(LOG_Task, "Open connection....");
                 url = new URL(serverUrls[0]);
                 conn = url.openConnection();
+                //conn.setConnectTimeout(6000);
 
                 //Request for Icy-MetaData
                 conn.addRequestProperty("Icy-MetaData", "1");
@@ -571,6 +579,16 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
                 // Retrieve and print the metadata just got from streaming server
                 //Log.i(LOG_Task, "Connect success, printing metadata in return header from server...");
                 hList = conn.getHeaderFields();
+
+                // Reset metadata to make sure it's not holding previous station's data
+                currentStationName = radioList.get(currentStation).getName();
+                currentStationGenre = "";
+                currentStationStatus = "";
+                currentStationDescription = "";
+                currentTitle = "";
+                currentArtist = "";
+                currentSource = serverUrls[0];
+
                 // The headerFields is a Map<String, List<String>>
                 for (Map.Entry<String, List<String>> entry : hList.entrySet()) {
                     String key = entry.getKey();
@@ -607,13 +625,20 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
                         }
                     }
                 }
-            } catch (java.net.ConnectException e1) {
+            } catch (java.net.UnknownHostException e4) {
+                //e4.printStackTrace();
+                return connError;
+            }
+            catch (java.net.ConnectException e1) {
+                //e1.printStackTrace();
                 return connError;
             } catch (IOException e2) {
-                //Just some error reading metadata, we still sucess in reading header
+                //e2.printStackTrace();
+                //Just some error reading metadata, we still success in reading header
                 return success;
-            } catch (Exception e3) {
-                e3.printStackTrace();
+            }
+            catch (Exception e3) {
+                //e3.printStackTrace();
                 return fail;
             }
 
@@ -683,6 +708,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
 
             // Need to setup Notif Bar if the preExecute was failing
             if (result.compareTo(connError) == 0) {
+                currentStationStatus = connError;
                 owner.updateNotifBar(MyFlag.PLAY, radioList.get(currentStation).getName(), connError);
                 return;
             } else if (result.compareTo(fail) == 0) {
