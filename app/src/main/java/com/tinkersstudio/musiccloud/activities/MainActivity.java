@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar = null;
     private FirebaseAuth mAuth;
 
+    private boolean permissionGranted = false;
+
     /*Fragment control*/
     FragmentTransaction fragmentTransaction;
 
@@ -224,6 +226,7 @@ public class MainActivity extends AppCompatActivity
             bindingIntent = new Intent(this, MusicService.class);
             startService(bindingIntent);
             bindService(bindingIntent, myMusicConnection, Context.BIND_AUTO_CREATE);
+            serviceBound = MyFlag.IS_ON;
         }
     }
 
@@ -231,16 +234,11 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        if (myService == null) {
+        if (bindingIntent == null) {
             Log.i(LOG_TAG, "No previous Service found");
         } else {
             Log.i(LOG_TAG, "Has found Previous Service ");
-
             //FIXME When user click on Notification bar => Show the Music Player
-            Fragment fragment = new FragmentMusicPlayer();
-            ((FragmentMusicPlayer)fragment).setMusicService(myService);
-            fragmentTransaction.replace(R.id.fragment_container,fragment);
-            //fragmentTransaction.commit();
         }
     }
 
@@ -272,7 +270,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-
             //get the reference of the service
             myService = binder.getService();
             serviceBound = MyFlag.IS_ON;
@@ -283,51 +280,38 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            Log.i("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
+            permissionGranted = true;
+            myService.reLoadData();
+        }
+    }
+    public boolean getPermissionStatus(){return permissionGranted;}
     /**
-     * This class handle uploading joke
-     * The order of parameter Params, Progress and Result
+     * This class handle checking permission
      */
     public class CheckPermission extends AsyncTask<Void, Void, String> {
-        /**
-         * Override this method to perform a computation on a background thread. The
-         * specified parameters are the parameters passed to {@link #execute}
-         * by the caller of this task.
-         * <p/>
-         * This method can call {@link #publishProgress} to publish updates
-         * on the UI thread.
-         *
-         * @param params The parameters of the task. Normally would be an array
-         * @return A result, defined by the subclass of this task.
-         * @see #onPreExecute()
-         * @see #onPostExecute
-         * @see #publishProgress
-         */
         @Override
         protected String doInBackground(Void... params) {
             //upload the event in here
-
-            try {
-                checkingPermission();
-            }
+            try { checkingPermission();}
             catch (Exception e) {
                 FirebaseCrash.logcat(Log.ERROR, MainActivity.this.LOG_TAG, "Exception in user case");
                 FirebaseCrash.report(e);
                 Log.e(LOG_TAG, "Error getting permission");
+                return "fail";
             }
             return "Success";
         }
-
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
-
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
+        protected void onPostExecute(String s) {super.onPostExecute(s);}
 
         public void checkingPermission() {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -335,24 +319,18 @@ public class MainActivity extends AppCompatActivity
                         == PackageManager.PERMISSION_GRANTED &&
                         (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 == PackageManager.PERMISSION_GRANTED)) {
+                    permissionGranted = true;
                 } else {
+                    permissionGranted = false;
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 }
             }
-            else { //permission is automatically granted on sdk<23 upon installation
+            else {
+                permissionGranted = true;
+                //permission is automatically granted on sdk<23 upon installation
                 Log.i("TAG","Permission is granted");
             }
         }
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Log.i("TAG","Permission: "+permissions[0]+ "was "+grantResults[0]);
-            //resume tasks needing this permission
-        }
-    }
-
 }
