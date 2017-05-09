@@ -15,7 +15,9 @@ import android.widget.LinearLayout;
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.adapter.SongListAdapter;
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.controller.MyPlayer;
 import com.tinkersstudio.musiccloud.model.Song;
+import com.tinkersstudio.musiccloud.util.MyFlag;
 
 /**
  * Created by Owner on 2/20/2017.
@@ -23,17 +25,17 @@ import com.tinkersstudio.musiccloud.model.Song;
 
 public class SongViewHolder extends RecyclerView.ViewHolder{
 
-    ImageView songArt;
-    ImageButton playButton;
-    TextView songTitle;
-    TextView songSinger;
-    Bitmap bitmap;
-    LinearLayout pane;
-    Song song;
-    String LOG_TAG = "Song View Holder";
-    View item;
-    MusicService myService;
-    SongListAdapter adapter;
+    private ImageView songArt;
+    private ImageButton playButton;
+    private TextView songTitle;
+    private TextView songSinger;
+    private Bitmap bitmap;
+    private LinearLayout pane;
+    private Song song;
+    private String LOG_TAG = "Song View Holder";
+    private View item;
+    private MusicService myService;
+    private SongListAdapter adapter;
 
     public SongViewHolder(View itemView, SongListAdapter adapter) {
         super(itemView);
@@ -68,22 +70,22 @@ public class SongViewHolder extends RecyclerView.ViewHolder{
         this.songSinger.setText(song.getArtist());
         this.songTitle.setText(song.getTitle());
 
-        if(getAdapterPosition() == myService.getPlayer().getCurrentSongPosition()
-                && !myService.getPlayer().getIsPause()) {
+        if(getAdapterPosition() == ((MyPlayer)myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE)).getCurrentSongPosition()
+                && !myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE).getIsPause()) {
             playButton.setImageResource(R.drawable.ic_action_pause);
-            playButton.setColorFilter(Color.RED);
+            pane.setBackgroundColor(item.getContext().getResources().getColor(R.color.play_red));
         } else {
             playButton.setImageResource(R.drawable.ic_action_play);
-            playButton.setColorFilter(Color.WHITE);
+            pane.setBackgroundColor(item.getContext().getResources().getColor(R.color.tw__composer_black));
         }
 
         playButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                myService.getPlayer().playAtIndex(getAdapterPosition());
+                myService.toggle(MyFlag.OFFLINE_MUSIC_MODE);
+                myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE).playAtIndex(getAdapterPosition());
                 playButton.setImageResource(R.drawable.ic_action_pause);
-                playButton.setColorFilter(Color.RED);
                 adapter.notifyDataSetChanged();
             }
         });

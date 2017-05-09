@@ -13,7 +13,7 @@ import android.widget.NumberPicker;
 import android.widget.SeekBar;
 
 import com.tinkersstudio.musiccloud.R;
-import com.tinkersstudio.musiccloud.controller.MyPlayer;
+import com.tinkersstudio.musiccloud.controller.Player;
 import com.tinkersstudio.musiccloud.model.PresetFrequency;
 import com.xw.repo.BubbleSeekBar;
 
@@ -51,7 +51,7 @@ public class FragmentEqualizer extends Fragment {
 
     // To modify sound
     private Equalizer myEQ;
-    private MyPlayer myPlayer;
+    private Player myPlayer;
 
     // Preset variables
     private NumberPicker presetMode;
@@ -68,7 +68,7 @@ public class FragmentEqualizer extends Fragment {
      * Setter of MusicPlayer
      * @param myPlayer is the player on back ground
      */
-    public void setMusicPlayer(MyPlayer myPlayer) {this.myPlayer = myPlayer;}
+    public void setMusicPlayer(Player myPlayer) {this.myPlayer = myPlayer;}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import com.tinkersstudio.musiccloud.model.Song;
  */
 
 public class FragmentMusicInfo extends Fragment {
+    private String LOG_TAG = "FragmentMusicInfo";
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private final int int_items = 3 ;
@@ -38,7 +40,10 @@ public class FragmentMusicInfo extends Fragment {
     private FragmentSongLyric fmSongLyric;
     private Song currentSong;
 
-    public void setCurrentSong(Song currentSong){this.currentSong = currentSong;}
+    public void setCurrentSong(Song currentSong){
+        Log.i(LOG_TAG, "set current song: " + currentSong.getTitle());
+        this.currentSong = currentSong;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,8 +90,13 @@ public class FragmentMusicInfo extends Fragment {
         artist.setTextColor(compColor);
         artist.setSelected(true);
 
-        fmSongLyric = new FragmentSongLyric();
-        fmSongLyric.hideQuitButton();
+        try {
+            fmSongLyric = new FragmentSongLyric();
+            fmSongLyric.hideQuitButton();
+        }
+        catch (java.lang.IllegalStateException e) {
+            Log.i("FragmentMusicInfo", "not attached to Activity");
+        }
 
         return view;
     }

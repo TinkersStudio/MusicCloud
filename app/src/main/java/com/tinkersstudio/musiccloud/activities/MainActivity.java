@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.R;
+import com.tinkersstudio.musiccloud.controller.MyPlayer;
 import com.tinkersstudio.musiccloud.fragment.FragmentEqualizer;
 import com.tinkersstudio.musiccloud.fragment.FragmentFavoriteList;
 import com.tinkersstudio.musiccloud.fragment.FragmentHome;
@@ -127,28 +128,35 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.navigation_view_home:
+                this.setTitle("Music Cloud");
                 fragment = new FragmentHome();
                 break;
             case R.id.navigation_view_now_playing:
+                this.setTitle("Now Playing");
                 fragment = new FragmentMusicPlayer();
                 ((FragmentMusicPlayer)fragment).setMusicService(myService);
                 break;
             /**Offline service group*/
             case R.id.navigation_view_music_library:
+                this.setTitle("Music Library");
                 fragment = new FragmentSongList();
                 break;
             case R.id.navigation_view_music_playlist:
+                this.setTitle("Music Playlist");
                 Toasty.info(context, "Open the Music Playlist", Toast.LENGTH_SHORT, true).show();
                 break;
             case R.id.navigation_view_favorite_list:
+                this.setTitle("Favorite Music");
                 Toasty.info(context, "Open the Favorite list", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentFavoriteList();
                 break;
             /** Online service group*/
             case R.id.navigation_view_spotify:
+                this.setTitle("Spotify");
                 Toasty.info(context, "Open Spotify Service", Toast.LENGTH_SHORT, true).show();
                 break;
             case R.id.navigation_view_radio:
+                this.setTitle("Online Radio");
                 fragment = new FragmentRadio();
                 break;
             //case R.id.navigation_view_soundcloud:
@@ -157,19 +165,22 @@ public class MainActivity extends AppCompatActivity
 
             /** FragmentSetting group*/
             case R.id.navigation_view_user_info:
+                this.setTitle("User Info");
                 Toasty.info(context, "User Info", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentProfile();
                 break;
             case R.id.navigation_view_equalizer:
+                this.setTitle("Equalizer");
                 fragment = new FragmentEqualizer();
-                ((FragmentEqualizer)fragment).setMusicPlayer(myService.getPlayer());
+                ((FragmentEqualizer)fragment).setMusicPlayer(myService.getPlayer(myService.getMode()));
                 break;
             case R.id.navigation_view_customize:
+                this.setTitle("Customize Player");
                 Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentSetting();
                 break;
             case R.id.navigation_view_quit:
-                myService.getPlayer().releasePlayer();
+                myService.releasePlayer();
                 myService.stopForeground(true);
                 finishAffinity();
                 System.exit(0);

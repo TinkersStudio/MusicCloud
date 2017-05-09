@@ -4,6 +4,108 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/fr_now_playing"
+        android:background="@drawable/background_radio2">
+
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fr_header_info">
+            <TextView
+                android:layout_gravity="center"
+                android:paddingTop="10dp"
+                android:paddingLeft="90dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fr_header_station_name"
+                android:textSize="10pt"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textStyle="bold"
+                android:textColor="#FFFF"
+                android:text="Station Name"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:scrollHorizontally="true"
+                />
+            <TextView
+                android:paddingLeft="150dp"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fr_header_title"
+                android:textSize="8pt"
+                android:fontFamily="sans-serif"
+                android:textColor="#FFFF"
+                android:text="Title Of The Track"
+                android:textStyle="bold"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:scrollHorizontally="true"/>
+            <TextView
+                android:paddingLeft="150dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fr_header_artist"
+                android:textSize="7pt"
+                android:textColor="#FFFF"
+                android:text="Artist"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:scrollHorizontally="true"/>
+            <TextView
+                android:paddingLeft="150dp"
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fr_header_genre"
+                android:textSize="7pt"
+                android:textColor="#FFFF"
+                android:textAllCaps="true"
+                android:text="Genre"
+                android:maxLines="1"/>
+            <TextView
+                android:paddingTop="18dp"
+                android:paddingLeft="150dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fr_header_status"
+                android:text="Status..."
+                android:textSize="6pt"
+                android:maxLines="1"
+                android:textColor="#FFFF"/>
+
+            <TextView
+                android:paddingLeft="150dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fr_header_source"
+                android:text="Source: "
+                android:textSize="6pt"
+                android:textStyle="italic"
+                android:singleLine="true"
+                android:textColor="#00FFFF"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:scrollHorizontally="true"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/orange">
+
+    </View>
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +116,6 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/fr_header_text"
             android:text="Radio Stations"
             android:layout_gravity="center"
             android:gravity="center"
@@ -43,5 +144,5 @@
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/background_radio"/>
+        android:background="@color/tw__composer_black"/>
 </LinearLayout>

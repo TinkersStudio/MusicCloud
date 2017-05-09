@@ -4,20 +4,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_blue_grey_800">
+    android:background="@color/tw__composer_black">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/material_blue_grey_800" >
-
+        android:orientation="vertical" >
 
         <View
             android:layout_margin="3dp"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:background="#d6c982" />
+            android:background="@color/orange" />
 
         <TextView
             android:layout_width="match_parent"
@@ -26,7 +24,7 @@
             android:textSize="9pt"
             android:gravity="center"
             android:textColor="@color/orange"
-            android:background="@color/material_blue_grey_800"
+            android:background="@color/tw__composer_black"
             android:fontFamily="sans-serif-smallcaps"/>
 
         <NumberPicker
@@ -37,6 +35,8 @@
             android:id="@+id/eq_preset_picker"
             android:orientation="vertical"
             android:theme="@style/AppTheme.Picker"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:soundEffectsEnabled="true"
             android:background="@drawable/songlist_background">
         </NumberPicker>
 
@@ -45,7 +45,7 @@
             android:layout_margin="3dp"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:background="#d6c982" />
+            android:background="@color/orange" />
 
         <TextView
             android:layout_width="match_parent"
@@ -54,7 +54,7 @@
             android:textSize="9pt"
             android:gravity="center"
             android:textColor="@color/orange"
-            android:background="@color/material_blue_grey_800"
+            android:background="@color/tw__composer_black"
             android:fontFamily="sans-serif-smallcaps"/>
 
         <LinearLayout
@@ -243,7 +243,7 @@
                 android:layout_margin="3dp"
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#d6c982" />
+                android:background="@color/orange" />
 
         <LinearLayout
                 android:layout_margin="2dp"
@@ -251,7 +251,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/eq_volume_bar"
-                android:background="@drawable/songlist_background">
+                android:background="@color/tw__composer_black">
 
                 <ImageView
                     android:layout_width="40dp"
@@ -293,7 +293,7 @@
                 android:layout_margin="3dp"
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:background="#d6c982" />
+                android:background="@color/orange" />
 
     </LinearLayout>
 
