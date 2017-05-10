@@ -5,16 +5,19 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.PowerManager;
 import android.util.Log;
+import android.net.NetworkInfo;
+import android.net.ConnectivityManager;
+import android.content.Context;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.net.URL;
+import java.net.URLConnection;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,9 +43,9 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
 
     private boolean isPaused;
     private static int currentStation = -1;
+    private static boolean currentStationChanged = false;
 
     private static boolean infoReady = false;
-    private static boolean currentStationChanged = false;
     private static String currentStationName = "";
     private static String currentStationGenre = "";
     private static String currentStationStatus = "";
@@ -51,7 +54,6 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
     private static String currentArtist = "";
     private static String currentSource = "";
     private static String currentBitrate = "";
-
 
     private static ArrayList<Radio> radioList;
     /**
@@ -108,23 +110,24 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
     public void playCurrent() {
         owner.setMode(MyFlag.RADIO_MODE);
 
-        currentStationName = radioList.get(currentStation).getName();
-        currentStationGenre = "";
-        currentStationStatus = "Loading Stream...";
-        currentStationDescription = "";
-        currentTitle = "";
-        currentArtist = "";
-        currentSource = radioList.get(currentStation).getUrl();
-        owner.updateNotifBar(MyFlag.PAUSE, currentStationName, currentStationStatus);
-        infoReady = true;
-
-
+        // Case PAUSE
         if(radioPlayer.isPlaying()){
             radioPlayer.pause();
             this.isPaused = true;
-            owner.updateNotifBar(MyFlag.PLAY, currentStationName, currentStationGenre);
-            currentStationStatus = "";
-            infoReady = true;
+            currentStationStatus = "stop";
+            notifyUser(MyFlag.PLAY, currentStationName, currentStationGenre);
+            return;
+        }
+
+        // Otherwise, case PLAY
+        // Check for internet connection and update UI before streaming
+        resetAllInfo();
+        if(isOnline()) {
+            currentStationStatus = "Loading Stream...";
+            notifyUser(MyFlag.PAUSE, currentStationName, currentStationStatus);
+        } else {
+            currentStationStatus = "No Internet Connection";
+            notifyUser(MyFlag.PAUSE, currentStationName, currentStationStatus);
             return;
         }
 
@@ -133,31 +136,21 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
 
         try {
             radioPlayer.setDataSource(radioList.get(currentStation).getUrl());
-
             radioPlayer.prepareAsync();
-
             radioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
                 public void onPrepared(MediaPlayer mp) {
                     radioPlayer.start();  //start streaming
                 }
             });
-
             // fetch data from server to update notification bar
             fetch(radioList.get(currentStation).getUrl());
         } catch (Exception e) {
             // IllegalArgumentException , IOException, IllegalStateException
             // Are all because of Error setting data source (bad url)
             //e.printStackTrace();
-            currentStationName = radioList.get(currentStation).getName();
-            currentStationGenre = "";
-            currentStationStatus = "Url not accessible";
-            currentStationDescription = "";
-            currentTitle = "";
-            currentArtist = "";
-            currentSource = radioList.get(currentStation).getUrl();
-            owner.updateNotifBar(MyFlag.PAUSE, currentStationName, currentStationStatus);
-            infoReady = true;
+            resetAllInfoExceptBitrate();
+            currentStationStatus =  "Url not accessible";
+            notifyUser(MyFlag.PAUSE, currentStationName, currentStationStatus);
         }
     }
 
@@ -169,8 +162,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
             radioPlayer.pause();
             currentStation = (currentStation == radioList.size() - 1) ? 0 : currentStation + 1;
             currentStationChanged = true;
-            owner.updateNotifBar(MyFlag.PLAY,
-                    radioList.get(currentStation).getName(), radioList.get(currentStation).getUrl());
+            notifyUser(MyFlag.PLAY, radioList.get(currentStation).getName(), radioList.get(currentStation).getUrl());
         }
     }
     public void seekPrev(boolean wasPlaying) {
@@ -181,22 +173,9 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
             radioPlayer.pause();
             currentStation = (currentStation == 0) ? radioList.size()-1 : currentStation - 1;
             currentStationChanged = true;
-            owner.updateNotifBar(MyFlag.PLAY,
-                    radioList.get(currentStation).getName(), radioList.get(currentStation).getUrl());
+            notifyUser(MyFlag.PLAY, radioList.get(currentStation).getName(), radioList.get(currentStation).getUrl());
         }
 
-    }
-
-    /**
-     * Stop streaming radio
-     */
-    private void stopRadio() {
-        isPaused = true;
-        if (radioPlayer.isPlaying()) {
-            radioPlayer.stop();
-            radioPlayer.release();
-            initializePlayer();
-        }
     }
 
     /**
@@ -273,28 +252,60 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
     }
 
     /**
+     * Update the xml source file
+     */
+    private void rewriteXmlSource(){
+        Log.i(LOG_TAG, "Updating radios.xml....");
+        String fileName = "radios.xml";
+        String content = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<playlist>\n";
+
+        for (Radio radio : radioList) {
+            content += "<track>\n";
+            content += "<location>" + radio.getUrl() + "</location>\n";
+            content += "<title>" + radio.getName() + "</title>\n";
+            content += "</track>\n";
+        }
+        content += "</playlist>";
+
+        FileOutputStream outputStream = null;
+        try {
+            Log.i(LOG_TAG,"write new radios.xml file");
+            outputStream = owner.openFileOutput(fileName, owner.getBaseContext().MODE_PRIVATE);
+            outputStream.write(content.getBytes());
+            outputStream.close();
+        } catch (Exception e2) {
+            e2.printStackTrace();
+        }
+    }
+
+    /**
      *  Make an AsyncTask to Retrieve Metadata from Server
      */
-    public void fetch(String serverUrl) {
-
-        owner.updateNotifBar(MyFlag.PAUSE, radioList.get(currentStation).getName(), "buffering...");
+    private void fetch(String serverUrl) {
+        if(isOnline()) {
+            currentStationStatus = "Loading Stream...";
+            notifyUser(MyFlag.PAUSE, currentStationName, currentStationStatus);
+        } else {
+            currentStationStatus = "No Internet Connection";
+            notifyUser(MyFlag.PAUSE, currentStationName, currentStationStatus);
+            return;
+        }
         //Log.i(LOG_TAG, "Make Asynctask to fetch meta data");
         new FetchMetaDataTask().execute(serverUrl);
     }
 
     /**
      * Access the XML file of the radio and change info
-     * @param index the index of that radio on the list
-     * @param newUrl
-     * @param newName
+     * @param index the index of that radio on the old list
      */
     public void editRadio(int index,String newUrl, String newName) {
-
+        radioList.set(index, new Radio(newUrl, newName));
+        rewriteXmlSource();
     }
 
     /**
      * Add new radio station to the list
-     * @param aChanel
      */
     public void addRadio(Radio aChanel) {
         radioList.add(aChanel);
@@ -332,30 +343,14 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
     }
 
     /**
-     * Update the xml source file
+     * Stop streaming radio
      */
-    private void rewriteXmlSource(){
-        Log.i(LOG_TAG, "Updating radios.xml....");
-        String fileName = "radios.xml";
-        String content = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                                "<playlist>\n";
-
-        for (Radio radio : radioList) {
-            content += "<track>\n";
-            content += "<location>" + radio.getUrl() + "</location>\n";
-            content += "<title>" + radio.getName() + "</title>\n";
-            content += "</track>\n";
-        }
-        content += "</playlist>";
-
-        FileOutputStream outputStream = null;
-        try {
-            Log.i(LOG_TAG,"write new radios.xml file");
-            outputStream = owner.openFileOutput(fileName, owner.getBaseContext().MODE_PRIVATE);
-            outputStream.write(content.getBytes());
-            outputStream.close();
-        } catch (Exception e2) {
-            e2.printStackTrace();
+    private void stopRadio() {
+        isPaused = true;
+        if (radioPlayer.isPlaying()) {
+            radioPlayer.stop();
+            radioPlayer.release();
+            initializePlayer();
         }
     }
 
@@ -380,10 +375,6 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
         }
     }
 
-    /**
-     * Stop the radio player when a stream is completed
-     * @param mp
-     */
     @Override
     public void onCompletion(MediaPlayer mp) {
         radioPlayer.stop();
@@ -391,63 +382,49 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
 
     /**
      * Error while streaming
-     * @param mp
-     * @param what
-     * @param extra
-     * @return
+     * @return true if we do handle this
      */
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Media Player Error: ");
         switch (what) {
             case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-                sb.append("Not Valid for Progressive Playback");
+                Log.i(LOG_TAG, "Stream Error: Not Valid for Progressive Playback");
                 break;
             case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-                currentStationStatus = "Server is currently unavailable";
+                currentStationStatus = "erver is currently unavailable";
                 infoReady = true;
-                sb.append("Server Died");
+                Log.i(LOG_TAG, "Stream Error: Server Died");
                 break;
             case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-                sb.append("Unknown");
+                Log.i(LOG_TAG, "Stream Error: Unknown");
                 break;
             default:
-                sb.append(" Non standard (");
-                sb.append(what);
-                sb.append(")");
+                Log.i(LOG_TAG, "Stream Error Non standard (" + what + ")");
         }
-        sb.append(" (" + what + ") ");
-        sb.append(extra);
-        Log.e(LOG_TAG, sb.toString());
         return true;
     }
 
     /**
-     * refereces <link>https://developer.android.com/reference/android/media/MediaPlayer.html#MEDIA_INFO_METADATA_UPDATE</link>
-     * @param mp
-     * @param what
-     * @param extra
-     * @return
+     * references
+     * https://developer.android.com/reference/android/media/MediaPlayer.html#MEDIA_INFO_METADATA_UPDATE
+     * @return true if we do handle this
      */
     @Override
     public boolean onInfo(MediaPlayer mp, int what, int extra) {
         switch (what) {
             // MediaPlayer is temporarily pausing playback internally in order to buffer more data.
             case MediaPlayer.MEDIA_INFO_BUFFERING_START :
-                Log.i(LOG_TAG, "got info from server : BUFFERING_START");
+                //Log.i(LOG_TAG, "got info from server : BUFFERING_START");
                 currentStationStatus = "Buffering....";
-                owner.updateNotifBar(MyFlag.PAUSE, currentStationName, "buffering...");
-                infoReady = true;
+                notifyUser(MyFlag.PAUSE, currentStationName, "buffering...");
                 break;
             case MediaPlayer.MEDIA_INFO_BUFFERING_END :
-                Log.i(LOG_TAG, "got info from server : BUFFERING_END");
+                //Log.i(LOG_TAG, "got info from server : BUFFERING_END");
                 currentStationStatus = currentBitrate + " Kbps";
-                owner.updateNotifBar(MyFlag.PAUSE, currentStationName, currentTitle + " - " + currentArtist);
-                infoReady = true;
+                notifyUser(MyFlag.PAUSE, currentStationName, currentTitle + " - " + currentArtist);
                 break;
             case MediaPlayer.MEDIA_INFO_METADATA_UPDATE:
-                Log.i(LOG_TAG, "got info from server : METADATA_UPDATE");
+                Log.i(LOG_TAG, "got info from server : METADATA_UPDATE"); // Never got this Info
                 fetch(radioList.get(currentStation).getUrl());
                 break;
             case MediaPlayer.MEDIA_INFO_UNSUPPORTED_SUBTITLE:
@@ -457,9 +434,8 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
                 Log.i(LOG_TAG, "got info from server : SUBTITLE_TIMED_OUT");
                 break;
             case 703: //MediaPlayer.MEDIA_INFO_NETWORK_BANDWIDTH
-                Log.i(LOG_TAG, "got info from server : NETWORK_BANDWIDTH");
-                currentStationStatus = "slow connection...";
-                infoReady = true;
+                //Log.i(LOG_TAG, "got info from server : NETWORK_BANDWIDTH");
+                notifyUser("slow connection...");
                 break;
             default:
                 Log.i(LOG_TAG, "got info from server : " + what + ", " + extra);
@@ -468,79 +444,79 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
         return true;
     }
 
+    /**-----------------------------------------------------------------------------------------
+     *                      GETTER and SETTER               */
     public String getFirstTitle(){
         return this.getCurrentStationName();
     }
     public String getSecondTitle(){
         return (getCurrentTitle() + " - " + getCurrentArtist());
     }
-    /**
-     * Retrieve the list of radios
-     */
+    //Retrieve the list of radios
     public ArrayList<Radio> getRadioList(){
         return this.radioList;
     }
-
     public static String getCurrentArtist() {
         return currentArtist;
     }
-
     public static String getCurrentTitle() {
         return currentTitle;
     }
-
     public static String getCurrentStationDescription() {
         return currentStationDescription;
     }
-
     public static String getCurrentStationStatus() {
         return currentStationStatus;
     }
-
     public static String getCurrentStationGenre() {
         return currentStationGenre;
     }
-
     public static String getCurrentStationName() {
         return currentStationName;
     }
-
     public static String getCurrentSource() {
         return currentSource;
     }
-
     public int getCurrentStation() {
         return currentStation;
     }
-
     public void setCurrentStationChanged() {currentStationChanged = false;}
     public boolean getCurrentStationChanged() { return currentStationChanged;}
-
-    /**
-     * Tell client that info from fetching is ready to use
-     * @return
-     */
+    public static void resetAllInfo(){resetAllInfoExceptBitrate();currentBitrate = "";}
     public boolean isInfoReady() {
         return infoReady;
     }
-
-    /**
-     * After client pickup info from fetching, reset the flag
-     * @param infoReady
-     */
     public void setInfoReady(boolean infoReady) {
         this.infoReady = infoReady;
     }
-
     public int getAudioSessionId(){return radioPlayer.getAudioSessionId();}
-
     public void setVolume(float left, float right) {
         radioPlayer.setVolume(left,right);
     }
+    public boolean getIsPause(){return isPaused;}
 
-    public boolean getIsPause(){
-        //Log.i(LOG_TAG, "MyRadio isPause = " + isPaused );
-        return isPaused;
+    private static void resetAllInfoExceptBitrate(){
+        currentStationName = radioList.get(currentStation).getName();
+        currentStationGenre = "";
+        currentStationDescription = "";
+        currentTitle = "";
+        currentArtist = "";
+        currentSource = radioList.get(currentStation).getUrl();
+    }
+    //Check for Wifi or Mobile internet connection
+    private boolean isOnline() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) owner.getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    private static void notifyUser(MyFlag flag, String first, String second ) {
+        owner.updateNotifBar(flag, first, second);
+        infoReady = true;
+    }
+    private static void notifyUser(String status) {
+        currentStationStatus = status;
+        infoReady = true;
     }
 
     /**------------------------------------------------------------------------------------------
@@ -555,40 +531,27 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
         private String success = "success";
         private String connError = "Network Error, connection fail...";
         private String fail = "Fail to Stream";
+        private String metaError = "No Track Info";
 
         /**
          * Open a connection to the streaming server (by url)
          * Make request for metadata from the server for that specific stream
          * Extract stream info in the return header, and metadata in middle of stream
          * @param serverUrls is the URL to the server
-         * @return
          */
         protected String doInBackground(String... serverUrls) {
 
             try {
                 //Open connection to streamming server with a specific stream URL
-                //Log.i(LOG_Task, "Open connection....");
-                url = new URL(serverUrls[0]);
-                conn = url.openConnection();
-                //conn.setConnectTimeout(6000);
-
+                conn = new URL(serverUrls[0]).openConnection();
                 //Request for Icy-MetaData
                 conn.addRequestProperty("Icy-MetaData", "1");
                 conn.connect();
-
                 // Retrieve and print the metadata just got from streaming server
                 //Log.i(LOG_Task, "Connect success, printing metadata in return header from server...");
                 hList = conn.getHeaderFields();
-
                 // Reset metadata to make sure it's not holding previous station's data
-                currentStationName = radioList.get(currentStation).getName();
-                currentStationGenre = "";
-                currentStationStatus = "";
-                currentStationDescription = "";
-                currentTitle = "";
-                currentArtist = "";
-                currentSource = serverUrls[0];
-
+                resetAllInfo();
                 // The headerFields is a Map<String, List<String>>
                 for (Map.Entry<String, List<String>> entry : hList.entrySet()) {
                     String key = entry.getKey();
@@ -597,24 +560,24 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
                     if (key != null) { // could be null key
                         switch (key) {
                             case "icy-br":
-                                Log.i(LOG_Task, "BiteRate: " + values.get(0));
+                                //Log.i(LOG_Task, "BiteRate: " + values.get(0));
                                 currentBitrate = values.get(0);
                                 currentStationStatus = currentBitrate + " Kbps";
                                 break;
                             case "icy-description":
-                                Log.i(LOG_Task, "Description: " + values.get(0));
+                                //Log.i(LOG_Task, "Description: " + values.get(0));
                                 currentStationDescription = values.get(0);
                                 break;
                             case "icy-name":
-                                Log.i(LOG_Task, "StationName: " + values.get(0));
+                                //Log.i(LOG_Task, "StationName: " + values.get(0));
                                 currentStationName = values.get(0);
                                 break;
                             case "icy-genre":
-                                Log.i(LOG_Task, "StationGenre: " + values.get(0));
+                                //Log.i(LOG_Task, "StationGenre: " + values.get(0));
                                 currentStationGenre = values.get(0);
                                 break;
                             case "icy-url":
-                                Log.i(LOG_Task, "URL: " + values.get(0));
+                                //Log.i(LOG_Task, "URL: " + values.get(0));
                                 currentSource = values.get(0);
                                 break;
                             // read metadata in the middle of the stream
@@ -626,22 +589,23 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
                     }
                 }
             } catch (java.net.UnknownHostException e4) {
+                currentStationStatus = connError;
                 //e4.printStackTrace();
                 return connError;
             }
             catch (java.net.ConnectException e1) {
                 //e1.printStackTrace();
+                currentStationStatus = connError;
                 return connError;
             } catch (IOException e2) {
                 //e2.printStackTrace();
-                //Just some error reading metadata, we still success in reading header
-                return success;
+                currentTitle = metaError;
+                return metaError;
             }
             catch (Exception e3) {
                 //e3.printStackTrace();
                 return fail;
             }
-
             return success;
         }
 
@@ -652,18 +616,14 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
          */
         private void readMetaData(int location) throws IOException {
             //Log.i(LOG_Task, "/readMetaData");
-
             long read = 0;
             String md = ""; // The metadata
-
             // Skipping stream until get to the metadata
             InputStream is = conn.getInputStream();
             while (read != location) { read += is.skip(location - read);}
-
             // The first byte of metadata tell how large the metadata is
             int mdl = is.read() * 16;
             //Log.i(LOG_Task, "Skipped " + read + " bytes, reading " + mdl + " next bytes for metadatas");
-
             // Start reading metadata if there is some
             if (mdl > 0) {
                 read = 0;
@@ -676,10 +636,8 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
                     if (read==mdl) {break;} // Got enough needed data
                 }
                 //Log.i(LOG_Task, "raw metadata: " + md);
-
                 // Get the chunks of metadata
                 String[] metdatas = new String(md.trim().getBytes(), "utf-8").split(";");
-
                 // Extract metadata in form     StreamTitle='DELTA GOODREM - BORN TO TRY';
                 for (String data : metdatas) {
                     //Log.i(LOG_Task, data);
@@ -691,7 +649,6 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
                     }
                 }
                 Log.i(LOG_Task, "Title: " + currentTitle + " | Artist: " + currentArtist);
-
             }
             is.close();
         }
@@ -702,29 +659,20 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
          */
         @Override
         protected void onPostExecute(String result) {
-            Log.i(LOG_Task, "onPostExecute " + this.getStatus().toString() + " arg " + result);
             super.onPostExecute(result);
-            infoReady = true; // turn on flag saying info is all set and ready to be use
 
-            // Need to setup Notif Bar if the preExecute was failing
+            //  setup Notif Bar base on preExecute
             if (result.compareTo(connError) == 0) {
-                currentStationStatus = connError;
-                owner.updateNotifBar(MyFlag.PLAY, radioList.get(currentStation).getName(), connError);
-                return;
+                notifyUser(MyFlag.PLAY, radioList.get(currentStation).getName(), connError);
             } else if (result.compareTo(fail) == 0) {
-                owner.updateNotifBar(MyFlag.PLAY, radioList.get(currentStation).getName(), fail);
-                return;
+                notifyUser(MyFlag.PLAY, radioList.get(currentStation).getName(), fail);
+            } else if (result.compareTo(metaError) == 0 || (currentTitle.compareTo("")!=0)) {
+                notifyUser(MyFlag.PAUSE, currentStationName, currentStationGenre);
+            } else if (currentArtist.compareTo("") == 0) {
+                notifyUser(MyFlag.PAUSE, currentStationName, currentTitle);
+            } else {
+                notifyUser(MyFlag.PAUSE, currentStationName, currentTitle + " - " + currentArtist);
             }
-            // Set up the view of notification bar
-            else if(currentTitle.compareTo("")!=0) {
-                if (currentArtist.compareTo("")!=0) {
-                    owner.updateNotifBar(MyFlag.PAUSE, currentStationName, currentTitle + " - " + currentArtist);
-                } else {
-                    owner.updateNotifBar(MyFlag.PAUSE, currentStationName, currentTitle);
-                }
-            }
-            owner.setNotificationBar(MyFlag.PAUSE, currentStationName, currentStationGenre);
         }
     }
-
 }

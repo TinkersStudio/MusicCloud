@@ -347,4 +347,5 @@ public class MusicService extends Service {
         thePlayer = (mode == MyFlag.OFFLINE_MUSIC_MODE? player :radio);
         this.mode = mode;
     }
+    public void reLoadData() {player.getDataSource();}
 }

@@ -137,5 +137,10 @@ public class FragmentSongList extends Fragment {
      */
     private void initDataset() {
         mDataset = ((MyPlayer)myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE)).getSongList();
+        // one more try
+        if (((MainActivity)getActivity()).getPermissionStatus() && mDataset.size() == 0) {
+            myService.reLoadData();
+            mDataset = ((MyPlayer)myService.getPlayer(MyFlag.OFFLINE_MUSIC_MODE)).getSongList();
+        }
     }
 }
