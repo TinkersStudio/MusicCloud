@@ -9,7 +9,9 @@ import android.widget.ListView;
 
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.fragment.FragmentRadio;
 import com.tinkersstudio.musiccloud.model.Radio;
+import com.tinkersstudio.musiccloud.util.MyFlag;
 import com.tinkersstudio.musiccloud.view.RadioViewHolder;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
     /** The data set to which this RadioListAdapter is bound. */
     private List<Radio> mRadioList;
     private MusicService myService;
-
+    private MyFlag mode;
     private View v;
 
     /**
@@ -39,9 +41,10 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
      *            The Collection of Radio objects to which this RadioListAdapter
      *            is bound.
      */
-    public RadioListAdapter(List<Radio> radioList, MusicService musicService) {
+    public RadioListAdapter(List<Radio> radioList, MusicService musicService, MyFlag mode) {
         this.mRadioList = radioList;
         this.myService = musicService;
+        this.mode = mode;
         //Log.i(LOG_TAG, "construct RadioListAdapter with " + radioList.size() + " radios");
     }
 
@@ -96,7 +99,7 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
         v = LayoutInflater.from(parent.getContext())
                 .inflate(viewType, parent, false);
         // set the com.tinkersstudio.musiccloud.view's size, margins, paddings and layout parameters
-        RadioViewHolder vh = new RadioViewHolder(v, this);
+        RadioViewHolder vh = new RadioViewHolder(v, this, mode);
         vh.setService(myService);
         return vh;
     }
@@ -155,4 +158,8 @@ public class RadioListAdapter extends RecyclerView.Adapter<RadioViewHolder>  {
     public int getItemCount() {
         return this.mRadioList.size();
     }
+
+    private FragmentRadio fmRadio;
+    public void setTargetResult(FragmentRadio fmRadio){this.fmRadio = fmRadio;}
+    public void updateFavoriteList(){fmRadio.updateFavoriteList();}
 }

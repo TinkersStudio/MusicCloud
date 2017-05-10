@@ -39,22 +39,19 @@ import com.tinkersstudio.musiccloud.R;
  * Should support both text and file text lyric
  */
 public class FragmentSongLyric extends Fragment {
+    private String LOG_TAG = "FragmentSongLyric";
+    private String API_KEY;
+    private MusixMatch musixMatch;
+    private Song currentSong;
+    private TextView lyricText, lyricTitle, lyricArtist;
+    private LinearLayout wholeScreen, lyricHeaderBar;
+    private String trackName = "", artistName = "";
+    private Bitmap bitmap;
+    private BitmapDrawable newBitmap;
+    private boolean hideQuit = false;
+    private int dominantColor, compColor, compColor2;
 
-    //TODO: getString from R.string throws exception : fragment not attached to Activity
-    //String API_KEY = getString(R.string.musicMatch_API);
-    String API_KEY = "f4337155f55d30c22e85a96f2dc674c8";
-    MusixMatch musixMatch = new MusixMatch(API_KEY);
-    String LOG_TAG = "FragmentSongLyric";
-    Song currentSong;
-    TextView lyricText, lyricTitle, lyricArtist;
-    LinearLayout wholeScreen, lyricHeaderBar;
-    String trackName = "", artistName = "";
-    Bitmap bitmap;
-    BitmapDrawable newBitmap;
-    boolean hideQuit = false;
-    int dominantColor, compColor, compColor2;
-
-    public void setCurrentSong(Song currentSong) {this.currentSong = currentSong;}
+    public void setCurrentSong(Song currentSong) {;this.currentSong = currentSong;}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,20 +67,21 @@ public class FragmentSongLyric extends Fragment {
         trackName = currentSong.getTitle();
         artistName = currentSong.getArtist();
 
-        if (trackName.equals("") || artistName.equals(""))
-        {
-            new retriveLyric().execute();
-        }
-        else
-        {
-            lyricText.setText("Can't find the song");
-        }
+        lyricText.setText("Getting lyric online ....");
+        // retrieve lyric
+        API_KEY = getString(R.string.musicMatch_API);
+        musixMatch = new MusixMatch(API_KEY);
         ArrayList<String> values = new ArrayList<String>();
         values.add(trackName);
         values.add(artistName);
         new retriveLyric().execute(values);
 
         return rootView;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
     }
 
     /**
@@ -96,12 +94,12 @@ public class FragmentSongLyric extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // Set up UI
         if (hideQuit) {
             lyricHeaderBar.removeAllViews();
             lyricText.setTextColor(Color.WHITE);
         }
         else {
-
             // Get screen size to scale the cover art
             WindowManager wm = (WindowManager) ((MainActivity)getActivity()).getBaseContext().getSystemService(Context.WINDOW_SERVICE);
             Display display = wm.getDefaultDisplay();
@@ -155,31 +153,10 @@ public class FragmentSongLyric extends Fragment {
         super.onDetach();
     }
 
-    public void writeToFile(String lyric)
-    {
+    public void writeToFile(String lyric) {}
 
-    }
-
-    /**
-     * This class handle uploading joke
-     * The order of parameter Params, Progress and Result
-     */
     public class retriveLyric extends AsyncTask<ArrayList<String>, Void, String> {
         String lyricsLyric = "";
-        /**
-         * Override this method to perform a computation on a background thread. The
-         * specified parameters are the parameters passed to {@link #execute}
-         * by the caller of this task.
-         * <p/>
-         * This method can call {@link #publishProgress} to publish updates
-         * on the UI thread.
-         *
-         * @param params The parameters of the task. Normally would be an array
-         * @return A result, defined by the subclass of this task.
-         * @see #onPreExecute()
-         * @see #onPostExecute
-         * @see #publishProgress
-         */
         @Override
         protected String doInBackground(ArrayList<String>... params) {
             try {
@@ -194,21 +171,17 @@ public class FragmentSongLyric extends Fragment {
             }
             return "Success";
         }
-
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             //Log.d(FragmentSongLyric.this.LOG_TAG, "Start API called");
         }
-
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             //Log.d(FragmentSongLyric.this.LOG_TAG, "Completed retrieve lyric");
             lyricText.setText(lyricsLyric);
         }
-
         public void getLyric(String trackName, String artistName) {
             try{
                 Track track = musixMatch.getMatchingTrack(trackName, artistName);
@@ -218,11 +191,12 @@ public class FragmentSongLyric extends Fragment {
                 this.lyricsLyric = lyrics.getLyricsBody();
             }
             catch (MusixMatchException e) {
+                lyricsLyric = "No Lyric Available";
                 Log.i(LOG_TAG, "No lyrics found online");
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 FirebaseCrash.report(e);
+                lyricsLyric = "No Lyric Available";
                 Log.e(e.toString(), "Error in setting value");
             }
         }

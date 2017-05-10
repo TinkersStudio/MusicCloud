@@ -55,7 +55,8 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
     private static String currentSource = "";
     private static String currentBitrate = "";
 
-    private static ArrayList<Radio> radioList;
+    private static ArrayList<Radio> radioList;      // MyList of radio to play
+    private static ArrayList<Radio> radioLibrary;   // All online radio available
     /**
      * Constructing a new Media Player which belong to a MusicService
      * @param owner the ownner of this Player
@@ -184,11 +185,15 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
      */
     public int getDataSource(){
         radioList = new ArrayList<Radio>();
+
+        new OnlineRadioRetriever().execute(owner.getString(R.string.radio_list));
+
+
         Document doc = null;
         // Try to open an internal source file first
         try {
             String filePath = owner.getBaseContext().getFilesDir() + "/" + "radios.xml";
-            Log.i(LOG_TAG,"FILE LOCATION: " + filePath);
+            //Log.i(LOG_TAG,"FILE LOCATION: " + filePath);
             File fXmlFile = new File(filePath);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -210,9 +215,9 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
         finally {
             doc.getDocumentElement().normalize();
 
-            Log.i(LOG_TAG, "Read radios.xml file :" + doc.getDocumentElement().getNodeName());
+            //Log.i(LOG_TAG, "Read radios.xml file :" + doc.getDocumentElement().getNodeName());
             NodeList nList = doc.getElementsByTagName("track");
-            Log.i(LOG_TAG,"Found  " + nList.getLength() + " items");
+            //Log.i(LOG_TAG,"Found  " + nList.getLength() + " items");
 
             for (int temp = 0; temp < nList.getLength(); temp++) {
                 Node nNode = nList.item(temp);
@@ -220,7 +225,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
                     Element eElement = (Element) nNode;
                     String title = eElement.getElementsByTagName("title").item(0).getTextContent();
                     String url = eElement.getElementsByTagName("location").item(0).getTextContent();
-                    Log.i(LOG_TAG,"\t" + nNode.getNodeName() + " #" + temp + ": Title :" + title + " | Url :" + url);
+                    //Log.i(LOG_TAG,"\t" + nNode.getNodeName() + " #" + temp + ": Title :" + title + " | Url :" + url);
                     radioList.add(new Radio(url, title));
                 }
             }
@@ -239,7 +244,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
      * Call <method>getRadios</method> to reload station from raw xml file in res
      */
     private void reloadRadioStationFromRawXML(){
-        Log.i(LOG_TAG, "reloadRadioStationFromRawXML");
+        //Log.i(LOG_TAG, "reloadRadioStationFromRawXML");
         try {
             String filePath = owner.getBaseContext().getFilesDir() + "/" + "radios.xml";
             File fXmlFile = new File(filePath);
@@ -255,7 +260,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
      * Update the xml source file
      */
     private void rewriteXmlSource(){
-        Log.i(LOG_TAG, "Updating radios.xml....");
+        //Log.i(LOG_TAG, "Updating radios.xml....");
         String fileName = "radios.xml";
         String content = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<playlist>\n";
@@ -270,7 +275,7 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
 
         FileOutputStream outputStream = null;
         try {
-            Log.i(LOG_TAG,"write new radios.xml file");
+            //Log.i(LOG_TAG,"write new radios.xml file");
             outputStream = owner.openFileOutput(fileName, owner.getBaseContext().MODE_PRIVATE);
             outputStream.write(content.getBytes());
             outputStream.close();
@@ -305,10 +310,10 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
     }
 
     /**
-     * Add new radio station to the list
+     * Add new radio station from library to the list
      */
-    public void addRadio(Radio aChanel) {
-        radioList.add(aChanel);
+    public void addRadio(int aChanel) {
+        radioList.add(radioLibrary.get(aChanel));
         rewriteXmlSource();
     }
 
@@ -517,6 +522,65 @@ public class MyRadio implements Player, MediaPlayer.OnCompletionListener,
     private static void notifyUser(String status) {
         currentStationStatus = status;
         infoReady = true;
+    }
+    public ArrayList<Radio> getLibraryStations(){
+        return radioLibrary;
+    }
+
+    /**---------------------------------------------------------------------------------------------
+     * Asynctask to search online for Radio Stations
+     */
+    public class OnlineRadioRetriever extends AsyncTask<String, Void, Void> {
+
+        private String LOG_Task = "OnlineRadioRetriever";
+        private Exception exception;
+        Map<String, List<String>> hList;
+
+        protected Void doInBackground(String... urls) {
+            readXml(urls[0]);
+
+            return null;
+        }
+
+        public int readXml(String urls){
+            radioLibrary = new ArrayList<Radio>();
+            Document doc = null;
+            // Try to open an internal source file first
+            try {
+                URL url = new URL(urls);
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                doc = dBuilder.parse(url.openStream());
+                doc.getDocumentElement().normalize();
+
+                //Log.i(LOG_Task, "Read radios.xml file :" + doc.getDocumentElement().getNodeName());
+                NodeList nList = doc.getElementsByTagName("track");
+                //Log.i(LOG_Task,"Found  " + nList.getLength() + " items");
+
+                for (int temp = 0; temp < nList.getLength(); temp++) {
+                    Node nNode = nList.item(temp);
+                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element eElement = (Element) nNode;
+                        String title = eElement.getElementsByTagName("title").item(0).getTextContent();
+                        String urll = eElement.getElementsByTagName("location").item(0).getTextContent();
+                        //Log.i(LOG_Task,"\t" + nNode.getNodeName() + " #" + temp + ": Title :" + title + " | Url :" + urll);
+                        radioLibrary.add(new Radio(urll, title));
+                    }
+                }
+
+            }
+            // There is no internal source file, open the default file in Res
+            catch (Exception e1) {
+                e1.printStackTrace();
+
+            }
+
+            return radioLibrary.size();
+        }
+
+        protected void onPostExecute(Void... feed) {
+            // TODO: display those metadata
+        }
     }
 
     /**------------------------------------------------------------------------------------------

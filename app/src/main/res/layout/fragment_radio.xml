@@ -116,7 +116,7 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Radio Stations"
+            android:text="My Stations"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/orange"
