@@ -28,7 +28,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--Google Demo Value-->
-    <eat-comment/>
+    <eat-comment />
     <string name="launch_title">FirebaseUI Auth Demo</string>
     <string name="sign_in">Start</string>
     <string name="green_theme">Green Theme</string>
@@ -86,4 +86,6 @@
     <!-- strings for database demo activities -->
     <string name="start_chatting">No messages. Start chatting at the bottom!</string>
     <string name="signed_in">Signed In</string>
+    <string name="email_sent_confirm">Thank you. We have received your feedback</string>
+    <string name="user_feedback">Feedback</string>
 </resources>

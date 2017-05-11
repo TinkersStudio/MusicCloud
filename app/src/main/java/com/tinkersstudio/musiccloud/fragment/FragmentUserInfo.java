@@ -48,6 +48,8 @@ public class FragmentUserInfo extends Fragment {
     private static final String TAG = "UserInfo";
     FirebaseUser user;
 
+
+
     View rootView;
     Button signInButton, signOutButton;
     public FragmentUserInfo(){
@@ -89,7 +91,6 @@ public class FragmentUserInfo extends Fragment {
         {
             signInButton.setVisibility(View.VISIBLE);
             signOutButton.setVisibility(View.GONE);
-
         }
 
     }
@@ -112,6 +113,7 @@ public class FragmentUserInfo extends Fragment {
                                 .setAllowNewEmailAccounts(true)
                                 .build(),
                         RC_SIGN_IN);
+
             }
         });
 
@@ -120,6 +122,8 @@ public class FragmentUserInfo extends Fragment {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
+                signInButton.setVisibility(View.VISIBLE);
+                signOutButton.setVisibility(View.GONE);
             }
         });
 
@@ -139,13 +143,15 @@ public class FragmentUserInfo extends Fragment {
     @MainThread
     private void handleSignInResponse(int resultCode, Intent data) {
         IdpResponse response = IdpResponse.fromResultIntent(data);
-
         // Successfully signed in
         if (resultCode == ResultCodes.OK) {
             //startActivity(SignedInActivity.createIntent(getActivity(), response));
             //getActivity().finish();
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            signInButton.setVisibility(View.GONE);
+            signOutButton.setVisibility(View.VISIBLE);
 
+            /**
             user.sendEmailVerification()
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -155,6 +161,7 @@ public class FragmentUserInfo extends Fragment {
                             }
                         }
                     });
+             */
             return;
         } else {
             // Sign in failed
