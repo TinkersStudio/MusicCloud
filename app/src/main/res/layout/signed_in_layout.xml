@@ -7,7 +7,7 @@
     android:clipToPadding="false"
     android:paddingBottom="16dp"
     android:paddingTop="16dp"
-    tools:context=".authentication.SignedInActivity">
+    tools:context=".deprecated.SignedInActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

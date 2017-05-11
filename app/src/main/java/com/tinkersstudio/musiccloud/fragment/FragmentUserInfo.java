@@ -5,33 +5,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.tinkersstudio.musiccloud.R;
-import com.tinkersstudio.musiccloud.activities.MainActivity;
-import com.tinkersstudio.musiccloud.authentication.AuthUiActivity;
-import com.tinkersstudio.musiccloud.authentication.SignedInActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,6 +45,7 @@ public class FragmentUserInfo extends Fragment {
 
     View rootView;
     Button signInButton, signOutButton;
+    ImageView mUserProfilePicture;
     public FragmentUserInfo(){
         //require an empty constructor
     }
@@ -81,9 +75,17 @@ public class FragmentUserInfo extends Fragment {
     {
         signInButton = (Button)rootView.findViewById(R.id.user_info_sign_in);
         signOutButton = (Button)rootView.findViewById(R.id.user_info_sign_out);
+        mUserProfilePicture = (ImageView)rootView.findViewById((R.id.fragment_user_profile_picture));
         //user signout
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null)
         {
+            if (user.getPhotoUrl() != null) {
+                Glide.with(FragmentUserInfo.this)
+                        .load(user.getPhotoUrl())
+                        .fitCenter()
+                        .into(mUserProfilePicture);
+            }
             signInButton.setVisibility(View.GONE);
             signOutButton.setVisibility(View.VISIBLE);
         }
@@ -150,6 +152,12 @@ public class FragmentUserInfo extends Fragment {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             signInButton.setVisibility(View.GONE);
             signOutButton.setVisibility(View.VISIBLE);
+            if (user.getPhotoUrl() != null) {
+                Glide.with(FragmentUserInfo.this)
+                        .load(user.getPhotoUrl())
+                        .fitCenter()
+                        .into(mUserProfilePicture);
+            }
 
             /**
             user.sendEmailVerification()

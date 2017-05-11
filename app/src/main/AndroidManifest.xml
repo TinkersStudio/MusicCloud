@@ -42,10 +42,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".authentication.AuthUiActivity"
+            android:name=".deprecated.AuthUiActivity"
             android:label="Authentication Activity"/>
         <activity
-            android:name=".authentication.SignedInActivity"
+            android:name=".deprecated.SignedInActivity"
             android:label="Sign In"/>
         <receiver android:name="com.tinkersstudio.musiccloud.controller.MusicService$NotificationDismissedReceiver" />
         <service android:name="com.tinkersstudio.musiccloud.controller.MusicService" />
