@@ -1,5 +1,6 @@
 package com.tinkersstudio.musiccloud.model;
 
+import android.util.Log;
 /**
  * Created by anhnguyen on 5/3/17.
  */

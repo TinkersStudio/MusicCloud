@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -105,7 +106,7 @@ public class FragmentRadio extends Fragment {
         this.setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
         //Log.i(LOG_TAG, "create RadioListAdapter with list of " +  mDataset.size() + " radios");
-        mAdapter = new RadioListAdapter(mDataset, myService);
+        mAdapter = new RadioListAdapter(mDataset, myService, MyFlag.LIST_FAVORITE);
         // Set CustomAdapter as the com.tinkersstudio.musiccloud.adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
 
@@ -119,37 +120,16 @@ public class FragmentRadio extends Fragment {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     addStation.setColorFilter(Color.WHITE);
 
-                    //TODO: need a better way to add station since most user not knowing streaming url to enter
-
-                    // Popup an dialog fragment to add a station, then update view
-                    View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.view_add_radio, (ViewGroup) getView(), false);
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle("Add New Chanel");
-
-                    // Set up the input
-                    final EditText name = (EditText)viewInflated.findViewById(R.id.fr_dialog_name);
-                    final EditText url = (EditText) viewInflated.findViewById(R.id.fr_dialog_url);
-
-                    builder.setView(viewInflated);
-
-                    // Set up the buttons
-                    builder.setPositiveButton("ADD Channel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            myRadio.addRadio(new Radio(url.getText().toString(), name.getText().toString()));
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-
-                    builder.show();
-                    return true;
+                    FragmentManager fragmentManager = getFragmentManager();
+                    android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    FragmentRadioLibrary radioLibrary = new FragmentRadioLibrary();
+                    radioLibrary.setRadio(myRadio);
+                    radioLibrary.setService(myService);
+                    radioLibrary.setTargetResult(FragmentRadio.this);
+                    fragmentTransaction.addToBackStack("FragmentMusicPlayer");
+                    fragmentTransaction.hide(FragmentRadio.this);
+                    fragmentTransaction.add(R.id.fragment_container, radioLibrary);
+                    fragmentTransaction.commit();
                 }
                 return false;
             }
@@ -158,6 +138,7 @@ public class FragmentRadio extends Fragment {
         return rootView;
     }
 
+    //public void updateFavorite(){mAdapter.notifyDataSetChanged();}
 
     @Override
     public void onStart() {
@@ -172,6 +153,10 @@ public class FragmentRadio extends Fragment {
         }
     }
 
+    public void updateFavoriteList(){
+        Log.i(LOG_TAG,"updateFavoriteList");
+        mAdapter.notifyDataSetChanged();
+    }
     /**
      * A Runnable which run separately on the back ground to update UI of this fragment
      * It is scheduled to update the seekbar every 1 second,

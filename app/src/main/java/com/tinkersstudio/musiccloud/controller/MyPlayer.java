@@ -145,7 +145,7 @@ public class MyPlayer implements Player, MediaPlayer.OnPreparedListener, MediaPl
      * This will either play the music or pause the music
      */
     public void playCurrent() {
-        owner.setMode(MyFlag.OFFLINE_MUSIC_MODE);
+        //owner.setMode(MyFlag.OFFLINE_MUSIC_MODE);
         // Check to see if there is a valid song to play
         if (songList == null && getDataSource() <= 0 || songList.size() == 0) {
             throw new NoSongToPlayException("There no such a song to play");

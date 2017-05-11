@@ -74,4 +74,97 @@
         <location>http://listen.radionomy.com:80/-Pophits</location>
         <title>#Pophits</title>
     </track>
+
+    <track>
+        <location>http://173.192.70.138:9170/stream</location>
+        <title>New Country 93</title>
+    </track>
+
+    <track>
+        <location>http://listen.radionomy.com:80/101SMOOTHJAZZ</location>
+        <title>101 SMOOTH JAZZ</title>
+    </track>
+
+    <track>
+        <location>http://listen.radionomy.com/CrystalRadioBeautifulMusic</location>
+        <title>Crystal Radio Beautiful Music</title>
+    </track>
+
+    <track>
+        <location>http://s3.voscast.com:8916</location>
+        <title>Rick and Bubba Show</title>
+    </track>
+
+    <track>
+        <location>http://listen.streamonomy.com/lexandterry</location>
+        <title>Lex and Terry Live</title>
+    </track>
+
+    <track>
+        <location>http://listen.radionomy.com:80/DIEUAMRADIO</location>
+        <title>DIEU AM RADIO</title>
+    </track>
+
+    <track>
+        <location>http://69.46.24.226:7006/stream</location>
+        <title>Old Time Radio CFRG</title>
+    </track>
+
+    <track>
+        <location>http://62.75.215.7:8038/stream</location>
+        <title>Radio Ha Ha</title>
+    </track>
+
+    <track>
+        <location>http://209.239.123.91:8239/stream</location>
+        <title>Radio Viet Nam Hai Ngoai - Washington DC</title>
+    </track>
+
+    <track>
+        <location>http://209.239.123.91:8251/stream</location>
+        <title>Dai Phat Thanh Viet Nam OKC</title>
+    </track>
+
+
+    <track>
+        <location>http://listen.radionomy.com/ChillHits4U</location>
+        <title>ChillHits4U</title>
+    </track>
+
+    <track>
+        <location>http://206.190.136.141:6682/Live</location>
+        <title>RadioBobo.com</title>
+    </track>
+
+    <track>
+        <location>http://109.123.116.202:8020/stream</location>
+        <title>Venice Classic Radio Italia</title>
+    </track>
+
+    <track>
+        <location>http://listen.radionomy.com/1000ClassicalHits</location>
+        <title>1000 Classical Hits</title>
+    </track>
+
+
+    <track>
+        <location>http://listen.radionomy.com/SlowRadioCom</location>
+        <title>SlowRadio.Com</title>
+    </track>
+
+    <track>
+        <location>http://listen.radionomy.com:80/LOVERADIOFM</location>
+        <title>LOVE RADIO FM</title>
+    </track>
+
+    <track>
+        <location>http://188.213.230.36:8300/stream</location>
+        <title>Nashville FM [24/7 Nonstop Country Music] -03</title>
+    </track>
+
+    <track>
+        <location>http://212.18.63.135:8060/mrdj</location>
+        <title>RADIO CENTER LOVE</title>
+    </track>
+
 </playlist>
