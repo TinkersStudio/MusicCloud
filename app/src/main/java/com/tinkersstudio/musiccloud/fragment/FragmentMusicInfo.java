@@ -38,6 +38,8 @@ public class FragmentMusicInfo extends Fragment {
     private LinearLayout header;
     private int dominantColor, compColor, compColor2;
     private FragmentSongLyric fmSongLyric;
+    private FragmentMusicInfoArtist fmInfoArtist;
+    private FragmentMusicInfoDetails fmInfoDetails;
     private Song currentSong;
 
     public void setCurrentSong(Song currentSong){
@@ -61,6 +63,7 @@ public class FragmentMusicInfo extends Fragment {
 
         //Set an Adater for the View Pager
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+        viewPager.setOffscreenPageLimit(int_items); // Keep all 3 tabs alive so it won't get recreate when user paging
         tabLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -90,12 +93,22 @@ public class FragmentMusicInfo extends Fragment {
         artist.setTextColor(compColor);
         artist.setSelected(true);
 
+
+        fmInfoDetails = new FragmentMusicInfoDetails();
+        fmInfoDetails.setCurrentSong(currentSong);
+
         try {
             fmSongLyric = new FragmentSongLyric();
+            fmSongLyric.setCurrentSong(currentSong);
             fmSongLyric.hideQuitButton();
-        }
-        catch (java.lang.IllegalStateException e) {
+        } catch (java.lang.IllegalStateException e) {
             Log.i("FragmentMusicInfo", "not attached to Activity");
+        }
+        try {
+            fmInfoArtist = new FragmentMusicInfoArtist();
+            fmInfoArtist.setCurrentSong(currentSong);
+        } catch (Exception e) {
+            Log.i(LOG_TAG, "Fail to connect LastFM API");
         }
 
         return view;
@@ -127,18 +140,13 @@ public class FragmentMusicInfo extends Fragment {
         {
             switch (position){
                 case 0 : {
-                    FragmentMusicInfoDetails fmInfoDetails = new FragmentMusicInfoDetails();
-                    fmInfoDetails.setCurrentSong(currentSong);
                     return fmInfoDetails;
                 }
                 case 1 : {
-                    fmSongLyric.setCurrentSong(currentSong);
                     return fmSongLyric;
                 }
                 case 2: {
-                    FragmentMusicInfoDetails fmInfoDetails = new FragmentMusicInfoDetails();
-                    fmInfoDetails.setCurrentSong(currentSong);
-                    return fmInfoDetails;
+                    return fmInfoArtist;
                 }
             }
             return null;
