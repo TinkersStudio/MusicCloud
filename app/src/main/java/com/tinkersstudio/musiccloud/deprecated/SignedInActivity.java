@@ -1,4 +1,4 @@
-package com.tinkersstudio.musiccloud.authentication;
+package com.tinkersstudio.musiccloud.deprecated;
 
 import android.content.Context;
 import android.content.DialogInterface;

@@ -1,4 +1,4 @@
-package com.tinkersstudio.musiccloud.authentication;
+package com.tinkersstudio.musiccloud.util;
 
 import android.app.Application;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.tinkersstudio.musiccloud.authentication;
+package com.tinkersstudio.musiccloud.deprecated;
 
 /**
  * DEPRECATED

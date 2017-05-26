@@ -71,12 +71,10 @@
                 android:id="@+id/navigation_view_equalizer"
                 android:icon="@drawable/ic_action_settings"
                 android:title="@string/equalizer" />
-            <!--
             <item
-                android:id="@+id/navigation_view_user_stat"
-                android:icon="@drawable/ic_trophy"
-                android:title="@string/achievement" />
-                -->
+                android:id="@+id/navigation_view_user_feedback"
+                android:icon="@drawable/ic_account_settings_variant"
+                android:title="@string/user_feedback"/>
         </menu>
     </item>
     <item

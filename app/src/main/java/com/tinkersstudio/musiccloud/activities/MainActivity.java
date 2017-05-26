@@ -39,6 +39,7 @@ import com.tinkersstudio.musiccloud.fragment.FragmentSetting;
 import com.tinkersstudio.musiccloud.fragment.FragmentSongList;
 
 import com.tinkersstudio.musiccloud.controller.MusicService;
+import com.tinkersstudio.musiccloud.fragment.FragmentUserResponse;
 import com.tinkersstudio.musiccloud.util.MyFlag;
 import es.dmoral.toasty.Toasty;
 
@@ -181,6 +182,12 @@ public class MainActivity extends AppCompatActivity
                 Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
                 fragment = new FragmentSetting();
                 break;
+            case R.id.navigation_view_user_feedback:
+                this.setTitle("Feedback");
+                //Toasty.info(context, "Open the customize page for the player", Toast.LENGTH_SHORT, true).show();
+                fragment = new FragmentUserResponse();
+                break;
+            /**Quit the application*/
             case R.id.navigation_view_quit:
                 myService.releasePlayer();
                 myService.stopForeground(true);
