@@ -245,6 +245,8 @@ public class FragmentMusicPlayer extends Fragment {
                     infoButton.setColorFilter(Color.RED);
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    Toasty.info(context, "One Moment, Retrieving Info", Toast.LENGTH_SHORT, true).show();
                     infoButton.setColorFilter(compColor);
                     try {
                         // Try get song to make sure there is a current song playing

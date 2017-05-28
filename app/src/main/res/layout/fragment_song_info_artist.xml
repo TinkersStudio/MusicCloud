@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/play_red">
+    </View>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/tw__composer_deep_gray">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/fm_lastFM_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/avatar_blank"
+            app:civ_border_color="@color/orange"
+            app:civ_border_width="2dp"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/fm_lastFM_artist"
+                android:text="ArtistName"
+                android:fontFamily="sans-serif-smallcaps"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:textColor="#FFFF"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/orange">
+            </View>
+            <TextView
+                android:paddingLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:id="@+id/fm_lastFM_stats"
+                android:textSize="6pt"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textColor="#FFFF"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textStyle="bold"
+                android:text="Listeners: 0.0M \nPlayCount: 0.0M"/>
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/play_red">
+    </View>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_margin="5dp"
+            android:id="@+id/fm_lastFM_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="A short description about this singer\n which is limit to \n 300 character\n about this long"
+            android:textSize="7pt"
+            android:textColor="#FFFF"/>
+    </ScrollView>
+</LinearLayout>
