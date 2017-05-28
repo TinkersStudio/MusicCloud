@@ -4,17 +4,19 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.tinkersstudio.musiccloud.util.database.table.GeneralTable;
+
 /**
- * Created by Owner on 4/27/2017.
+ * Created by Jun Trinh on 4/27/2017.
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     /** The name of the database. */
-    public static final String DATABASE_NAME = "musiccloud.songdb";
+    private static final String DATABASE_NAME = "musiccloud.db";
 
     /** The starting database version. */
-    public static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 1;
 
     /**
      * Create a helper object to create, open, and/or manage a database.
@@ -41,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        GeneralTable.onCreate(db);
     }
 
     /**
@@ -66,6 +68,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        GeneralTable.onUpgrade(db, oldVersion, newVersion);
     }
+
+
+    public static String getDatabase()
+    {
+        return DATABASE_NAME;
+    }
+
+    public static int getVersion()
+    {
+       return DATABASE_VERSION;
+    }
+
 }

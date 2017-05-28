@@ -1,7 +1,9 @@
-package com.tinkersstudio.musiccloud.util.database;
+package com.tinkersstudio.musiccloud.util.database.cursor;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
@@ -22,13 +24,15 @@ public class SongCursorAdapter extends CursorAdapter {
      * @param autoRequery If true the adapter will call requery() on the
      *                    cursor whenever it changes so the most recent
      */
-    public SongCursorAdapter(Context context, Cursor c, boolean autoRequery) {
-        super(context, c, autoRequery);
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public SongCursorAdapter(Context context, Cursor songCursor, int flags) {
+        super(context, songCursor, flags);
     }
+
 
     /**
      * Makes a new view to hold the data pointed to by cursor.
-     *
+     * The data is run in background. No need for view
      * @param context Interface to application's global information
      * @param cursor  The cursor from which to get the data. The cursor is already
      *                moved to the correct position.
@@ -49,6 +53,6 @@ public class SongCursorAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
+        //NO NEED TO IMPLEMENT
     }
 }

@@ -51,7 +51,7 @@
         <service android:name="com.tinkersstudio.musiccloud.controller.MusicService" />
 
         <service
-            android:name="com.tinkersstudio.musiccloud.util.MyFirebaseMessagingService">
+            android:name="com.tinkersstudio.musiccloud.util.firebase.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

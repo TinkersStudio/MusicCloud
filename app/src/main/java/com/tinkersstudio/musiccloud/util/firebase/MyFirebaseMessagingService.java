@@ -1,4 +1,4 @@
-package com.tinkersstudio.musiccloud.util;
+package com.tinkersstudio.musiccloud.util.firebase;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -42,7 +42,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.launcher)
+                .setSmallIcon(R.drawable.logo_mip)
                 .setContentTitle("Firebase Push Notification")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
