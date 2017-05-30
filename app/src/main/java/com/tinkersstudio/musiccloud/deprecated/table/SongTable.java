@@ -1,4 +1,4 @@
-package com.tinkersstudio.musiccloud.util.database.table;
+package com.tinkersstudio.musiccloud.deprecated.table;
 
 /**
  * Created by Owner on 4/27/2017.

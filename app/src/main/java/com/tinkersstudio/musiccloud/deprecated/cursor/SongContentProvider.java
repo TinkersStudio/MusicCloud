@@ -1,21 +1,14 @@
-package com.tinkersstudio.musiccloud.util.database.cursor;
+package com.tinkersstudio.musiccloud.deprecated.cursor;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.tinkersstudio.musiccloud.util.database.DatabaseHelper;
-
-import java.util.Arrays;
-import java.util.HashSet;
+import com.tinkersstudio.musiccloud.deprecated.DatabaseHelper;
 
 /**
  * Created by Owner on 4/27/2017.
@@ -36,7 +29,7 @@ public class SongContentProvider extends ContentProvider{
     private static final int JOKE_FILTER = 2;
 
     /** The authority for this content provider. */
-    private static final String AUTHORITY = "com.tinkersstudio.musiccloud.util.database.cursor.contentprovider";
+    private static final String AUTHORITY = "com.tinkersstudio.musiccloud.deprecated.cursor.contentprovider";
 
 
     /** This provider's content location. Used by accessing applications to
@@ -85,7 +78,7 @@ public class SongContentProvider extends ContentProvider{
         checkColumns(projection);
 
 		/* Set up helper to query our jokes table */
-        queryBuilder.setTables(JokeTable.DATABASE_TABLE_JOKE);
+        //queryBuilder.setTables(JokeTable.DATABASE_TABLE_JOKE);
 
 		/* Match the passed-in URI to an expected URI format */
         int uriType = sURIMatcher.match(uri);
@@ -96,11 +89,13 @@ public class SongContentProvider extends ContentProvider{
                 String filter = uri.getLastPathSegment();
                 /** Leave selection as null to fetch all rows if filter is Show All. Otherwise,
                  * fetch rows with a specific rating according to the parsed filter. */
+                /**
                 if (!filter.equals(AdvancedJokeList.SHOW_ALL_FILTER_STRING)) {
                     queryBuilder.appendWhere(JokeTable.JOKE_KEY_RATING + "=" + filter);
                 } else {
                     selection = null; //return all rows
                 }
+                 */
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -156,7 +151,7 @@ public class SongContentProvider extends ContentProvider{
             case JOKE_ID:
 
                 /** Perform the database insert, placing the joke at the bottom of the table. */
-                id = sqlDB.insert(JokeTable.DATABASE_TABLE_JOKE, null, values);
+                //id = sqlDB.insert(JokeTable.DATABASE_TABLE_JOKE, null, values);
                 break;
 
             default:
@@ -195,8 +190,8 @@ public class SongContentProvider extends ContentProvider{
                 /* Fetch the last segment of the URI,which should be a filter number */
                 String jokeID = uri.getLastPathSegment();
 
-                numRow = sqlDB.delete(JokeTable.DATABASE_TABLE_JOKE, JokeTable.JOKE_KEY_ID
-                        + "=" + jokeID, null);
+                //numRow = sqlDB.delete(JokeTable.DATABASE_TABLE_JOKE, JokeTable.JOKE_KEY_ID
+                //        + "=" + jokeID, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -237,7 +232,7 @@ public class SongContentProvider extends ContentProvider{
                 /* Fetch the last segment of the URI,which should be a filter number */
                 String jokeID = uri.getLastPathSegment();
 
-                numRow = sqLiteDatabase.update(JokeTable.DATABASE_TABLE_JOKE, values, JokeTable.JOKE_KEY_ID + "=" + jokeID, null);
+                //numRow = sqLiteDatabase.update(JokeTable.DATABASE_TABLE_JOKE, values, JokeTable.JOKE_KEY_ID + "=" + jokeID, null);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -258,8 +253,9 @@ public class SongContentProvider extends ContentProvider{
      * 						The set of columns about to be queried.
      */
     private void checkColumns(String[] projection) {
-        String[] available = { JokeTable.JOKE_KEY_ID, JokeTable.JOKE_KEY_TEXT, JokeTable.JOKE_KEY_RATING,
-                JokeTable.JOKE_KEY_AUTHOR };
+        /*
+        //String[] available = { JokeTable.JOKE_KEY_ID, JokeTable.JOKE_KEY_TEXT, JokeTable.JOKE_KEY_RATING,
+        //        JokeTable.JOKE_KEY_AUTHOR };
 
         if(projection != null) {
             HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
@@ -269,5 +265,6 @@ public class SongContentProvider extends ContentProvider{
                 throw new IllegalArgumentException("Unknown columns in projection");
             }
         }
+        */
     }
 }

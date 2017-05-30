@@ -1,4 +1,4 @@
-package com.tinkersstudio.musiccloud.util.database.table;
+package com.tinkersstudio.musiccloud.deprecated.table;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;

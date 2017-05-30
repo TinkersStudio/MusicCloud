@@ -21,12 +21,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
+import com.orm.SugarContext;
 import com.tinkersstudio.musiccloud.R;
 import com.tinkersstudio.musiccloud.controller.MyPlayer;
 import com.tinkersstudio.musiccloud.fragment.FragmentEqualizer;
@@ -42,6 +45,8 @@ import com.tinkersstudio.musiccloud.controller.MusicService;
 import com.tinkersstudio.musiccloud.fragment.FragmentUserResponse;
 import com.tinkersstudio.musiccloud.util.MyFlag;
 import es.dmoral.toasty.Toasty;
+
+import static com.tinkersstudio.musiccloud.R.id.profile_image;
 
 /**
  * Created by Owner on 2/19/2017.
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
+    private ImageView userProfileImage;
     private Context context;
     private Toolbar toolbar = null;
     private FirebaseAuth mAuth;
@@ -91,6 +97,7 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this.getApplicationContext());
         context = getApplicationContext();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        userProfileImage = (ImageView) findViewById(R.id.profile_image);
 
         /*Fragment control*/
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -111,6 +118,9 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        //start database
+        SugarContext.init(getApplicationContext());
     }
 
     @Override
@@ -213,6 +223,16 @@ public class MainActivity extends AppCompatActivity
     protected void updateUI(FirebaseUser currentUser)
     {
 
+        if (currentUser != null)
+        {
+            if (currentUser.getPhotoUrl() != null) {
+                Glide.with(MainActivity.this)
+                        .load(currentUser.getPhotoUrl())
+                        .fitCenter()
+                        .into(userProfileImage);
+            }
+
+        }
     }
     /**
      * Everytime we start this activity, bind it to the Service
@@ -223,10 +243,12 @@ public class MainActivity extends AppCompatActivity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null)
         {
-            updateUI(currentUser);
+            //FIXME: The UI update if broken
+            //updateUI(currentUser);
         }
         else {
-            //TODO: Set the default UI
+
+            //DO NOTHING
         }
 
         if (bindingIntent == null) {

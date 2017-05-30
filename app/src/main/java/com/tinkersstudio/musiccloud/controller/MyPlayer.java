@@ -2,6 +2,7 @@ package com.tinkersstudio.musiccloud.controller;
 import android.content.ContentUris;
 import android.database.Cursor;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.PowerManager;
@@ -13,6 +14,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.tinkersstudio.musiccloud.model.Song;
 import com.tinkersstudio.musiccloud.util.MyFlag;
 import com.tinkersstudio.musiccloud.util.NoSongToPlayException;
+import com.tinkersstudio.musiccloud.util.database.SugarDataBaseHelper;
 
 /**
  * Created by anhnguyen on 2/11/17.
@@ -43,6 +45,7 @@ public class MyPlayer implements Player, MediaPlayer.OnPreparedListener, MediaPl
 
     /* song list to play */
     private ArrayList<Song> songList;
+
 
     /**
      * Constructing a new Media Player which belong to a MusicService
@@ -187,7 +190,21 @@ public class MyPlayer implements Player, MediaPlayer.OnPreparedListener, MediaPl
         }
         // The song is feeded into the player and ready to be played
         player.prepareAsync();
-        //TODO: Update the database
+        //FIXME: Comment out for testing purpose
+        /**
+        try{
+            MediaMetadataRetriever metaRetriver;
+            metaRetriver = new MediaMetadataRetriever();
+            metaRetriver.setDataSource(currentSong.getPath());
+
+            //Currently only support to get the genre info
+            SugarDataBaseHelper.saveEntry(metaRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE));
+        }
+        catch (Exception e)
+        {
+            Log.e("MUSIC SERVICE", "Error setting the database", e);
+        }
+         */
         owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
     }
 

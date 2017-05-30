@@ -1,10 +1,10 @@
-package com.tinkersstudio.musiccloud.util.database;
+package com.tinkersstudio.musiccloud.deprecated;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.tinkersstudio.musiccloud.util.database.table.GeneralTable;
+import com.tinkersstudio.musiccloud.deprecated.table.GeneralTable;
 
 /**
  * Created by Jun Trinh on 4/27/2017.

@@ -9,10 +9,15 @@ import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +29,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.tinkersstudio.musiccloud.R;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +54,7 @@ public class FragmentUserInfo extends Fragment {
     View rootView;
     Button signInButton, signOutButton;
     ImageView mUserProfilePicture;
+    EditText mUserName, mUserGenre, mUserSinger;
     public FragmentUserInfo(){
         //require an empty constructor
     }
@@ -56,7 +65,9 @@ public class FragmentUserInfo extends Fragment {
         // Inflate the layout for this fragment
         rootView =  inflater.inflate(R.layout.fragment_user_info, container, false);
         initLayout();
+        readFile();
         initListener();
+        setHasOptionsMenu(true);
         return rootView;
         //initialize button in here
     }
@@ -73,9 +84,16 @@ public class FragmentUserInfo extends Fragment {
 
     public void initLayout()
     {
+
+        mUserName = (EditText)rootView.findViewById(R.id.fragment_user_info_name);
+        mUserGenre = (EditText)rootView.findViewById(R.id.fragment_user_info_genre);
+        mUserSinger = (EditText)rootView.findViewById(R.id.fragment_user_info_singer);
+
         signInButton = (Button)rootView.findViewById(R.id.user_info_sign_in);
         signOutButton = (Button)rootView.findViewById(R.id.user_info_sign_out);
         mUserProfilePicture = (ImageView)rootView.findViewById((R.id.fragment_user_profile_picture));
+
+
         //user signout
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null)
@@ -95,6 +113,22 @@ public class FragmentUserInfo extends Fragment {
             signOutButton.setVisibility(View.GONE);
         }
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.edit_profile_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.action_save){
+            saveFile();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void initListener()
@@ -128,8 +162,9 @@ public class FragmentUserInfo extends Fragment {
                 signOutButton.setVisibility(View.GONE);
             }
         });
-
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -152,6 +187,8 @@ public class FragmentUserInfo extends Fragment {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             signInButton.setVisibility(View.GONE);
             signOutButton.setVisibility(View.VISIBLE);
+
+            //get the user picture
             if (user.getPhotoUrl() != null) {
                 Glide.with(FragmentUserInfo.this)
                         .load(user.getPhotoUrl())
@@ -191,6 +228,45 @@ public class FragmentUserInfo extends Fragment {
         }
 
         showSnackbar(R.string.unknown_sign_in_response);
+    }
+
+    /**Read the file about user profile and update the field*/
+    public void readFile()
+    {
+        //FIXME: Reading name is still wrong
+        try {
+            FileInputStream in = getActivity().getApplicationContext().openFileInput("musicclouduser.txt");
+            int size = in.available();
+            byte[] buffer = new byte[size];
+            in.read(buffer);
+            String info = new String(buffer);
+            String[] content = info.split(" ");
+            mUserName.setText(content[0]);
+            mUserGenre.setText(content[1]);
+            mUserSinger.setText(content[2]);
+        }
+        catch (Exception e)
+        {
+            Log.i("UserInfo", "File is missing");
+        }
+    }
+
+
+    public void saveFile()
+    {
+        try
+        {
+            String content = mUserName.getText() + " " + mUserGenre.getText() + " " + mUserSinger.getText();
+            FileOutputStream outputStream = getActivity().getApplicationContext()
+                    .openFileOutput("musicclouduser.txt", Context.MODE_PRIVATE);
+            outputStream.write(content.getBytes());
+            outputStream.close();
+        }
+        catch(IOException e)
+        {
+            Log.i("UserInfo", "File is missing. Can't write to file");
+        }
+
     }
 
     @MainThread

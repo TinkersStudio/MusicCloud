@@ -1,4 +1,4 @@
-package com.tinkersstudio.musiccloud.util.database.cursor;
+package com.tinkersstudio.musiccloud.deprecated.cursor;
 
 import android.annotation.TargetApi;
 import android.content.Context;

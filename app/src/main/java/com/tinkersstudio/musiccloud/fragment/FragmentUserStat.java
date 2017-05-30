@@ -10,7 +10,8 @@ import android.view.ViewGroup;
 import com.tinkersstudio.musiccloud.R;
 
 /**
- * Created by Owner on 2/19/2017.
+ * Created by Jun Trinh on 2/19/2017.
+ * Display the user listening pattern
  */
 
 public class FragmentUserStat extends Fragment {

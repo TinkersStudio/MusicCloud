@@ -10,12 +10,18 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+
         android:windowSoftInputMode="adjustResize|stateHidden"
         android:allowBackup="true"
         android:icon="@mipmap/launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <!--DATABASE-->
+        <meta-data android:name="DATABASE" android:value="sugar_song.db" />
+        <meta-data android:name="VERSION" android:value="1" />
+        <meta-data android:name="QUERY_LOG" android:value="true" />
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.tinkersstudio.musiccloud" />
         <!-- [START fcm_default_icon] -->
         <!-- Set custom default icon.
         This is used when no icon is set for incoming notification messages.
