@@ -204,7 +204,7 @@ public class MyPlayer implements Player, MediaPlayer.OnPreparedListener, MediaPl
         {
             Log.e("MUSIC SERVICE", "Error setting the database", e);
         }
-         */
+        */
         owner.updateNotifBar(MyFlag.PAUSE, currentSong.getTitle(), currentSong.getArtist());
     }
 
